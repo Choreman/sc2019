@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.orderdetail.dao.OrderDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.xzsd.pc.orderdetail.entity.OrderDetail" >
+    <id column="order_detail_id" property="orderDetailId" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_person" property="createPerson" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="is_deleted" property="isDeleted" jdbcType="INTEGER" />
+    <result column="order_detail_order_code" property="orderDetailOrderCode" jdbcType="VARCHAR" />
+    <result column="order_detail_goods_code" property="orderDetailGoodsCode" jdbcType="VARCHAR" />
+    <result column="order_detail_goods_num" property="orderDetailGoodsNum" jdbcType="INTEGER" />
+    <result column="order_detail_goods_price" property="orderDetailGoodsPrice" jdbcType="REAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    order_detail_id, create_time, create_person, update_time, update_person, version, 
+    is_deleted, order_detail_order_code, order_detail_goods_code, order_detail_goods_num, 
+    order_detail_goods_price
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order_detail
+    where order_detail_id = #{orderDetailId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_order_detail
+    where order_detail_id = #{orderDetailId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xzsd.pc.orderdetail.entity.OrderDetail" >
+    insert into t_order_detail (order_detail_id, create_time, create_person, 
+      update_time, update_person, version, 
+      is_deleted, order_detail_order_code, order_detail_goods_code, 
+      order_detail_goods_num, order_detail_goods_price
+      )
+    values (#{orderDetailId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
+      #{isDeleted,jdbcType=INTEGER}, #{orderDetailOrderCode,jdbcType=VARCHAR}, #{orderDetailGoodsCode,jdbcType=VARCHAR}, 
+      #{orderDetailGoodsNum,jdbcType=INTEGER}, #{orderDetailGoodsPrice,jdbcType=REAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.xzsd.pc.orderdetail.entity.OrderDetail" >
+    insert into t_order_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderDetailId != null" >
+        order_detail_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createPerson != null" >
+        create_person,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updatePerson != null" >
+        update_person,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted,
+      </if>
+      <if test="orderDetailOrderCode != null" >
+        order_detail_order_code,
+      </if>
+      <if test="orderDetailGoodsCode != null" >
+        order_detail_goods_code,
+      </if>
+      <if test="orderDetailGoodsNum != null" >
+        order_detail_goods_num,
+      </if>
+      <if test="orderDetailGoodsPrice != null" >
+        order_detail_goods_price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderDetailId != null" >
+        #{orderDetailId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createPerson != null" >
+        #{createPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null" >
+        #{updatePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="isDeleted != null" >
+        #{isDeleted,jdbcType=INTEGER},
+      </if>
+      <if test="orderDetailOrderCode != null" >
+        #{orderDetailOrderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orderDetailGoodsCode != null" >
+        #{orderDetailGoodsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orderDetailGoodsNum != null" >
+        #{orderDetailGoodsNum,jdbcType=INTEGER},
+      </if>
+      <if test="orderDetailGoodsPrice != null" >
+        #{orderDetailGoodsPrice,jdbcType=REAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.pc.orderdetail.entity.OrderDetail" >
+    update t_order_detail
+    <set >
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createPerson != null" >
+        create_person = #{createPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null" >
+        update_person = #{updatePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted = #{isDeleted,jdbcType=INTEGER},
+      </if>
+      <if test="orderDetailOrderCode != null" >
+        order_detail_order_code = #{orderDetailOrderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orderDetailGoodsCode != null" >
+        order_detail_goods_code = #{orderDetailGoodsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orderDetailGoodsNum != null" >
+        order_detail_goods_num = #{orderDetailGoodsNum,jdbcType=INTEGER},
+      </if>
+      <if test="orderDetailGoodsPrice != null" >
+        order_detail_goods_price = #{orderDetailGoodsPrice,jdbcType=REAL},
+      </if>
+    </set>
+    where order_detail_id = #{orderDetailId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.orderdetail.entity.OrderDetail" >
+    update t_order_detail
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_person = #{createPerson,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_person = #{updatePerson,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      is_deleted = #{isDeleted,jdbcType=INTEGER},
+      order_detail_order_code = #{orderDetailOrderCode,jdbcType=VARCHAR},
+      order_detail_goods_code = #{orderDetailGoodsCode,jdbcType=VARCHAR},
+      order_detail_goods_num = #{orderDetailGoodsNum,jdbcType=INTEGER},
+      order_detail_goods_price = #{orderDetailGoodsPrice,jdbcType=REAL}
+    where order_detail_id = #{orderDetailId,jdbcType=VARCHAR}
+  </update>
+</mapper>

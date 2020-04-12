@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.rollimage.dao.RollImageMapper" >
+  <resultMap id="BaseResultMap" type="com.xzsd.pc.rollimage.entity.RollImage" >
+    <id column="roll_image_id" property="rollImageId" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_person" property="createPerson" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="is_deleted" property="isDeleted" jdbcType="INTEGER" />
+    <result column="roll_image_code" property="rollImageCode" jdbcType="VARCHAR" />
+    <result column="roll_image_weight" property="rollImageWeight" jdbcType="INTEGER" />
+    <result column="roll_image_goods_code" property="rollImageGoodsCode" jdbcType="VARCHAR" />
+    <result column="roll_image_begin_date" property="rollImageBeginDate" jdbcType="DATE" />
+    <result column="roll_image_end_date" property="rollImageEndDate" jdbcType="DATE" />
+    <result column="roll_image_condition" property="rollImageCondition" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    roll_image_id, create_time, create_person, update_time, update_person, version, is_deleted, 
+    roll_image_code, roll_image_weight, roll_image_goods_code, roll_image_begin_date, 
+    roll_image_end_date, roll_image_condition
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_roll_image
+    where roll_image_id = #{rollImageId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_roll_image
+    where roll_image_id = #{rollImageId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xzsd.pc.rollimage.entity.RollImage" >
+    insert into t_roll_image (roll_image_id, create_time, create_person, 
+      update_time, update_person, version, 
+      is_deleted, roll_image_code, roll_image_weight, 
+      roll_image_goods_code, roll_image_begin_date, roll_image_end_date, 
+      roll_image_condition)
+    values (#{rollImageId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
+      #{isDeleted,jdbcType=INTEGER}, #{rollImageCode,jdbcType=VARCHAR}, #{rollImageWeight,jdbcType=INTEGER}, 
+      #{rollImageGoodsCode,jdbcType=VARCHAR}, #{rollImageBeginDate,jdbcType=DATE}, #{rollImageEndDate,jdbcType=DATE}, 
+      #{rollImageCondition,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xzsd.pc.rollimage.entity.RollImage" >
+    insert into t_roll_image
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="rollImageId != null" >
+        roll_image_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createPerson != null" >
+        create_person,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updatePerson != null" >
+        update_person,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted,
+      </if>
+      <if test="rollImageCode != null" >
+        roll_image_code,
+      </if>
+      <if test="rollImageWeight != null" >
+        roll_image_weight,
+      </if>
+      <if test="rollImageGoodsCode != null" >
+        roll_image_goods_code,
+      </if>
+      <if test="rollImageBeginDate != null" >
+        roll_image_begin_date,
+      </if>
+      <if test="rollImageEndDate != null" >
+        roll_image_end_date,
+      </if>
+      <if test="rollImageCondition != null" >
+        roll_image_condition,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="rollImageId != null" >
+        #{rollImageId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createPerson != null" >
+        #{createPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null" >
+        #{updatePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="isDeleted != null" >
+        #{isDeleted,jdbcType=INTEGER},
+      </if>
+      <if test="rollImageCode != null" >
+        #{rollImageCode,jdbcType=VARCHAR},
+      </if>
+      <if test="rollImageWeight != null" >
+        #{rollImageWeight,jdbcType=INTEGER},
+      </if>
+      <if test="rollImageGoodsCode != null" >
+        #{rollImageGoodsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="rollImageBeginDate != null" >
+        #{rollImageBeginDate,jdbcType=DATE},
+      </if>
+      <if test="rollImageEndDate != null" >
+        #{rollImageEndDate,jdbcType=DATE},
+      </if>
+      <if test="rollImageCondition != null" >
+        #{rollImageCondition,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.pc.rollimage.entity.RollImage" >
+    update t_roll_image
+    <set >
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createPerson != null" >
+        create_person = #{createPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null" >
+        update_person = #{updatePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted = #{isDeleted,jdbcType=INTEGER},
+      </if>
+      <if test="rollImageCode != null" >
+        roll_image_code = #{rollImageCode,jdbcType=VARCHAR},
+      </if>
+      <if test="rollImageWeight != null" >
+        roll_image_weight = #{rollImageWeight,jdbcType=INTEGER},
+      </if>
+      <if test="rollImageGoodsCode != null" >
+        roll_image_goods_code = #{rollImageGoodsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="rollImageBeginDate != null" >
+        roll_image_begin_date = #{rollImageBeginDate,jdbcType=DATE},
+      </if>
+      <if test="rollImageEndDate != null" >
+        roll_image_end_date = #{rollImageEndDate,jdbcType=DATE},
+      </if>
+      <if test="rollImageCondition != null" >
+        roll_image_condition = #{rollImageCondition,jdbcType=INTEGER},
+      </if>
+    </set>
+    where roll_image_id = #{rollImageId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.rollimage.entity.RollImage" >
+    update t_roll_image
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_person = #{createPerson,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_person = #{updatePerson,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      is_deleted = #{isDeleted,jdbcType=INTEGER},
+      roll_image_code = #{rollImageCode,jdbcType=VARCHAR},
+      roll_image_weight = #{rollImageWeight,jdbcType=INTEGER},
+      roll_image_goods_code = #{rollImageGoodsCode,jdbcType=VARCHAR},
+      roll_image_begin_date = #{rollImageBeginDate,jdbcType=DATE},
+      roll_image_end_date = #{rollImageEndDate,jdbcType=DATE},
+      roll_image_condition = #{rollImageCondition,jdbcType=INTEGER}
+    where roll_image_id = #{rollImageId,jdbcType=VARCHAR}
+  </update>
+</mapper>

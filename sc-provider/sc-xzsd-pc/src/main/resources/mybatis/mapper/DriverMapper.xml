@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.driver.dao.DriverMapper">
+    <resultMap id="BaseResultMap" type="com.xzsd.pc.driver.entity.Driver">
+        <id column="driver_id" property="driverId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="driver_client_code" property="driverUserCode" jdbcType="VARCHAR"/>
+        <result column="driver_province_code" property="driverProvinceCode" jdbcType="VARCHAR"/>
+        <result column="driver_city_code" property="driverCityCode" jdbcType="VARCHAR"/>
+        <result column="driver_region_code" property="driverRegionCode" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+      driver_id, create_time, create_person, update_time, update_person, version, is_deleted,
+      driver_user_code, driver_province_code, driver_city_code, driver_region_code
+    </sql>
+    <!-- 前台展示字段 -->
+    <sql id="Display_Column_List">
+        driver_id, driver_user_code, driver_province_code, driver_city_code, driver_region_code
+    </sql>
+
+    <!-- 查询司机的用户表信息关联查询司机表信息关联查询区域名称表信息 -->
+    <resultMap id="UserDriverAreaResultMap" type="com.xzsd.pc.user.entity.User">
+        <id column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="user_code" property="userCode" jdbcType="VARCHAR"/>
+        <result column="user_login_name" property="userLoginName" jdbcType="VARCHAR"/>
+        <result column="user_password" property="userPassword" jdbcType="VARCHAR"/>
+        <result column="user_role" property="userRole" jdbcType="INTEGER"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="user_sex" property="userSex" jdbcType="INTEGER"/>
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR"/>
+        <result column="user_mail" property="userMail" jdbcType="VARCHAR"/>
+        <result column="user_idcard" property="userIdcard" jdbcType="VARCHAR"/>
+        <result column="user_store_id" property="userStoreId" jdbcType="VARCHAR"/>
+        <!-- 关联查询司机信息 -->
+        <association property="driver" javaType="com.xzsd.pc.driver.entity.Driver">
+            <id column="driver_id" property="driverId" jdbcType="VARCHAR"/>
+            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+            <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+            <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+            <result column="version" property="version" jdbcType="INTEGER"/>
+            <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+            <result column="driver_client_code" property="driverUserCode" jdbcType="VARCHAR"/>
+            <result column="driver_province_code" property="driverProvinceCode" jdbcType="VARCHAR"/>
+            <result column="driver_city_code" property="driverCityCode" jdbcType="VARCHAR"/>
+            <result column="driver_region_code" property="driverRegionCode" jdbcType="VARCHAR"/>
+            <!-- 关联查询区域信息 -->
+            <collection property="areaList" ofType="com.xzsd.pc.area.entity.Area">
+                <id column="area_name_id" property="areaNameId" jdbcType="VARCHAR"/>
+                <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+                <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+                <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+                <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+                <result column="version" property="version" jdbcType="INTEGER"/>
+                <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+                <result column="area_name" property="areaName" jdbcType="VARCHAR"/>
+                <result column="area_name_level" property="areaNameLevel" jdbcType="INTEGER"/>
+                <result column="area_name_parent_code" property="areaNameParentCode" jdbcType="VARCHAR"/>
+            </collection>
+        </association>
+    </resultMap>
+
+    <!-- 新增司机信息 -->
+    <insert id="insertSelective" parameterType="com.xzsd.pc.driver.entity.Driver">
+        insert into t_driver_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="driverId != null">
+                driver_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createPerson != null">
+                create_person,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updatePerson != null">
+                update_person,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="driverUserCode != null">
+                driver_user_code,
+            </if>
+            <if test="driverProvinceCode != null">
+                driver_province_code,
+            </if>
+            <if test="driverCityCode != null">
+                driver_city_code,
+            </if>
+            <if test="driverRegionCode != null">
+                driver_region_code,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="driverId != null">
+                #{driverId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="driverUserCode != null">
+                #{driverUserCode,jdbcType=VARCHAR},
+            </if>
+            <if test="driverProvinceCode != null">
+                #{driverProvinceCode,jdbcType=VARCHAR},
+            </if>
+            <if test="driverCityCode != null">
+                #{driverCityCode,jdbcType=VARCHAR},
+            </if>
+            <if test="driverRegionCode != null">
+                #{driverRegionCode,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 根据传入的查询条件查询司机存放在user表中的信息 -->
+    <select id="listDrivers" resultType="com.xzsd.pc.user.entity.User">
+        SELECT
+            user_id,
+            user_code,
+            user_name,
+            user_phone,
+            user_idcard,
+            user_login_name
+        from
+            t_sys_user_info
+            <if test="driver.driverProvinceCode != null or
+            driver.driverCityCode != null or driver.driverRegionCode != null">
+                , t_driver_info
+            </if>
+        where
+            t_sys_user_info.is_deleted = 1
+        and
+            t_sys_user_info.user_role = 3
+            <if test="driver.driverProvinceCode != null or
+            driver.driverCityCode != null or driver.driverRegionCode != null">
+                and t_driver_info.driver_user_code = t_sys_user_info.user_id
+            </if>
+            <if test="user.userCode != null and user.userCode != ''">
+                and user_code like CONCAT('%', #{user.userCode,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="user.userName != null and user.userName != ''">
+                and user_name like CONCAT('%', #{user.userName,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="driver.driverProvinceCode != null and driver.driverProvinceCode != ''">
+                and driver_province_code = #{driver.driverProvinceCode,jdbcType=VARCHAR}
+            </if>
+            <if test="driver.driverCityCode != null and driver.driverCityCode != ''">
+                and driver_city_code = #{driver.driverCityCode,jdbcType=VARCHAR}
+            </if>
+            <if test="driver.driverRegionCode != null and driver.driverRegionCode != ''">
+                and driver_region_code = #{driver.driverRegionCode,jdbcType=VARCHAR}
+            </if>
+    </select>
+
+    <!-- 根据id查询司机信息（包含用户表、司机表、区域名称表里的信息） -->
+    <select id="findDriverById" resultMap="UserDriverAreaResultMap">
+        SELECT
+            t_sys_user_info.user_id,
+            t_sys_user_info.user_name,
+            t_sys_user_info.user_phone,
+            t_sys_user_info.user_login_name,
+            t_sys_user_info.user_password,
+            t_sys_user_info.user_idcard,
+            t_driver_info.*,
+            t_area_name.area_name_id,
+            t_area_name.area_name,
+            t_area_name.area_name_level,
+            t_area_name.area_name_parent_code
+        FROM
+            t_sys_user_info,
+            t_driver_info
+        left join
+            t_area_name
+        on
+            t_area_name.area_name_id in (driver_province_code, driver_city_code, driver_region_code)
+        WHERE
+            t_sys_user_info.is_deleted = 1
+        and
+            t_sys_user_info.user_id = t_driver_info.driver_user_code
+        AND
+            t_sys_user_info.user_role = 3
+        AND
+            t_sys_user_info.user_id = #{userId, jdbcType=VARCHAR}
+        ORDER BY
+            user_name,
+            area_name_level
+    </select>
+
+    <!-- Mybatis generator自动生成代码 -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_driver_info
+        where driver_id = #{driverId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_driver_info
+    where driver_id = #{driverId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.xzsd.pc.driver.entity.Driver">
+    insert into t_driver_info (driver_id, create_time, create_person, 
+      update_time, update_person, version, 
+      is_deleted, driver_user_code, driver_province_code,
+      driver_city_code, driver_region_code)
+    values (#{driverId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
+      #{isDeleted,jdbcType=INTEGER}, #{driverUserCode,jdbcType=VARCHAR}, #{driverProvinceCode,jdbcType=VARCHAR},
+      #{driverCityCode,jdbcType=VARCHAR}, #{driverRegionCode,jdbcType=VARCHAR})
+  </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.pc.driver.entity.Driver">
+        update t_driver_info
+        <set>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                create_person = #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                update_person = #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                version = #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="driverUserCode != null">
+                driver_user_code = #{driverUserCode,jdbcType=VARCHAR},
+            </if>
+            <if test="driverProvinceCode != null">
+                driver_province_code = #{driverProvinceCode,jdbcType=VARCHAR},
+            </if>
+            <if test="driverCityCode != null">
+                driver_city_code = #{driverCityCode,jdbcType=VARCHAR},
+            </if>
+            <if test="driverRegionCode != null">
+                driver_region_code = #{driverRegionCode,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where driver_id = #{driverId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.driver.entity.Driver">
+    update t_driver_info
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_person = #{createPerson,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_person = #{updatePerson,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      is_deleted = #{isDeleted,jdbcType=INTEGER},
+      driver_user_code = #{driverUserCode,jdbcType=VARCHAR},
+      driver_province_code = #{driverProvinceCode,jdbcType=VARCHAR},
+      driver_city_code = #{driverCityCode,jdbcType=VARCHAR},
+      driver_region_code = #{driverRegionCode,jdbcType=VARCHAR}
+    where driver_id = #{driverId,jdbcType=VARCHAR}
+  </update>
+</mapper>

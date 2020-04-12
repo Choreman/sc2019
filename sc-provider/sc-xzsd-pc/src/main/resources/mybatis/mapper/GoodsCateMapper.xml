@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.goodscate.dao.GoodsCateMapper" >
+  <resultMap id="BaseResultMap" type="com.xzsd.pc.goodscate.entity.GoodsCate" >
+    <id column="goods_cate_id" property="goodsCateId" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_person" property="createPerson" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="is_deleted" property="isDeleted" jdbcType="INTEGER" />
+    <result column="cate_name" property="cateName" jdbcType="VARCHAR" />
+    <result column="cate_level" property="cateLevel" jdbcType="INTEGER" />
+    <result column="cate_parent" property="cateParent" jdbcType="VARCHAR" />
+    <result column="cate_comment" property="cateComment" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    goods_cate_id, create_time, create_person, update_time, update_person, version, is_deleted, 
+    cate_name, cate_level, cate_parent, cate_comment
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_goods_cate_info
+    where goods_cate_id = #{goodsCateId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_goods_cate_info
+    where goods_cate_id = #{goodsCateId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xzsd.pc.goodscate.entity.GoodsCate" >
+    insert into t_goods_cate_info (goods_cate_id, create_time, create_person, 
+      update_time, update_person, version, 
+      is_deleted, cate_name, cate_level, 
+      cate_parent, cate_comment)
+    values (#{goodsCateId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
+      #{isDeleted,jdbcType=INTEGER}, #{cateName,jdbcType=VARCHAR}, #{cateLevel,jdbcType=INTEGER}, 
+      #{cateParent,jdbcType=VARCHAR}, #{cateComment,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xzsd.pc.goodscate.entity.GoodsCate" >
+    insert into t_goods_cate_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="goodsCateId != null" >
+        goods_cate_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createPerson != null" >
+        create_person,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updatePerson != null" >
+        update_person,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted,
+      </if>
+      <if test="cateName != null" >
+        cate_name,
+      </if>
+      <if test="cateLevel != null" >
+        cate_level,
+      </if>
+      <if test="cateParent != null" >
+        cate_parent,
+      </if>
+      <if test="cateComment != null" >
+        cate_comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="goodsCateId != null" >
+        #{goodsCateId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createPerson != null" >
+        #{createPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null" >
+        #{updatePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="isDeleted != null" >
+        #{isDeleted,jdbcType=INTEGER},
+      </if>
+      <if test="cateName != null" >
+        #{cateName,jdbcType=VARCHAR},
+      </if>
+      <if test="cateLevel != null" >
+        #{cateLevel,jdbcType=INTEGER},
+      </if>
+      <if test="cateParent != null" >
+        #{cateParent,jdbcType=VARCHAR},
+      </if>
+      <if test="cateComment != null" >
+        #{cateComment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.pc.goodscate.entity.GoodsCate" >
+    update t_goods_cate_info
+    <set >
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createPerson != null" >
+        create_person = #{createPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null" >
+        update_person = #{updatePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted = #{isDeleted,jdbcType=INTEGER},
+      </if>
+      <if test="cateName != null" >
+        cate_name = #{cateName,jdbcType=VARCHAR},
+      </if>
+      <if test="cateLevel != null" >
+        cate_level = #{cateLevel,jdbcType=INTEGER},
+      </if>
+      <if test="cateParent != null" >
+        cate_parent = #{cateParent,jdbcType=VARCHAR},
+      </if>
+      <if test="cateComment != null" >
+        cate_comment = #{cateComment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where goods_cate_id = #{goodsCateId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.goodscate.entity.GoodsCate" >
+    update t_goods_cate_info
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_person = #{createPerson,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_person = #{updatePerson,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      is_deleted = #{isDeleted,jdbcType=INTEGER},
+      cate_name = #{cateName,jdbcType=VARCHAR},
+      cate_level = #{cateLevel,jdbcType=INTEGER},
+      cate_parent = #{cateParent,jdbcType=VARCHAR},
+      cate_comment = #{cateComment,jdbcType=VARCHAR}
+    where goods_cate_id = #{goodsCateId,jdbcType=VARCHAR}
+  </update>
+</mapper>

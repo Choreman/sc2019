@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.menu.dao.MenuMapper">
+    <resultMap id="BaseResultMap" type="com.xzsd.pc.menu.entity.Menu">
+        <id column="menu_id" property="menuId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
+        <result column="menu_route" property="menuRoute" jdbcType="VARCHAR"/>
+        <result column="is_menu" property="isMenu" jdbcType="INTEGER"/>
+        <result column="menu_comment" property="menuComment" jdbcType="VARCHAR"/>
+        <result column="menu_parent" property="menuParent" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    menu_id, create_time, create_person, update_time, update_person, version, is_deleted, 
+    menu_name, menu_route, is_menu, menu_comment, menu_parent
+  </sql>
+    <!-- 菜单信息前台展示字段 -->
+    <sql id="Display_Column_List">
+    menu_id, version, menu_name, menu_route, is_menu, menu_comment, menu_parent
+    </sql>
+
+    <!-- 新增菜单信息 -->
+    <insert id="insertSelective" parameterType="com.xzsd.pc.menu.entity.Menu">
+        insert into t_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="menuId != null">
+                menu_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createPerson != null">
+                create_person,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updatePerson != null">
+                update_person,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="menuName != null">
+                menu_name,
+            </if>
+            <if test="menuRoute != null">
+                menu_route,
+            </if>
+            <if test="isMenu != null">
+                is_menu,
+            </if>
+            <if test="menuComment != null">
+                menu_comment,
+            </if>
+            <if test="menuParent != null">
+                menu_parent,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="menuId != null">
+                #{menuId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="menuName != null">
+                #{menuName,jdbcType=VARCHAR},
+            </if>
+            <if test="menuRoute != null">
+                #{menuRoute,jdbcType=VARCHAR},
+            </if>
+            <if test="isMenu != null">
+                #{isMenu,jdbcType=INTEGER},
+            </if>
+            <if test="menuComment != null">
+                #{menuComment,jdbcType=VARCHAR},
+            </if>
+            <if test="menuParent != null">
+                #{menuParent,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 根据菜单名称计算菜单数 -->
+    <select id="countMenuByMenuName" parameterType="java.lang.String" resultType="int">
+      SELECT
+          count(*)
+      FROM
+          t_menu
+      WHERE
+          menu_name = #{menuName,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 查询菜单列表接口 -->
+    <select id="listMenus" parameterType="com.xzsd.pc.menu.entity.Menu" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Display_Column_List"/>
+        FROM
+        t_menu
+        WHERE
+        is_deleted = 1
+    </select>
+
+    <!-- 据菜单id查找菜单信息 -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Display_Column_List"/>
+        from
+        t_menu
+        where
+        is_deleted = 1
+        and
+        menu_id = #{menuId,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 修改菜单信息 -->
+    <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.pc.menu.entity.Menu">
+        update t_menu
+        <set>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null and createPerson != ''">
+                create_person = #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null and updatePerson != ''">
+                update_person = #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null and version != ''">
+                version = #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                is_deleted = #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="menuName != null and menuName !=''">
+                menu_name = #{menuName,jdbcType=VARCHAR},
+            </if>
+            <if test="menuRoute != null and menuRoute != ''">
+                menu_route = #{menuRoute,jdbcType=VARCHAR},
+            </if>
+            <if test="isMenu != null and isMenu != ''">
+                is_menu = #{isMenu,jdbcType=INTEGER},
+            </if>
+            <if test="menuComment != null and menuComment != ''">
+                menu_comment = #{menuComment,jdbcType=VARCHAR},
+            </if>
+            <if test="menuParent != null and menuParent != ''">
+                menu_parent = #{menuParent,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where menu_id = #{menuId,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 删除菜单信息（修改字段is_delete状态，并非真正删除） -->
+    <update id="deleteMenuById" parameterType="java.lang.String">
+        update
+            t_menu
+        set
+            is_deleted = 0,
+            update_time = now(),
+            update_person = #{updatePersonId},
+            version = version + 1
+        where
+            menu_id
+        in
+            <foreach item="menuId" index="index" collection="listIds" open="(" separator="," close=")">
+                #{menuId}
+            </foreach>
+    </update>
+
+    <!-- Mybatis generator自动生成代码 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_menu
+    where menu_id = #{menuId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.xzsd.pc.menu.entity.Menu">
+    insert into t_menu (menu_id, create_time, create_person, 
+      update_time, update_person, version, 
+      is_deleted, menu_name, menu_route, 
+      is_menu, menu_comment, menu_parent
+      )
+    values (#{menuId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
+      #{isDeleted,jdbcType=INTEGER}, #{menuName,jdbcType=VARCHAR}, #{menuRoute,jdbcType=VARCHAR}, 
+      #{isMenu,jdbcType=INTEGER}, #{menuComment,jdbcType=VARCHAR}, #{menuParent,jdbcType=VARCHAR}
+      )
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.menu.entity.Menu">
+    update t_menu
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_person = #{createPerson,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_person = #{updatePerson,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      is_deleted = #{isDeleted,jdbcType=INTEGER},
+      menu_name = #{menuName,jdbcType=VARCHAR},
+      menu_route = #{menuRoute,jdbcType=VARCHAR},
+      is_menu = #{isMenu,jdbcType=INTEGER},
+      menu_comment = #{menuComment,jdbcType=VARCHAR},
+      menu_parent = #{menuParent,jdbcType=VARCHAR}
+    where menu_id = #{menuId,jdbcType=VARCHAR}
+  </update>
+</mapper>

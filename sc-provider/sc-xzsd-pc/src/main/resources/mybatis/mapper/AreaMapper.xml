@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.area.dao.AreaMapper">
+    <resultMap id="BaseResultMap" type="com.xzsd.pc.area.entity.Area">
+        <id column="area_name_id" property="areaNameId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="area_name" property="areaName" jdbcType="VARCHAR"/>
+        <result column="area_name_level" property="areaNameLevel" jdbcType="INTEGER"/>
+        <result column="area_name_parent_code" property="areaNameParentCode" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    area_name_id, create_time, create_person, update_time, update_person, version, is_deleted,
+    area_name, area_name_level, area_name_parent_code
+  </sql>
+    <!-- 前台展示字段 -->
+    <sql id="display_Column_List">
+    area_name_id, area_name, area_name_level, area_name_parent_code
+  </sql>
+
+    <!-- 省关联查询市关联查询区(县)ResultMap -->
+    <resultMap id="ProvinceCityRegionResultMap" type="com.xzsd.pc.area.entity.Area" extends="BaseResultMap">
+        <!-- 关联查询市和区（县） -->
+        <collection property="childAreaList" ofType="com.xzsd.pc.area.entity.Area"
+                    column="area_name_id" select="selectChildAreaList">
+            <id column="area_name_id" property="areaNameId" jdbcType="VARCHAR"/>
+            <result column="version" property="version" jdbcType="INTEGER"/>
+            <result column="area_name" property="areaName" jdbcType="VARCHAR"/>
+            <result column="area_name_level" property="areaNameLevel" jdbcType="INTEGER"/>
+            <result column="area_name_parent_code" property="areaNameParentCode" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+
+    <!-- 查询子级区域名称信息，例如省查市级，市查区级 -->
+    <select id="selectChildAreaList" parameterType="java.lang.String" resultMap="ProvinceCityRegionResultMap">
+        select
+            area_name_id,
+            area_name,
+            area_name_level,
+            area_name_parent_code
+        from
+            t_area_name
+        where
+            is_deleted = 1
+        and
+            area_name_parent_code = #{area_name_id,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 查询所有区域名称列表 -->
+    <select id="listAreas" resultMap="BaseResultMap">
+        select
+        <include refid="display_Column_List"/>
+        from
+        t_area_name
+        where
+        is_deleted = 1
+    </select>
+
+    <!-- 根据父级编号查询子区域名称列表，传入null表示查询第一级区域名称 -->
+    <select id="listAreasByParentCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="display_Column_List"/>
+        from
+        t_area_name
+        where
+        is_deleted = 1
+        and
+        <choose>
+            <when test="areaNameParentCode != null">
+                area_name_parent_code = ${areaNameParentCode}
+            </when>
+            <otherwise>
+                area_name_parent_code is NULL
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 查询树形区域名称（省包含所有市，市包含所有区（县）） -->
+    <select id="listTreeAreas" resultMap="ProvinceCityRegionResultMap">
+        SELECT
+            area_name_id,
+            area_name,
+            area_name_level,
+            area_name_parent_code
+        from
+            t_area_name
+        where
+            is_deleted = 1
+        and
+            area_name_level = 1
+    </select>
+
+    <!-- Mybatis generator自动生成代码 -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_area_name
+        where area_name_id = #{areaNameId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_area_name
+    where area_name_id = #{areaNameId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.xzsd.pc.area.entity.Area">
+    insert into t_area_name (area_name_id, create_time, create_person,
+      update_time, update_person, version,
+      is_deleted, area_name, area_name_level,
+      area_name_parent_code)
+    values (#{areaNameId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR},
+      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER},
+      #{isDeleted,jdbcType=INTEGER}, #{areaName,jdbcType=VARCHAR}, #{areaNameLevel,jdbcType=INTEGER},
+      #{areaNameParentCode,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.xzsd.pc.area.entity.Area">
+        insert into t_area_name
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="areaNameId != null">
+                area_name_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createPerson != null">
+                create_person,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updatePerson != null">
+                update_person,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="areaName != null">
+                area_name,
+            </if>
+            <if test="areaNameLevel != null">
+                area_name_level,
+            </if>
+            <if test="areaNameParentCode != null">
+                area_name_parent_code,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="areaNameId != null">
+                #{areaNameId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="areaName != null">
+                #{areaName,jdbcType=VARCHAR},
+            </if>
+            <if test="areaNameLevel != null">
+                #{areaNameLevel,jdbcType=INTEGER},
+            </if>
+            <if test="areaNameParentCode != null">
+                #{areaNameParentCode,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.pc.area.entity.Area">
+        update t_area_name
+        <set>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                create_person = #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                update_person = #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                version = #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="areaName != null">
+                area_name = #{areaName,jdbcType=VARCHAR},
+            </if>
+            <if test="areaNameLevel != null">
+                area_name_level = #{areaNameLevel,jdbcType=INTEGER},
+            </if>
+            <if test="areaNameParentCode != null">
+                area_name_parent_code = #{areaNameParentCode,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where area_name_id = #{areaNameId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.area.entity.Area">
+    update t_area_name
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_person = #{createPerson,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_person = #{updatePerson,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      is_deleted = #{isDeleted,jdbcType=INTEGER},
+      area_name = #{areaName,jdbcType=VARCHAR},
+      area_name_level = #{areaNameLevel,jdbcType=INTEGER},
+      area_name_parent_code = #{areaNameParentCode,jdbcType=VARCHAR}
+    where area_name_id = #{areaNameId,jdbcType=VARCHAR}
+  </update>
+</mapper>

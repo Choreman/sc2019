@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.store.dao.StoreMapper">
+    <resultMap id="BaseResultMap" type="com.xzsd.pc.store.entity.Store">
+        <id column="store_id" property="storeId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="store_code" property="storeCode" jdbcType="VARCHAR"/>
+        <result column="store_name" property="storeName" jdbcType="VARCHAR"/>
+        <result column="store_phone" property="storePhone" jdbcType="VARCHAR"/>
+        <result column="store_manager_id" property="storeManagerId" jdbcType="VARCHAR"/>
+        <result column="store_license_code" property="storeLicenseCode" jdbcType="VARCHAR"/>
+        <result column="store_address" property="storeAddress" jdbcType="VARCHAR"/>
+        <result column="store_invitation_code" property="storeInvitationCode" jdbcType="VARCHAR"/>
+        <result column="store_province_code" property="storeProvinceCode" jdbcType="VARCHAR"/>
+        <result column="store_city_code" property="storeCityCode" jdbcType="VARCHAR"/>
+        <result column="store_region_code" property="storeRegionCode" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    store_id, t_store_info.create_time, t_store_info.create_person, t_store_info.update_time,
+    t_store_info.update_person, t_store_info.version, t_store_info.is_deleted,
+    store_code, store_name, store_phone, store_manager_id, store_license_code, store_address,
+    store_invitation_code, store_province_code, store_city_code, store_region_code
+    </sql>
+    <!-- 门店展示的字段 -->
+    <sql id="display_Column_List">
+    store_id, t_store_info.version, store_code, store_name, store_phone, store_manager_id,
+    store_license_code, store_address, store_invitation_code,
+    store_province_code, store_city_code, store_region_code
+  </sql>
+
+    <!-- 门店关联查询店长信息ResultMap -->
+    <resultMap id="StoreUserResultMap" type="com.xzsd.pc.store.entity.Store" extends="BaseResultMap">
+        <association property="user" javaType="com.xzsd.pc.user.entity.User">
+            <id column="user_id" property="userId" jdbcType="VARCHAR"/>
+            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+            <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+            <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+            <result column="version" property="version" jdbcType="INTEGER"/>
+            <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+            <result column="user_code" property="userCode" jdbcType="VARCHAR"/>
+            <result column="user_login_name" property="userLoginName" jdbcType="VARCHAR"/>
+            <result column="user_password" property="userPassword" jdbcType="VARCHAR"/>
+            <result column="user_role" property="userRole" jdbcType="INTEGER"/>
+            <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+            <result column="user_sex" property="userSex" jdbcType="INTEGER"/>
+            <result column="user_phone" property="userPhone" jdbcType="VARCHAR"/>
+            <result column="user_mail" property="userMail" jdbcType="VARCHAR"/>
+            <result column="user_idcard" property="userIdcard" jdbcType="VARCHAR"/>
+            <result column="user_store_id" property="userStoreId" jdbcType="VARCHAR"/>
+        </association>
+    </resultMap>
+
+    <!-- 门店关联查询店长信息关联查询区域名称信息ResultMap -->
+    <resultMap id="StoreUserAreaResultMap" type="com.xzsd.pc.store.entity.Store" extends="BaseResultMap">
+        <!-- 关联店长信息 -->
+        <association property="user" javaType="com.xzsd.pc.user.entity.User">
+            <id column="user_id" property="userId" jdbcType="VARCHAR"/>
+            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+            <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+            <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+            <result column="version" property="version" jdbcType="INTEGER"/>
+            <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+            <result column="user_code" property="userCode" jdbcType="VARCHAR"/>
+            <result column="user_login_name" property="userLoginName" jdbcType="VARCHAR"/>
+            <result column="user_password" property="userPassword" jdbcType="VARCHAR"/>
+            <result column="user_role" property="userRole" jdbcType="INTEGER"/>
+            <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+            <result column="user_sex" property="userSex" jdbcType="INTEGER"/>
+            <result column="user_phone" property="userPhone" jdbcType="VARCHAR"/>
+            <result column="user_mail" property="userMail" jdbcType="VARCHAR"/>
+            <result column="user_idcard" property="userIdcard" jdbcType="VARCHAR"/>
+            <result column="user_store_id" property="userStoreId" jdbcType="VARCHAR"/>
+        </association>
+        <!-- 关联查询区域信息 -->
+        <collection property="areaList" ofType="com.xzsd.pc.area.entity.Area">
+            <id column="area_name_id" property="areaNameId" jdbcType="VARCHAR"/>
+            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+            <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+            <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+            <result column="version" property="version" jdbcType="INTEGER"/>
+            <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+            <result column="area_name" property="areaName" jdbcType="VARCHAR"/>
+            <result column="area_name_level" property="areaNameLevel" jdbcType="INTEGER"/>
+            <result column="area_name_parent_code" property="areaNameParentCode" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+
+    <!-- 新增门店信息 -->
+    <insert id="insertSelective" parameterType="com.xzsd.pc.store.entity.Store">
+        insert into t_store_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="storeId != null">
+                store_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createPerson != null">
+                create_person,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updatePerson != null">
+                update_person,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="storeCode != null">
+                store_code,
+            </if>
+            <if test="storeName != null">
+                store_name,
+            </if>
+            <if test="storePhone != null">
+                store_phone,
+            </if>
+            <if test="storeManagerId != null">
+                store_manager_id,
+            </if>
+            <if test="storeLicenseCode != null">
+                store_license_code,
+            </if>
+            <if test="storeAddress != null">
+                store_address,
+            </if>
+            <if test="storeInvitationCode != null">
+                store_invitation_code,
+            </if>
+            <if test="storeProvinceCode != null">
+                store_province_code,
+            </if>
+            <if test="storeCityCode != null">
+                store_city_code,
+            </if>
+            <if test="storeRegionCode != null">
+                store_region_code,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="storeId != null">
+                #{storeId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="storeCode != null">
+                #{storeCode, jdbcType=VARCHAR},
+            </if>
+            <if test="storeName != null">
+                #{storeName,jdbcType=VARCHAR},
+            </if>
+            <if test="storePhone != null">
+                #{storePhone,jdbcType=VARCHAR},
+            </if>
+            <if test="storeManagerId != null">
+                #{storeManagerId,jdbcType=VARCHAR},
+            </if>
+            <if test="storeLicenseCode != null">
+                #{storeLicenseCode,jdbcType=VARCHAR},
+            </if>
+            <if test="storeAddress != null">
+                #{storeAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="storeInvitationCode != null">
+                #{storeInvitationCode,jdbcType=VARCHAR},
+            </if>
+            <if test="storeProvinceCode != null">
+                #{storeProvinceCode,jdbcType=VARCHAR},
+            </if>
+            <if test="storeCityCode != null">
+                #{storeCityCode,jdbcType=VARCHAR},
+            </if>
+            <if test="storeRegionCode != null">
+                #{storeRegionCode,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 根据传入的查询条件查询门店信息列表 -->
+    <select id="listStores" resultMap="StoreUserResultMap">
+        select
+        <include refid="display_Column_List"/>
+        , t_sys_user_info.user_name
+        , t_sys_user_info.user_login_name
+        from
+        t_store_info,
+        t_sys_user_info
+        where
+        t_store_info.is_deleted = 1
+        and
+        t_store_info.store_manager_id = t_sys_user_info.user_id
+        <if test="store.storeCode != null and store.storeCode != ''">
+            and store_code like CONCAT('%', #{store.storeCode}, '%')
+        </if>
+        <if test="store.storeName != null and store.storeName != ''">
+            and store_name like CONCAT('%', #{store.storeName}, '%')
+        </if>
+        <if test="store.storeProvinceCode != null and store.storeProvinceCode != ''">
+            and store_province_code = #{store.storeProvinceCode}
+        </if>
+        <if test="store.storeCityCode != null and store.storeCityCode != ''">
+            and store_city_code = #{store.storeCityCode}
+        </if>
+        <if test="store.storeRegionCode != null and store.storeRegionCode != ''">
+            and store_region_code = #{store.storeRegionCode}
+        </if>
+        <if test="managerName != null and managerName != ''">
+            and t_sys_user_info.user_name like CONCAT('%', #{managerName}, '%')
+        </if>
+    </select>
+
+    <!-- 根据id查询门店信息关联查询店长信息 -->
+    <select id="findStoresById" parameterType="java.lang.String" resultMap="StoreUserAreaResultMap">
+        SELECT
+            <include refid="display_Column_List"/>
+            , t_sys_user_info.user_name
+            , t_sys_user_info.user_login_name
+            , t_area_name.area_name_id
+            , t_area_name.area_name
+            , t_area_name.area_name_level
+        FROM
+            t_store_info
+        left join t_sys_user_info on t_store_info.store_manager_id = t_sys_user_info.user_id
+        left JOIN t_area_name on t_area_name.area_name_id in (store_province_code, store_city_code, store_region_code)
+        WHERE
+            t_store_info.is_deleted = 1
+        AND
+            t_store_info.store_id = #{storeId}
+        ORDER BY
+            t_area_name.area_name_level
+    </select>
+
+    <!-- 根据id查询是否包含此条记录 -->
+    <select id="countStoreById" parameterType="java.lang.String" resultType="int">
+        SELECT
+            count(store_id)
+        FROM
+            t_store_info
+        WHERE
+            is_deleted = 1
+        and
+            store_id = #{storeId}
+    </select>
+
+    <!-- 根据id查询门店信息 -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        t_store_info
+        where
+        is_deleted = 1
+        and
+        store_id = #{storeId,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据id修改门店信息 -->
+    <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.pc.store.entity.Store">
+        update t_store_info
+        <set>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null and createPerson != ''">
+                create_person = #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null and updatePerson != ''">
+                update_person = #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null and version != ''">
+                version = #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                is_deleted = #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="storeName != null and storeName != ''">
+                store_name = #{storeName,jdbcType=VARCHAR},
+            </if>
+            <if test="storePhone != null and storePhone != ''">
+                store_phone = #{storePhone,jdbcType=VARCHAR},
+            </if>
+            <if test="storeManagerId != null and storeManagerId != ''">
+                store_manager_id = #{storeManagerId,jdbcType=VARCHAR},
+            </if>
+            <if test="storeLicenseCode != null and storeLicenseCode != ''">
+                store_license_code = #{storeLicenseCode,jdbcType=VARCHAR},
+            </if>
+            <if test="storeAddress != null and storeAddress != ''">
+                store_address = #{storeAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="storeInvitationCode != null and storeInvitationCode != ''">
+                store_invitation_code = #{storeInvitationCode,jdbcType=VARCHAR},
+            </if>
+            <if test="storeProvinceCode != null and storeProvinceCode != ''">
+                store_province_code = #{storeProvinceCode,jdbcType=VARCHAR},
+            </if>
+            <if test="storeCityCode != null and storeCityCode != ''">
+                store_city_code = #{storeCityCode,jdbcType=VARCHAR},
+            </if>
+            <if test="storeRegionCode != null and storeRegionCode != ''">
+                store_region_code = #{storeRegionCode,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where store_id = #{storeId,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 删除门店信息（修改字段is_delete状态，并非真正删除） -->
+    <update id="deleteStoreById" parameterType="java.lang.String">
+        update t_store_info
+        set
+        is_deleted = 0,
+        update_time = now(),
+        update_person = #{updatePersonId},
+        version = version + 1
+        where store_id in
+        <foreach item="storeId" index="index" collection="listIds" open="(" separator="," close=")">
+            #{storeId}
+        </foreach>
+    </update>
+
+    <!-- Mybatis generator自动生成代码 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_store_info
+    where store_id = #{storeId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.xzsd.pc.store.entity.Store">
+        insert into t_store_info (
+        <include refid="Base_Column_List"/>
+        )
+        values (#{storeId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR},
+        #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER},
+        #{isDeleted,jdbcType=INTEGER}, #{storeCode, jdbcType=VARCHAR}, #{storeName,jdbcType=VARCHAR},
+        #{storePhone,jdbcType=VARCHAR}, #{storeManagerId,jdbcType=VARCHAR}, #{storeLicenseCode,jdbcType=VARCHAR},
+        #{storeAddress,jdbcType=VARCHAR}, #{storeInvitationCode,jdbcType=VARCHAR},
+        #{storeProvinceCode,jdbcType=VARCHAR},
+        #{storeCityCode,jdbcType=VARCHAR}, #{storeRegionCode,jdbcType=VARCHAR})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.store.entity.Store">
+    update t_store_info
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_person = #{createPerson,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_person = #{updatePerson,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      is_deleted = #{isDeleted,jdbcType=INTEGER},
+      store_name = #{storeName,jdbcType=VARCHAR},
+      store_phone = #{storePhone,jdbcType=VARCHAR},
+      store_manager_id = #{storeManagerId,jdbcType=VARCHAR},
+      store_license_code = #{storeLicenseCode,jdbcType=VARCHAR},
+      store_address = #{storeAddress,jdbcType=VARCHAR},
+      store_invitation_code = #{storeInvitationCode,jdbcType=VARCHAR},
+      store_province_code = #{storeProvinceCode,jdbcType=VARCHAR},
+      store_city_code = #{storeCityCode,jdbcType=VARCHAR},
+      store_region_code = #{storeRegionCode,jdbcType=VARCHAR}
+    where store_id = #{storeId,jdbcType=VARCHAR}
+  </update>
+</mapper>
