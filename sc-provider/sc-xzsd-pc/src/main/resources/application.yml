@@ -56,8 +56,8 @@ spring:
           result-set-log-enabled: false
 #腾讯云对象存储配置
   tengxun:
-    accessKey: AKIDFKBl6wQrCJ99uQpkbNwHWWHkeLo3m813
-    secretKey: vgAOP9tQlTv7FckeJlKegS83nJgpi14y
+    accessKey:
+    secretKey:
     bucket: xzsd-1253216955
     bucketName: xzsd-1253216955
     path: https://xzsd-1253216955.cos.ap-guangzhou.myqcloud.com
