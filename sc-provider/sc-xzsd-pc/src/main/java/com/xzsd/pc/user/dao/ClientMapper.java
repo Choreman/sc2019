@@ -22,6 +22,13 @@ public interface ClientMapper {
      */
     List<User> listClients(User user);
 
+    /**
+     * 根据查询条件查询门店所有客户信息
+     * @param user 查询条件（含店长编号）
+     * @return
+     */
+    List<User> listStoreClients(User user);
+
 }
 
 

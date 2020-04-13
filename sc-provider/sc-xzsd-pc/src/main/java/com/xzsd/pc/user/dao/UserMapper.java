@@ -42,7 +42,7 @@ public interface UserMapper {
     List<User> listUsers(User user);
 
     /**
-     * 根据id查询用户信息
+     * 根据id查询用户信息关联查询头像图片
      *
      * @param userId 用户id
      * @return
@@ -65,6 +65,13 @@ public interface UserMapper {
      * @return
      */
     int deleteUserById(@Param("listIds") List<String> listIds, @Param("updatePersonId") String updatePersonId);
+
+    /**
+     * 根据id查询用户信息
+     * @param userId 用户id
+     * @return
+     */
+    User findUserById(@Param("userId") String userId);
 
     int deleteByPrimaryKey(String userId);
 

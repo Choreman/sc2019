@@ -49,4 +49,29 @@
             </if>
     </select>
 
+    <!-- 根据查询条件（含店长编号）查询门店所有客户信息 -->
+    <select id="listStoreClients" parameterType="com.xzsd.pc.user.entity.User" resultMap="BaseResultMap">
+        SELECT
+            t_sys_user_info.*
+        FROM
+            t_sys_user_info
+        WHERE
+            is_deleted = 1
+        AND user_role = 4
+            <if test="userName != null and userName != ''">
+                and user_name like CONCAT('%', #{userName}, '%')
+            </if>
+            <if test="userLoginName != null and userLoginName != ''">
+                and user_login_name like CONCAT('%', #{userLoginName}, '%')
+            </if>
+        AND t_sys_user_info.user_store_id = (
+            SELECT
+                user_store_id
+            FROM
+                t_sys_user_info
+            WHERE
+                user_id = #{userId}
+        )
+    </select>
+
 </mapper>

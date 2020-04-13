@@ -191,7 +191,7 @@
         </if>
     </select>
 
-    <!-- 根据id查询用户信息 -->
+    <!-- 根据id查询用户信息关联查询图片信息 -->
     <select id="selectByPrimaryKey" resultMap="UserImageResultMap" parameterType="java.lang.String">
         select
             <include refid="Base_Column_List"/>
@@ -282,6 +282,18 @@
                 #{userId}
             </foreach>
     </update>
+
+    <!-- 根据id查询用户信息 -->
+    <select id="findUserById" parameterType="java.lang.String" resultType="com.xzsd.pc.user.entity.User">
+        select
+            <include refid="Display_Column_List"/>
+        from
+            t_sys_user_info
+        where
+            t_sys_user_info.is_deleted = 1
+        and
+            user_id = #{userId,jdbcType=VARCHAR}
+    </select>
 
     <!-- Mybatis generator自动生成代码 -->
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">

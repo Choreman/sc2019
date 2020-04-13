@@ -27,7 +27,9 @@ public class ClientController {
     private ClientService clientService;
 
     /**
-     * 查询客户列表接口（分页）
+     * 分角色查询客户列表接口（分页）
+     * - 管理员查询所有客户信息列表
+     * - 店长查询门店所有客户信息列表
      *
      * @param pageBean 分页信息
      * @param user     客户信息查询条件
