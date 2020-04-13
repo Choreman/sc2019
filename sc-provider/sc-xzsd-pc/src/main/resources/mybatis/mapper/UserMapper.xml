@@ -162,12 +162,14 @@
 
     <!-- 根据用户账号信息计算用户数 -->
     <select id="countUserByUserLoginName" parameterType="java.lang.String" resultType="int">
-      SELECT
-          count(*)
-      FROM
-          t_sys_user_info
-      WHERE
-          user_login_name = #{userLoginName,jdbcType=VARCHAR}
+        SELECT
+            count(*)
+        FROM
+            t_sys_user_info
+        WHERE
+            is_deleted = 1
+        and
+            user_login_name = #{userLoginName,jdbcType=VARCHAR}
     </select>
 
     <!-- 根据用户信息条件查询用户信息（管理员、店长、司机） -->

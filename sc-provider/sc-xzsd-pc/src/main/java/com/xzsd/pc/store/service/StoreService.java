@@ -91,16 +91,15 @@ public class StoreService {
      * @return
      */
     public AppResponse findStoresById(String storeId) {
-        Store store = null;
         //校验门店id不为null或着""
-        if (storeId != null && !"".equals(storeId)) {
-            store = storeMapper.findStoresById(storeId);
-        }
-        if (store != null) {
-            return AppResponse.success("查询成功!", store);
-        } else {
+        if (storeId == null || "".equals(storeId)) {
             return AppResponse.Error("没有该门店信息");
         }
+        Store store = storeMapper.findStoresById(storeId);
+        if (store == null) {
+            return AppResponse.Error("没有该门店信息");
+        }
+        return AppResponse.success("查询成功!", store);
     }
 
     /**
@@ -130,9 +129,8 @@ public class StoreService {
         int status = storeMapper.updateByPrimaryKeySelective(store);
         if (status > 0) {
             return AppResponse.success("修改门店信息成功");
-        } else {
-            return AppResponse.bizError("修改门店信息失败");
         }
+        return AppResponse.bizError("修改门店信息失败");
     }
 
     /**

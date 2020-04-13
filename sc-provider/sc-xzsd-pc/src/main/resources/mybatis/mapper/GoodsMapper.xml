@@ -1,51 +1,72 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.xzsd.pc.goods.dao.GoodsMapper" >
-  <resultMap id="BaseResultMap" type="com.xzsd.pc.goods.entity.Goods" >
-    <id column="goods_id" property="goodsId" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="create_person" property="createPerson" jdbcType="VARCHAR" />
-    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
-    <result column="version" property="version" jdbcType="INTEGER" />
-    <result column="is_deleted" property="isDeleted" jdbcType="INTEGER" />
-    <result column="goods_code" property="goodsCode" jdbcType="VARCHAR" />
-    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
-    <result column="goods_fix_price" property="goodsFixPrice" jdbcType="REAL" />
-    <result column="goods_cost_price" property="goodsCostPrice" jdbcType="REAL" />
-    <result column="goods_sale_price" property="goodsSalePrice" jdbcType="REAL" />
-    <result column="goods_stock" property="goodsStock" jdbcType="INTEGER" />
-    <result column="goods_sale_sum" property="goodsSaleSum" jdbcType="INTEGER" />
-    <result column="goods_cate_code" property="goodsCateCode" jdbcType="VARCHAR" />
-    <result column="goods_advertisement" property="goodsAdvertisement" jdbcType="VARCHAR" />
-    <result column="goods_description" property="goodsDescription" jdbcType="VARCHAR" />
-    <result column="goods_condition" property="goodsCondition" jdbcType="INTEGER" />
-    <result column="goods_sale_time" property="goodsSaleTime" jdbcType="TIMESTAMP" />
-    <result column="goods_visit_num" property="goodsVisitNum" jdbcType="INTEGER" />
-    <result column="goods_business" property="goodsBusiness" jdbcType="VARCHAR" />
-    <result column="goods_isbn" property="goodsIsbn" jdbcType="VARCHAR" />
-    <result column="goods_publisher" property="goodsPublisher" jdbcType="VARCHAR" />
-    <result column="goods_author" property="goodsAuthor" jdbcType="VARCHAR" />
-    <result column="goods_star" property="goodsStar" jdbcType="INTEGER" />
-  </resultMap>
-  <sql id="Base_Column_List" >
-    goods_id, create_time, create_person, update_time, update_person, version, is_deleted, 
-    goods_code, goods_name, goods_fix_price, goods_cost_price, goods_sale_price, goods_stock, 
-    goods_sale_sum, goods_cate_code, goods_advertisement, goods_description, goods_condition, 
-    goods_sale_time, goods_visit_num, goods_business, goods_isbn, goods_publisher, goods_author, 
-    goods_star
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select 
-    <include refid="Base_Column_List" />
-    from t_goods_info
-    where goods_id = #{goodsId,jdbcType=VARCHAR}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+<mapper namespace="com.xzsd.pc.goods.dao.GoodsMapper">
+    <resultMap id="BaseResultMap" type="com.xzsd.pc.goods.entity.Goods">
+        <id column="goods_id" property="goodsId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="goods_code" property="goodsCode" jdbcType="VARCHAR"/>
+        <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
+        <result column="goods_fix_price" property="goodsFixPrice" jdbcType="REAL"/>
+        <result column="goods_cost_price" property="goodsCostPrice" jdbcType="REAL"/>
+        <result column="goods_sale_price" property="goodsSalePrice" jdbcType="REAL"/>
+        <result column="goods_stock" property="goodsStock" jdbcType="INTEGER"/>
+        <result column="goods_sale_sum" property="goodsSaleSum" jdbcType="INTEGER"/>
+        <result column="goods_cate_code" property="goodsCateCode" jdbcType="VARCHAR"/>
+        <result column="goods_advertisement" property="goodsAdvertisement" jdbcType="VARCHAR"/>
+        <result column="goods_description" property="goodsDescription" jdbcType="VARCHAR"/>
+        <result column="goods_condition" property="goodsCondition" jdbcType="INTEGER"/>
+        <result column="goods_sale_time" property="goodsSaleTime" jdbcType="TIMESTAMP"/>
+        <result column="goods_visit_num" property="goodsVisitNum" jdbcType="INTEGER"/>
+        <result column="goods_business" property="goodsBusiness" jdbcType="VARCHAR"/>
+        <result column="goods_isbn" property="goodsIsbn" jdbcType="VARCHAR"/>
+        <result column="goods_publisher" property="goodsPublisher" jdbcType="VARCHAR"/>
+        <result column="goods_author" property="goodsAuthor" jdbcType="VARCHAR"/>
+        <result column="goods_star" property="goodsStar" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+      goods_id, create_time, create_person, update_time, update_person, version, is_deleted,
+      goods_code, goods_name, goods_fix_price, goods_cost_price, goods_sale_price, goods_stock,
+      goods_sale_sum, goods_cate_code, goods_advertisement, goods_description, goods_condition,
+      goods_sale_time, goods_visit_num, goods_business, goods_isbn, goods_publisher, goods_author,
+      goods_star
+    </sql>
+    <!-- 前台展示字段 -->
+    <sql id="Display_Column_List">
+      goods_id, version, goods_code, goods_name, goods_fix_price, goods_cost_price, goods_sale_price, goods_stock,
+      goods_sale_sum, goods_cate_code, goods_advertisement, goods_description, goods_condition,
+      goods_sale_time, goods_visit_num, goods_business, goods_isbn, goods_publisher, goods_author,
+      goods_star
+    </sql>
+
+    <!-- 根据商品分类编号查询商品数量 -->
+    <select id="countGoodsByGoodsCateCode" parameterType="java.lang.String" resultType="int">
+        SELECT
+            count(*)
+        FROM
+            t_goods_info
+        WHERE
+            is_deleted = 1
+        and
+            goods_cate_code = #{goodsCateCode,jdbcType=VARCHAR}
+    </select>
+
+    <!-- Mybatis generator自动生成代码 -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_goods_info
+        where goods_id = #{goodsId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from t_goods_info
     where goods_id = #{goodsId,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.xzsd.pc.goods.entity.Goods" >
+    <insert id="insert" parameterType="com.xzsd.pc.goods.entity.Goods">
     insert into t_goods_info (goods_id, create_time, create_person, 
       update_time, update_person, version, 
       is_deleted, goods_code, goods_name, 
@@ -65,242 +86,242 @@
       #{goodsIsbn,jdbcType=VARCHAR}, #{goodsPublisher,jdbcType=VARCHAR}, #{goodsAuthor,jdbcType=VARCHAR}, 
       #{goodsStar,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.xzsd.pc.goods.entity.Goods" >
-    insert into t_goods_info
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="goodsId != null" >
-        goods_id,
-      </if>
-      <if test="createTime != null" >
-        create_time,
-      </if>
-      <if test="createPerson != null" >
-        create_person,
-      </if>
-      <if test="updateTime != null" >
-        update_time,
-      </if>
-      <if test="updatePerson != null" >
-        update_person,
-      </if>
-      <if test="version != null" >
-        version,
-      </if>
-      <if test="isDeleted != null" >
-        is_deleted,
-      </if>
-      <if test="goodsCode != null" >
-        goods_code,
-      </if>
-      <if test="goodsName != null" >
-        goods_name,
-      </if>
-      <if test="goodsFixPrice != null" >
-        goods_fix_price,
-      </if>
-      <if test="goodsCostPrice != null" >
-        goods_cost_price,
-      </if>
-      <if test="goodsSalePrice != null" >
-        goods_sale_price,
-      </if>
-      <if test="goodsStock != null" >
-        goods_stock,
-      </if>
-      <if test="goodsSaleSum != null" >
-        goods_sale_sum,
-      </if>
-      <if test="goodsCateCode != null" >
-        goods_cate_code,
-      </if>
-      <if test="goodsAdvertisement != null" >
-        goods_advertisement,
-      </if>
-      <if test="goodsDescription != null" >
-        goods_description,
-      </if>
-      <if test="goodsCondition != null" >
-        goods_condition,
-      </if>
-      <if test="goodsSaleTime != null" >
-        goods_sale_time,
-      </if>
-      <if test="goodsVisitNum != null" >
-        goods_visit_num,
-      </if>
-      <if test="goodsBusiness != null" >
-        goods_business,
-      </if>
-      <if test="goodsIsbn != null" >
-        goods_isbn,
-      </if>
-      <if test="goodsPublisher != null" >
-        goods_publisher,
-      </if>
-      <if test="goodsAuthor != null" >
-        goods_author,
-      </if>
-      <if test="goodsStar != null" >
-        goods_star,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="goodsId != null" >
-        #{goodsId,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createPerson != null" >
-        #{createPerson,jdbcType=VARCHAR},
-      </if>
-      <if test="updateTime != null" >
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updatePerson != null" >
-        #{updatePerson,jdbcType=VARCHAR},
-      </if>
-      <if test="version != null" >
-        #{version,jdbcType=INTEGER},
-      </if>
-      <if test="isDeleted != null" >
-        #{isDeleted,jdbcType=INTEGER},
-      </if>
-      <if test="goodsCode != null" >
-        #{goodsCode,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsName != null" >
-        #{goodsName,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsFixPrice != null" >
-        #{goodsFixPrice,jdbcType=REAL},
-      </if>
-      <if test="goodsCostPrice != null" >
-        #{goodsCostPrice,jdbcType=REAL},
-      </if>
-      <if test="goodsSalePrice != null" >
-        #{goodsSalePrice,jdbcType=REAL},
-      </if>
-      <if test="goodsStock != null" >
-        #{goodsStock,jdbcType=INTEGER},
-      </if>
-      <if test="goodsSaleSum != null" >
-        #{goodsSaleSum,jdbcType=INTEGER},
-      </if>
-      <if test="goodsCateCode != null" >
-        #{goodsCateCode,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsAdvertisement != null" >
-        #{goodsAdvertisement,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsDescription != null" >
-        #{goodsDescription,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsCondition != null" >
-        #{goodsCondition,jdbcType=INTEGER},
-      </if>
-      <if test="goodsSaleTime != null" >
-        #{goodsSaleTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="goodsVisitNum != null" >
-        #{goodsVisitNum,jdbcType=INTEGER},
-      </if>
-      <if test="goodsBusiness != null" >
-        #{goodsBusiness,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsIsbn != null" >
-        #{goodsIsbn,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsPublisher != null" >
-        #{goodsPublisher,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsAuthor != null" >
-        #{goodsAuthor,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsStar != null" >
-        #{goodsStar,jdbcType=INTEGER},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.pc.goods.entity.Goods" >
-    update t_goods_info
-    <set >
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createPerson != null" >
-        create_person = #{createPerson,jdbcType=VARCHAR},
-      </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updatePerson != null" >
-        update_person = #{updatePerson,jdbcType=VARCHAR},
-      </if>
-      <if test="version != null" >
-        version = #{version,jdbcType=INTEGER},
-      </if>
-      <if test="isDeleted != null" >
-        is_deleted = #{isDeleted,jdbcType=INTEGER},
-      </if>
-      <if test="goodsCode != null" >
-        goods_code = #{goodsCode,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsName != null" >
-        goods_name = #{goodsName,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsFixPrice != null" >
-        goods_fix_price = #{goodsFixPrice,jdbcType=REAL},
-      </if>
-      <if test="goodsCostPrice != null" >
-        goods_cost_price = #{goodsCostPrice,jdbcType=REAL},
-      </if>
-      <if test="goodsSalePrice != null" >
-        goods_sale_price = #{goodsSalePrice,jdbcType=REAL},
-      </if>
-      <if test="goodsStock != null" >
-        goods_stock = #{goodsStock,jdbcType=INTEGER},
-      </if>
-      <if test="goodsSaleSum != null" >
-        goods_sale_sum = #{goodsSaleSum,jdbcType=INTEGER},
-      </if>
-      <if test="goodsCateCode != null" >
-        goods_cate_code = #{goodsCateCode,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsAdvertisement != null" >
-        goods_advertisement = #{goodsAdvertisement,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsDescription != null" >
-        goods_description = #{goodsDescription,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsCondition != null" >
-        goods_condition = #{goodsCondition,jdbcType=INTEGER},
-      </if>
-      <if test="goodsSaleTime != null" >
-        goods_sale_time = #{goodsSaleTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="goodsVisitNum != null" >
-        goods_visit_num = #{goodsVisitNum,jdbcType=INTEGER},
-      </if>
-      <if test="goodsBusiness != null" >
-        goods_business = #{goodsBusiness,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsIsbn != null" >
-        goods_isbn = #{goodsIsbn,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsPublisher != null" >
-        goods_publisher = #{goodsPublisher,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsAuthor != null" >
-        goods_author = #{goodsAuthor,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsStar != null" >
-        goods_star = #{goodsStar,jdbcType=INTEGER},
-      </if>
-    </set>
-    where goods_id = #{goodsId,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.goods.entity.Goods" >
+    <insert id="insertSelective" parameterType="com.xzsd.pc.goods.entity.Goods">
+        insert into t_goods_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodsId != null">
+                goods_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createPerson != null">
+                create_person,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updatePerson != null">
+                update_person,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="goodsCode != null">
+                goods_code,
+            </if>
+            <if test="goodsName != null">
+                goods_name,
+            </if>
+            <if test="goodsFixPrice != null">
+                goods_fix_price,
+            </if>
+            <if test="goodsCostPrice != null">
+                goods_cost_price,
+            </if>
+            <if test="goodsSalePrice != null">
+                goods_sale_price,
+            </if>
+            <if test="goodsStock != null">
+                goods_stock,
+            </if>
+            <if test="goodsSaleSum != null">
+                goods_sale_sum,
+            </if>
+            <if test="goodsCateCode != null">
+                goods_cate_code,
+            </if>
+            <if test="goodsAdvertisement != null">
+                goods_advertisement,
+            </if>
+            <if test="goodsDescription != null">
+                goods_description,
+            </if>
+            <if test="goodsCondition != null">
+                goods_condition,
+            </if>
+            <if test="goodsSaleTime != null">
+                goods_sale_time,
+            </if>
+            <if test="goodsVisitNum != null">
+                goods_visit_num,
+            </if>
+            <if test="goodsBusiness != null">
+                goods_business,
+            </if>
+            <if test="goodsIsbn != null">
+                goods_isbn,
+            </if>
+            <if test="goodsPublisher != null">
+                goods_publisher,
+            </if>
+            <if test="goodsAuthor != null">
+                goods_author,
+            </if>
+            <if test="goodsStar != null">
+                goods_star,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsId != null">
+                #{goodsId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="goodsCode != null">
+                #{goodsCode,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsName != null">
+                #{goodsName,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsFixPrice != null">
+                #{goodsFixPrice,jdbcType=REAL},
+            </if>
+            <if test="goodsCostPrice != null">
+                #{goodsCostPrice,jdbcType=REAL},
+            </if>
+            <if test="goodsSalePrice != null">
+                #{goodsSalePrice,jdbcType=REAL},
+            </if>
+            <if test="goodsStock != null">
+                #{goodsStock,jdbcType=INTEGER},
+            </if>
+            <if test="goodsSaleSum != null">
+                #{goodsSaleSum,jdbcType=INTEGER},
+            </if>
+            <if test="goodsCateCode != null">
+                #{goodsCateCode,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsAdvertisement != null">
+                #{goodsAdvertisement,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsDescription != null">
+                #{goodsDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsCondition != null">
+                #{goodsCondition,jdbcType=INTEGER},
+            </if>
+            <if test="goodsSaleTime != null">
+                #{goodsSaleTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="goodsVisitNum != null">
+                #{goodsVisitNum,jdbcType=INTEGER},
+            </if>
+            <if test="goodsBusiness != null">
+                #{goodsBusiness,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsIsbn != null">
+                #{goodsIsbn,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsPublisher != null">
+                #{goodsPublisher,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsAuthor != null">
+                #{goodsAuthor,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsStar != null">
+                #{goodsStar,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.pc.goods.entity.Goods">
+        update t_goods_info
+        <set>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                create_person = #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                update_person = #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                version = #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="goodsCode != null">
+                goods_code = #{goodsCode,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsName != null">
+                goods_name = #{goodsName,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsFixPrice != null">
+                goods_fix_price = #{goodsFixPrice,jdbcType=REAL},
+            </if>
+            <if test="goodsCostPrice != null">
+                goods_cost_price = #{goodsCostPrice,jdbcType=REAL},
+            </if>
+            <if test="goodsSalePrice != null">
+                goods_sale_price = #{goodsSalePrice,jdbcType=REAL},
+            </if>
+            <if test="goodsStock != null">
+                goods_stock = #{goodsStock,jdbcType=INTEGER},
+            </if>
+            <if test="goodsSaleSum != null">
+                goods_sale_sum = #{goodsSaleSum,jdbcType=INTEGER},
+            </if>
+            <if test="goodsCateCode != null">
+                goods_cate_code = #{goodsCateCode,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsAdvertisement != null">
+                goods_advertisement = #{goodsAdvertisement,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsDescription != null">
+                goods_description = #{goodsDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsCondition != null">
+                goods_condition = #{goodsCondition,jdbcType=INTEGER},
+            </if>
+            <if test="goodsSaleTime != null">
+                goods_sale_time = #{goodsSaleTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="goodsVisitNum != null">
+                goods_visit_num = #{goodsVisitNum,jdbcType=INTEGER},
+            </if>
+            <if test="goodsBusiness != null">
+                goods_business = #{goodsBusiness,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsIsbn != null">
+                goods_isbn = #{goodsIsbn,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsPublisher != null">
+                goods_publisher = #{goodsPublisher,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsAuthor != null">
+                goods_author = #{goodsAuthor,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsStar != null">
+                goods_star = #{goodsStar,jdbcType=INTEGER},
+            </if>
+        </set>
+        where goods_id = #{goodsId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.goods.entity.Goods">
     update t_goods_info
     set create_time = #{createTime,jdbcType=TIMESTAMP},
       create_person = #{createPerson,jdbcType=VARCHAR},

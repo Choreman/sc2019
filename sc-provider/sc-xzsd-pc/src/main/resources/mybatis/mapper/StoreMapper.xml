@@ -337,16 +337,19 @@
 
     <!-- 删除门店信息（修改字段is_delete状态，并非真正删除） -->
     <update id="deleteStoreById" parameterType="java.lang.String">
-        update t_store_info
+        update
+            t_store_info
         set
-        is_deleted = 0,
-        update_time = now(),
-        update_person = #{updatePersonId},
-        version = version + 1
-        where store_id in
-        <foreach item="storeId" index="index" collection="listIds" open="(" separator="," close=")">
-            #{storeId}
-        </foreach>
+            is_deleted = 0,
+            update_time = now(),
+            update_person = #{updatePersonId},
+            version = version + 1
+        where
+            store_id
+        in
+            <foreach item="storeId" index="index" collection="listIds" open="(" separator="," close=")">
+                #{storeId}
+            </foreach>
     </update>
 
     <!-- Mybatis generator自动生成代码 -->

@@ -2,7 +2,9 @@ package com.xzsd.pc.goodscate.entity;
 
 import com.xzsd.pc.base.entity.BaseEntity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 商品分类实体类
@@ -26,13 +28,32 @@ public class GoodsCate extends BaseEntity {
      */
     private Integer cateLevel;
     /**
-     * 该类别的上一级（null：没有上一级，则该记录为第一级）
+     * 该类别的上一级编号（null：没有上一级，则该记录为第一级）
      */
     private String cateParent;
     /**
      * 该记录的备注信息
      */
     private String cateComment;
+
+    //-----------------关联关系-----------------
+
+    /**
+     * 该商品分类的子分类集合，一级分类包含二级分类
+     * 自关联，一对多
+     */
+    private List<GoodsCate> childGoodsCateList = new ArrayList<>();
+
+    //-----------------get和set方法-----------------
+
+
+    public List<GoodsCate> getChildGoodsCateList() {
+        return childGoodsCateList;
+    }
+
+    public void setChildGoodsCateList(List<GoodsCate> childGoodsCateList) {
+        this.childGoodsCateList = childGoodsCateList;
+    }
 
     public String getGoodsCateId() {
         return goodsCateId;

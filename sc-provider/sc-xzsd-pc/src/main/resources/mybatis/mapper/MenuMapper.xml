@@ -107,12 +107,14 @@
 
     <!-- 根据菜单名称计算菜单数 -->
     <select id="countMenuByMenuName" parameterType="java.lang.String" resultType="int">
-      SELECT
-          count(*)
-      FROM
-          t_menu
-      WHERE
-          menu_name = #{menuName,jdbcType=VARCHAR}
+        SELECT
+            count(*)
+        FROM
+            t_menu
+        WHERE
+            is_deleted = 1
+        and
+            menu_name = #{menuName,jdbcType=VARCHAR}
     </select>
 
     <!-- 查询菜单列表接口 -->
