@@ -40,15 +40,27 @@ public interface DriverMapper {
      */
     User findDriverById(String userId);
 
-    User testDriverAreas();
+    /**
+     * 根据司机表关联的用户表编号修改司机信息
+     * @param driver 要修改的司机信息
+     * @return
+     */
+    int updateByDriverUserCodeSelective(Driver driver);
+
+    /**
+     * 根据司机表关联的用户编号删除司机信息（修改字段is_delete状态，并非真正删除）
+     *
+     * @param listIds        要删除的司机信息列表
+     * @param updatePersonId 更新人id
+     * @return
+     */
+    int deleteDriverByUserId(@Param("listIds") List<String> listIds, @Param("updatePersonId") String updatePersonId);
 
     int deleteByPrimaryKey(String driverId);
 
     int insert(Driver record);
 
     Driver selectByPrimaryKey(String driverId);
-
-    int updateByPrimaryKeySelective(Driver record);
 
     int updateByPrimaryKey(Driver record);
 }

@@ -42,11 +42,16 @@ public interface ImageMapper {
      */
     int deleteImageByUserId(@Param("listIds") List<String> listIds, @Param("updatePersonId") String updatePersonId);
 
+    /**
+     * 根据图片分类编号修改图片信息
+     * @param image 要修改的图片信息
+     * @return
+     */
+    int updateByImageCateCodeSelective(Image image);
+
     int insert(Image record);
 
     Image selectByPrimaryKey(String imageId);
-
-    int updateByPrimaryKeySelective(Image record);
 
     int updateByPrimaryKey(Image record);
 }

@@ -123,6 +123,42 @@ public class UserService {
     }
 
     /**
+     * 更新头像图片
+     * @param headImage 要更新的头像图片
+     * @param imageCateCode 图片分类的编号
+     * @return
+     */
+    private int updateHeadImage(MultipartFile headImage, String imageCateCode){
+        Image image = new Image();
+        //设置图片分类的编号
+        image.setImageCateCode(imageCateCode);
+        //设置基本属性
+        image.setUpdateTime(new Date());
+        image.setUpdatePerson(AuthUtils.getCurrentUserId());
+        int status = 0;
+        //当没有传入要修改的头像时
+        if (headImage.isEmpty()) {
+            //根据图片分类的编号修改图片信息
+            status = imageMapper.updateByImageCateCodeSelective(image);
+            //当传入要修改的头像时
+        }else{
+            String url = null;
+            try {
+                //上传到指定的文件夹里面
+                url = tencentCOSUtil.uploadImage(headImage, TencentCOSUtil.HEADIMAGEFOLDER);
+            }catch (Exception e){
+                //表示上传图片出现异常
+                return -1;
+            }
+            //设置图片的url
+            image.setImageUrl(url);
+            //根据图片分类的编号修改图片信息
+            status = imageMapper.updateByImageCateCodeSelective(image);
+        }
+        return status;
+    }
+
+    /**
      * 根据用户账号查询用户接口
      *
      * @param userLoginName 用户账号
@@ -188,15 +224,14 @@ public class UserService {
         user.setVersion(oldUser.getVersion() + 1);
         int status = userMapper.updateByPrimaryKeySelective(user);
         if (status > 0) {
-            //上传头像
-            int headImageStatus = uploadHeadImage(headImage, oldUser.getUserId());
-            if(headImageStatus == -1 || headImageStatus == 0){
+            //更新用户的头像
+            int headImageStatus = updateHeadImage(headImage, oldUser.getUserId());
+            //当为-1时，表示图片上传出现异常，为0时表示图片信息插入失败
+            if(headImageStatus <= 0){
                 //回滚事物
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return AppResponse.bizError("图片上传失败，请重试");
             }
-            //修改头像成功后，就把之前的头像图片删除
-            imageMapper.deleteByPrimaryKey(oldUser.getImage().getImageId(), AuthUtils.getCurrentUserId());
             return AppResponse.success("修改用户信息成功");
         } else {
             return AppResponse.bizError("修改用户信息失败");

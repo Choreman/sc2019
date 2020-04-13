@@ -11,10 +11,13 @@ import com.xzsd.pc.user.dao.UserMapper;
 import com.xzsd.pc.user.entity.User;
 import com.xzsd.pc.utils.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -46,6 +49,7 @@ public class DriverService {
      * @param driver 存放司机表的信息
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     public AppResponse addDriver(MultipartFile headImage, User user, Driver driver) {
         //判断用户账号是否为null或者""
         if (user.getUserLoginName() == null || "".equals(user.getUserLoginName().trim())) {
@@ -144,6 +148,42 @@ public class DriverService {
     }
 
     /**
+     * 更新头像图片
+     * @param headImage 要更新的头像图片
+     * @param imageCateCode 图片分类的编号
+     * @return
+     */
+    private int updateHeadImage(MultipartFile headImage, String imageCateCode){
+        Image image = new Image();
+        //设置图片分类的编号
+        image.setImageCateCode(imageCateCode);
+        //设置基本属性
+        image.setUpdateTime(new Date());
+        image.setUpdatePerson(AuthUtils.getCurrentUserId());
+        int status = 0;
+        //当没有传入要修改的头像时
+        if (headImage.isEmpty()) {
+            //根据图片分类的编号修改图片信息
+            status = imageMapper.updateByImageCateCodeSelective(image);
+        //当传入要修改的头像时
+        }else{
+            String url = null;
+            try {
+                //上传到指定的文件夹里面
+                url = tencentCOSUtil.uploadImage(headImage, TencentCOSUtil.HEADIMAGEFOLDER);
+            }catch (Exception e){
+                //表示上传图片出现异常
+                return -1;
+            }
+            //设置图片的url
+            image.setImageUrl(url);
+            //根据图片分类的编号修改图片信息
+            status = imageMapper.updateByImageCateCodeSelective(image);
+        }
+        return status;
+    }
+
+    /**
      * 查询司机信息列表接口
      * @param pageBean 分页信息
      * @param user 查询条件，存放在user表里的司机信息
@@ -174,7 +214,87 @@ public class DriverService {
         return AppResponse.success("查询成功", user);
     }
 
+    /**
+     * 修改司机信息接口
+     * @param headImage 头像图片
+     * @param user 要修改的在用户表的信息
+     * @param driver 要修改的在司机表的信息
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public AppResponse updateDriversById(MultipartFile headImage, User user, Driver driver){
+        //校验用户id不为null或着""
+        if (user.getUserId() == null || "".equals(user.getUserId())) {
+            return AppResponse.Error("没有该司机信息");
+        }
+        //校验数据库中有没有该id的记录
+        User oldUser = userMapper.selectByPrimaryKey(user.getUserId());
+        if (oldUser == null) {
+            return AppResponse.Error("没有该司机信息");
+        } else if (!oldUser.getVersion().equals(user.getVersion())) {
+            return AppResponse.Error("信息已更新，请重试");
+        }
+        //更新user表的信息
+        //加密密码
+        user.setUserPassword(PasswordUtils.generatePassword(user.getUserPassword()));
+        //设置基本信息
+        user.setUpdatePerson(AuthUtils.getCurrentUserId());
+        user.setUpdateTime(new Date());
+        user.setVersion(oldUser.getVersion() + 1);
+        //更新driver表的信息
+        driver.setDriverUserCode(oldUser.getUserId());
+        driver.setUpdateTime(new Date());
+        driver.setUpdatePerson(AuthUtils.getCurrentUserId());
+        //修改司机在用户表的信息
+        int status = userMapper.updateByPrimaryKeySelective(user);
+        if (status > 0) {
+            //更新司机的头像
+            int headImageStatus = updateHeadImage(headImage, oldUser.getUserId());
+            //当为-1时，表示图片上传出现异常，为0时表示图片信息插入失败
+            if(headImageStatus <= 0){
+                //回滚事物
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return AppResponse.bizError("图片上传失败，请重试");
+            }
+            //根据司机表关联的用户表编号修改司机信息
+            int driverStatus = driverMapper.updateByDriverUserCodeSelective(driver);
+            if(driverStatus == 0){
+                //回滚事物
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return AppResponse.bizError("修改司机信息失败，请重试");
+            }
+            return AppResponse.success("修改司机信息成功");
+        } else {
+            return AppResponse.bizError("修改司机信息失败");
+        }
+    }
 
+    /**
+     * 删除司机接口
+     * @param userIds 要删除的用户表的id（批量删除用逗号分开）
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public AppResponse deleteDriverByUserId(String userIds){
+        //检验要删除的ids是否为null或者""
+        if (userIds == null || "".equals(userIds)) {
+            return AppResponse.Error("没有该司机信息，删除失败");
+        }
+        List<String> listIds = Arrays.asList(userIds.split(","));
+        int count = userMapper.deleteUserById(listIds, AuthUtils.getCurrentUserId());
+        //当要删除的用户总数和已删除的总数不等时，回滚事物，删除失败
+        if (count != listIds.size()) {
+            //回滚事物
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return AppResponse.bizError("所选列表有未存在数据，删除失败");
+        } else {
+            //同时删除用户信息列表关联的头像图片
+            imageMapper.deleteImageByUserId(listIds, AuthUtils.getCurrentUserId());
+            //同时删除用户信息列表关联的司机表信息
+            driverMapper.deleteDriverByUserId(listIds, AuthUtils.getCurrentUserId());
+            return AppResponse.success("删除成功");
+        }
+    }
 
 }
 

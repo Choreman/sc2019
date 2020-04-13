@@ -85,7 +85,39 @@ public class DriverController {
         }
     }
 
+    /**
+     * 修改司机信息接口
+     * @param headImage 头像图片
+     * @param user 要修改的在用户表的信息
+     * @param driver 要修改的在司机表的信息
+     * @return
+     */
+    @PostMapping("/updateDriversById")
+    public AppResponse updateDriversById(@RequestParam("headImage") MultipartFile headImage, User user, Driver driver){
+        try {
+            return driverService.updateDriversById(headImage, user, driver);
+        } catch (Exception e) {
+            logger.error("修改司机信息异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
 
+    /**
+     * 删除司机接口
+     * @param userIds 要删除的用户表的id（批量删除用逗号分开）
+     * @return
+     */
+    @PostMapping("/deleteDriverByUserId")
+    public AppResponse deleteDriverByUserId(String userIds){
+        try {
+            return driverService.deleteDriverByUserId(userIds);
+        } catch (Exception e) {
+            logger.error("删除司机信息异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
 
 }
 
