@@ -12,7 +12,6 @@
         <result column="goods_code" property="goodsCode" jdbcType="VARCHAR"/>
         <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
         <result column="goods_fix_price" property="goodsFixPrice" jdbcType="REAL"/>
-        <result column="goods_cost_price" property="goodsCostPrice" jdbcType="REAL"/>
         <result column="goods_sale_price" property="goodsSalePrice" jdbcType="REAL"/>
         <result column="goods_stock" property="goodsStock" jdbcType="INTEGER"/>
         <result column="goods_sale_sum" property="goodsSaleSum" jdbcType="INTEGER"/>
@@ -30,14 +29,14 @@
     </resultMap>
     <sql id="Base_Column_List">
       goods_id, create_time, create_person, update_time, update_person, version, is_deleted,
-      goods_code, goods_name, goods_fix_price, goods_cost_price, goods_sale_price, goods_stock,
+      goods_code, goods_name, goods_fix_price, goods_sale_price, goods_stock,
       goods_sale_sum, goods_cate_code, goods_advertisement, goods_description, goods_condition,
       goods_sale_time, goods_visit_num, goods_business, goods_isbn, goods_publisher, goods_author,
       goods_star
     </sql>
     <!-- 前台展示字段 -->
     <sql id="Display_Column_List">
-      goods_id, version, goods_code, goods_name, goods_fix_price, goods_cost_price, goods_sale_price, goods_stock,
+      goods_id, version, goods_code, goods_name, goods_fix_price, goods_sale_price, goods_stock,
       goods_sale_sum, goods_cate_code, goods_advertisement, goods_description, goods_condition,
       goods_sale_time, goods_visit_num, goods_business, goods_isbn, goods_publisher, goods_author,
       goods_star
@@ -55,37 +54,19 @@
             goods_cate_code = #{goodsCateCode,jdbcType=VARCHAR}
     </select>
 
-    <!-- Mybatis generator自动生成代码 -->
-    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
-        select
-        <include refid="Base_Column_List"/>
-        from t_goods_info
-        where goods_id = #{goodsId,jdbcType=VARCHAR}
+    <!-- 根据isbn编号查询数据库是否已存在相同商品 -->
+    <select id="countGoodsByIsbn" parameterType="java.lang.String" resultType="int">
+        SELECT
+            count(*)
+        FROM
+            t_goods_info
+        WHERE
+            is_deleted = 1
+        and
+            goods_isbn = #{goodsIsbn,jdbcType=VARCHAR}
     </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from t_goods_info
-    where goods_id = #{goodsId,jdbcType=VARCHAR}
-  </delete>
-    <insert id="insert" parameterType="com.xzsd.pc.goods.entity.Goods">
-    insert into t_goods_info (goods_id, create_time, create_person, 
-      update_time, update_person, version, 
-      is_deleted, goods_code, goods_name, 
-      goods_fix_price, goods_cost_price, goods_sale_price, 
-      goods_stock, goods_sale_sum, goods_cate_code, 
-      goods_advertisement, goods_description, goods_condition, 
-      goods_sale_time, goods_visit_num, goods_business, 
-      goods_isbn, goods_publisher, goods_author, 
-      goods_star)
-    values (#{goodsId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
-      #{isDeleted,jdbcType=INTEGER}, #{goodsCode,jdbcType=VARCHAR}, #{goodsName,jdbcType=VARCHAR}, 
-      #{goodsFixPrice,jdbcType=REAL}, #{goodsCostPrice,jdbcType=REAL}, #{goodsSalePrice,jdbcType=REAL}, 
-      #{goodsStock,jdbcType=INTEGER}, #{goodsSaleSum,jdbcType=INTEGER}, #{goodsCateCode,jdbcType=VARCHAR}, 
-      #{goodsAdvertisement,jdbcType=VARCHAR}, #{goodsDescription,jdbcType=VARCHAR}, #{goodsCondition,jdbcType=INTEGER}, 
-      #{goodsSaleTime,jdbcType=TIMESTAMP}, #{goodsVisitNum,jdbcType=INTEGER}, #{goodsBusiness,jdbcType=VARCHAR}, 
-      #{goodsIsbn,jdbcType=VARCHAR}, #{goodsPublisher,jdbcType=VARCHAR}, #{goodsAuthor,jdbcType=VARCHAR}, 
-      #{goodsStar,jdbcType=INTEGER})
-  </insert>
+
+    <!-- 新增商品信息 -->
     <insert id="insertSelective" parameterType="com.xzsd.pc.goods.entity.Goods">
         insert into t_goods_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -118,9 +99,6 @@
             </if>
             <if test="goodsFixPrice != null">
                 goods_fix_price,
-            </if>
-            <if test="goodsCostPrice != null">
-                goods_cost_price,
             </if>
             <if test="goodsSalePrice != null">
                 goods_sale_price,
@@ -196,9 +174,6 @@
             <if test="goodsFixPrice != null">
                 #{goodsFixPrice,jdbcType=REAL},
             </if>
-            <if test="goodsCostPrice != null">
-                #{goodsCostPrice,jdbcType=REAL},
-            </if>
             <if test="goodsSalePrice != null">
                 #{goodsSalePrice,jdbcType=REAL},
             </if>
@@ -243,6 +218,38 @@
             </if>
         </trim>
     </insert>
+
+    <!-- Mybatis generator自动生成代码 -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_goods_info
+        where goods_id = #{goodsId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_goods_info
+    where goods_id = #{goodsId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.xzsd.pc.goods.entity.Goods">
+    insert into t_goods_info (goods_id, create_time, create_person, 
+      update_time, update_person, version, 
+      is_deleted, goods_code, goods_name, 
+      goods_fix_price, goods_sale_price,
+      goods_stock, goods_sale_sum, goods_cate_code, 
+      goods_advertisement, goods_description, goods_condition, 
+      goods_sale_time, goods_visit_num, goods_business, 
+      goods_isbn, goods_publisher, goods_author, 
+      goods_star)
+    values (#{goodsId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
+      #{isDeleted,jdbcType=INTEGER}, #{goodsCode,jdbcType=VARCHAR}, #{goodsName,jdbcType=VARCHAR}, 
+      #{goodsFixPrice,jdbcType=REAL}, #{goodsSalePrice,jdbcType=REAL},
+      #{goodsStock,jdbcType=INTEGER}, #{goodsSaleSum,jdbcType=INTEGER}, #{goodsCateCode,jdbcType=VARCHAR}, 
+      #{goodsAdvertisement,jdbcType=VARCHAR}, #{goodsDescription,jdbcType=VARCHAR}, #{goodsCondition,jdbcType=INTEGER}, 
+      #{goodsSaleTime,jdbcType=TIMESTAMP}, #{goodsVisitNum,jdbcType=INTEGER}, #{goodsBusiness,jdbcType=VARCHAR}, 
+      #{goodsIsbn,jdbcType=VARCHAR}, #{goodsPublisher,jdbcType=VARCHAR}, #{goodsAuthor,jdbcType=VARCHAR}, 
+      #{goodsStar,jdbcType=INTEGER})
+  </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.pc.goods.entity.Goods">
         update t_goods_info
         <set>
@@ -272,9 +279,6 @@
             </if>
             <if test="goodsFixPrice != null">
                 goods_fix_price = #{goodsFixPrice,jdbcType=REAL},
-            </if>
-            <if test="goodsCostPrice != null">
-                goods_cost_price = #{goodsCostPrice,jdbcType=REAL},
             </if>
             <if test="goodsSalePrice != null">
                 goods_sale_price = #{goodsSalePrice,jdbcType=REAL},
@@ -332,7 +336,6 @@
       goods_code = #{goodsCode,jdbcType=VARCHAR},
       goods_name = #{goodsName,jdbcType=VARCHAR},
       goods_fix_price = #{goodsFixPrice,jdbcType=REAL},
-      goods_cost_price = #{goodsCostPrice,jdbcType=REAL},
       goods_sale_price = #{goodsSalePrice,jdbcType=REAL},
       goods_stock = #{goodsStock,jdbcType=INTEGER},
       goods_sale_sum = #{goodsSaleSum,jdbcType=INTEGER},

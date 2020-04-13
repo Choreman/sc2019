@@ -31,10 +31,6 @@ public class Goods extends BaseEntity {
      */
     private Float goodsFixPrice;
     /**
-     * 商品的成本价
-     */
-    private Float goodsCostPrice;
-    /**
      * 商品的销售价格
      */
     private Float goodsSalePrice;
@@ -121,14 +117,6 @@ public class Goods extends BaseEntity {
 
     public void setGoodsFixPrice(Float goodsFixPrice) {
         this.goodsFixPrice = goodsFixPrice;
-    }
-
-    public Float getGoodsCostPrice() {
-        return goodsCostPrice;
-    }
-
-    public void setGoodsCostPrice(Float goodsCostPrice) {
-        this.goodsCostPrice = goodsCostPrice;
     }
 
     public Float getGoodsSalePrice() {
