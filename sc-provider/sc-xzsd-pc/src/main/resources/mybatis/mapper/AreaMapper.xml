@@ -19,8 +19,8 @@
   </sql>
     <!-- 前台展示字段 -->
     <sql id="display_Column_List">
-    area_name_id, area_name, area_name_level, area_name_parent_code
-  </sql>
+     area_name_id, area_name, area_name_level, area_name_parent_code
+    </sql>
 
     <!-- 省关联查询市关联查询区(县)ResultMap -->
     <resultMap id="ProvinceCityRegionResultMap" type="com.xzsd.pc.area.entity.Area" extends="BaseResultMap">

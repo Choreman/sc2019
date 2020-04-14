@@ -42,10 +42,24 @@ public class GoodsCate extends BaseEntity {
      * 该商品分类的子分类集合，一级分类包含二级分类
      * 自关联，一对多
      */
-    private List<GoodsCate> childGoodsCateList = new ArrayList<>();
+    private List<GoodsCate> childGoodsCateList;
 
-    //-----------------get和set方法-----------------
+    /**
+     * 该商品分类的父级分类，二级分类只有一个一级分类，一级分类没有父级分类
+     * 自关联，一对一
+     */
+    private GoodsCate parentGoodsCate;
 
+   //-----------------get和set方法-----------------
+
+
+    public GoodsCate getParentGoodsCate() {
+        return parentGoodsCate;
+    }
+
+    public void setParentGoodsCate(GoodsCate parentGoodsCate) {
+        this.parentGoodsCate = parentGoodsCate;
+    }
 
     public List<GoodsCate> getChildGoodsCateList() {
         return childGoodsCateList;

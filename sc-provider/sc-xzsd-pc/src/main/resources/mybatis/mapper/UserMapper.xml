@@ -192,6 +192,7 @@
     </select>
 
     <!-- 根据id查询用户信息关联查询图片信息 -->
+    <!-- 不知道有没问题，有就应该可以用左连接 -->
     <select id="selectByPrimaryKey" resultMap="UserImageResultMap" parameterType="java.lang.String">
         select
             <include refid="Base_Column_List"/>

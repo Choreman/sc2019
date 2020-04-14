@@ -1,9 +1,13 @@
 package com.xzsd.pc.goods.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.xzsd.pc.base.entity.BaseEntity;
+import com.xzsd.pc.goodscate.entity.GoodsCate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 商品信息实体类
@@ -61,6 +65,8 @@ public class Goods extends BaseEntity {
     /**
      * 商品的上架时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date goodsSaleTime;
     /**
      * 商品总的访问量
@@ -86,6 +92,27 @@ public class Goods extends BaseEntity {
      * 商品的评价星级（1：一星，2：两星，3：三星，4：四星，5：五星）
      */
     private Integer goodsStar;
+
+
+    //-----------------关联关系-----------------
+
+    /**
+     * 一个商品关联一个二级商品分类，一对一
+     * （二级分类关联一个一级分类，一对一）
+     * 一个商品有第一级、第二级分类
+     */
+    private GoodsCate goodsCate;
+
+    //-----------------get和set方法-----------------
+
+
+    public GoodsCate getGoodsCate() {
+        return goodsCate;
+    }
+
+    public void setGoodsCate(GoodsCate goodsCate) {
+        this.goodsCate = goodsCate;
+    }
 
     public String getGoodsId() {
         return goodsId;

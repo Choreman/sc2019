@@ -43,6 +43,15 @@ public interface ImageMapper {
     int deleteImageByUserId(@Param("listIds") List<String> listIds, @Param("updatePersonId") String updatePersonId);
 
     /**
+     * 批量删除商品的图片信息（修改字段is_delete状态，并非真正删除）
+     *
+     * @param listIds        要删除商品图片的图片分类编号
+     * @param updatePersonId 更新人id
+     * @return
+     */
+    int deleteImageByGoodsId(@Param("listIds") List<String> listIds, @Param("updatePersonId") String updatePersonId);
+
+    /**
      * 根据图片分类编号修改图片信息
      * @param image 要修改的图片信息
      * @return
