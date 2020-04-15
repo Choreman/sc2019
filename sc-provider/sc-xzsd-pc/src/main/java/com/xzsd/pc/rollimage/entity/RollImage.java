@@ -1,6 +1,7 @@
 package com.xzsd.pc.rollimage.entity;
 
 import com.xzsd.pc.base.entity.BaseEntity;
+import com.xzsd.pc.image.entity.Image;
 
 import java.util.Date;
 
@@ -41,6 +42,24 @@ public class RollImage extends BaseEntity {
      * 轮播图的图片状态（0：禁用，1：启用）
      */
     private Integer rollImageCondition;
+
+    //-----------------关联关系-----------------
+
+    /**
+     * 一张轮播图对应一张图片，一对一
+     */
+    private Image image;
+
+    //-----------------get和set方法-----------------
+
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
 
     public String getRollImageId() {
         return rollImageId;

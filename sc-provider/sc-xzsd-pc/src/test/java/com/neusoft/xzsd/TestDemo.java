@@ -38,6 +38,16 @@ public class TestDemo {
     @Test
     public void testDateFormatUtil() {
         System.out.println(DateFormatUtil.date2string(new Date(), DateFormatUtil.YYYYMMDDHHMMSS));
+
+        String date1Str = "2018-01-01 00:00:00";
+        String date2Str = "2018-01-02 00:00:00";
+
+        Date date1 = DateFormatUtil.string2date(date1Str, DateFormatUtil.YYYYMMDDHHMMSS);
+        Date date2 = DateFormatUtil.string2date(date2Str, DateFormatUtil.YYYYMMDDHHMMSS);
+
+        System.out.println(date1.before(date2));
+        System.out.println(date1.equals(date2));
+
     }
 
     @Test

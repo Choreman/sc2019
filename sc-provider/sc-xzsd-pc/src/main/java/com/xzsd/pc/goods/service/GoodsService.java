@@ -262,6 +262,8 @@ public class GoodsService {
             imageMapper.deleteImageByGoodsId(listIds, AuthUtils.getCurrentUserId());
             return AppResponse.success("删除成功");
         }
+        //todo
+        //删除商品还需要判断是否在轮播图里，是否在热门位里，完成轮播图和热门位在来完成这个，待完成
     }
 
 }

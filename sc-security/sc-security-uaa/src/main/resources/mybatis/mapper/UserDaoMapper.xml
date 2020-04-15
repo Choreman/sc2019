@@ -29,7 +29,7 @@
      </sql>
 
     <!-- 根据用户登陆账号查询用户信息 -->
-    <select id="getUserByUserLoginName" resultMap="com.neusoft.oauth.entity.User">
+    <select id="getUserByUserLoginName" resultMap="BaseResultMap">
         SELECT
             <include refid="Base_Column_List"/>
         FROM

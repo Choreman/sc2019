@@ -22,15 +22,12 @@ import javax.annotation.Resource;
 @Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    //    @Resource
-//    private SysUserDao sysUserDao;
     @Resource
     private UserDao userDao;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         String lowCaseUsername = username.toLowerCase();
-//        SysUser sysUser = sysUserDao.getUserInfoByUsername(lowCaseUsername);
         //根据传入的用户账号获取用户信息
         User user = userDao.getUserByUserLoginName(username);
         if (user != null) {
