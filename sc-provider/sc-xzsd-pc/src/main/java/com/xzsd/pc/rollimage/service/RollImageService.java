@@ -174,7 +174,7 @@ public class RollImageService {
         //根据轮播图编号查询出轮播图列表
         List<RollImage> rollImageList = rollImageMapper.listRollImagesByIds(listIds);
         //批量修改轮播图信息
-        int status = rollImageMapper.updateRollImageList(rollImageList, AuthUtils.getCurrentUserId(), rollImageCondition);
+        int status = rollImageMapper.updateRollImageListCondition(rollImageList, AuthUtils.getCurrentUserId(), rollImageCondition);
         //当修改的轮播图信息和查询出来的轮播图信息不一致
         if (status != rollImageList.size()) {
             //回滚事物

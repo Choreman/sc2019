@@ -187,7 +187,7 @@
     </select>
 
     <!-- 批量修改轮播图状态信息 -->
-    <update id="updateRollImageList" parameterType="java.lang.String">
+    <update id="updateRollImageListCondition" parameterType="java.lang.String">
         update
             t_roll_image
         set

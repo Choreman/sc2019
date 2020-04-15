@@ -58,7 +58,7 @@ public interface RollImageMapper {
      * @param rollImageCondition 轮播图状态
      * @return
      */
-    int updateRollImageList(@Param("rollImageList") List<RollImage> rollImageList,
+    int updateRollImageListCondition(@Param("rollImageList") List<RollImage> rollImageList,
                             @Param("updatePersonId") String updatePersonId,
                             @Param("rollImageCondition") int rollImageCondition);
 
