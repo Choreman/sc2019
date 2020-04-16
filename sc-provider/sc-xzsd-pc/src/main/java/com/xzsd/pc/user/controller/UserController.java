@@ -30,14 +30,14 @@ public class UserController {
 
     /**
      * 新增用户接口
-     *
      * @param user 用户信息
+     * @param imageId 上传的头像图片编号
      * @return
      */
     @PostMapping("/addUser")
-    public AppResponse addUser(@RequestParam("headImage") MultipartFile headImage, User user) {
+    public AppResponse addUser(User user, String imageId) {
         try {
-            return userService.addUser(headImage, user);
+            return userService.addUser(user, imageId);
         } catch (Exception e) {
             logger.error("新增用户异常", e);
             System.out.println(e.toString());
@@ -86,9 +86,9 @@ public class UserController {
      * @return
      */
     @PostMapping("/updateUserById")
-    public AppResponse updateUserById(@RequestParam("headImage") MultipartFile headImage, User user) {
+    public AppResponse updateUserById(User user, String imageId) {
         try {
-            return userService.updateUserById(headImage, user);
+            return userService.updateUserById(user, imageId);
         } catch (Exception e) {
             logger.error("修改用户信息异常", e);
             System.out.println(e.toString());

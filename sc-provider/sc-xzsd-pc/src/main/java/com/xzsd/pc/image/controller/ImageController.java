@@ -28,21 +28,20 @@ public class ImageController {
 
     /**
      * 上传头像接口
-     * @param headImage 头像图片文件
-     * @param imageCateCode 上传头像的用户编号
+     * @param imageFile 图片文件
+     * @param imageCate 图片类别
      * @return
      */
-    @PostMapping("/uploadheadImage")
-    public AppResponse uploadheadImage(@RequestParam("headImage") MultipartFile headImage, String imageCateCode){
+    @PostMapping("/uploadImage")
+    public AppResponse uploadImage(@RequestParam("imageFile") MultipartFile imageFile, int imageCate){
         try {
-            return imageService.uploadheadImage(headImage, imageCateCode);
+            return imageService.uploadImage(imageFile, imageCate);
         } catch (Exception e) {
-            logger.error("上传头像异常", e);
+            logger.error("上传图片异常", e);
             System.out.println(e.toString());
             return AppResponse.bizError("出现异常");
         }
     }
-
 
 }
 

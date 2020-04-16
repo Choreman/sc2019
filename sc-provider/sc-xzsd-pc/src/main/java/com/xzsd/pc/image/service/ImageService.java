@@ -29,45 +29,48 @@ public class ImageService {
     private ImageMapper imageMapper;
 
     @Resource
-    private UserMapper userMapper;
-
-    @Resource
     private TencentCOSUtil tencentCOSUtil;
 
     /**
      * 上传头像接口
-     * @param headImage 头像图片文件
-     * @param imageCateCode 上传头像的用户编号
+     * @param imageFile 图片文件
+     * @param imageCate 图片类别
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse uploadheadImage(MultipartFile headImage, String imageCateCode) {
-        //校验头像图片是否存在
-        if (headImage.isEmpty()) {
-            return AppResponse.Error("上传失败，请选择文件");
+    public AppResponse uploadImage(MultipartFile imageFile, int imageCate) {
+        //校验图片是否存在
+        if (imageFile.isEmpty()) {
+            return AppResponse.Error("上传失败，请选择图片");
         }
-        //校验用户编号是否存在
-        if (imageCateCode == null || "".equals(imageCateCode)){
-            return AppResponse.Error("上传失败，请输入用户编号");
-        }
-        User user = userMapper.selectByPrimaryKey(imageCateCode);
-        if(user == null){
-            return AppResponse.Error("上传失败，没有该用户编号");
+        //给上传的图片分文件夹
+        String imageFolder = "default";
+        switch (imageCate){
+            case 1 :
+                imageFolder = TencentCOSUtil.GOODSIMAGEFOLDER;
+                break;
+            case 2 :
+                imageFolder = TencentCOSUtil.ROLLIMAGEFOLDER;
+                break;
+            case 3 :
+                imageFolder = TencentCOSUtil.GOODSCOMMENTIMAGEFOLDER;
+                break;
+            case 4 :
+                imageFolder = TencentCOSUtil.HEADIMAGEFOLDER;
+                break;
         }
         String url = null;
         try {
             //上传到指定的文件夹里面
-            url = tencentCOSUtil.uploadImage(headImage, TencentCOSUtil.HEADIMAGEFOLDER);
+            url = tencentCOSUtil.uploadImage(imageFile, imageFolder);
         }catch (IOException e){
             return AppResponse.bizError("图片上传出现异常");
         }
         Image image = new Image();
         //设置UUID为主键
         image.setImageId(UUIDUtils.getUUID());
-        //设置图片类别为头像
-        image.setImageCate(TencentCOSUtil.HEADIMAGECATE);
-        //设置上传头像的用户编号
-        image.setImageCateCode(imageCateCode);
+        //设置图片类别
+        image.setImageCate(imageCate);
         //设置图片的url
         image.setImageUrl(url);
         //设置基本属性
@@ -80,10 +83,9 @@ public class ImageService {
 
         int status = imageMapper.insertSelective(image);
         if (status > 0) {
-            return AppResponse.success("用户头像上传成功", image);
-        } else {
-            return AppResponse.bizError("用户头像上传失败");
+            return AppResponse.success("图片上传成功", image);
         }
+        return AppResponse.bizError("图片上传失败");
     }
 
 }

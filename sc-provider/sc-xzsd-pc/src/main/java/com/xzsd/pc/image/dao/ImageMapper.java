@@ -34,6 +34,14 @@ public interface ImageMapper {
     int deleteByPrimaryKey(@Param("imageId") String imageId, @Param("updatePersonId") String updatePersonId);
 
     /**
+     * 根据图片的分类编号删除图片信息
+     * @param imageCateCode 图片的分类编号（包含商品图、轮播图、商品评论图、头像）
+     * @return
+     */
+    int deleteImageByImageCateCode(@Param("imageCateCode") String imageCateCode,
+                                   @Param("updatePersonId") String updatePersonId);
+
+    /**
      * 批量删除用户的头像图片信息（修改字段is_delete状态，并非真正删除）
      *
      * @param listIds        要删除用户的头像图片的图片分类编号
@@ -57,6 +65,13 @@ public interface ImageMapper {
      * @return
      */
     int updateByImageCateCodeSelective(Image image);
+
+    /**
+     * 根据图片的id修改图片的分类编号
+     * @param image 包含图片的id和图片分类编号
+     * @return
+     */
+    int updateByPrimaryKeySelective(Image image);
 
     int insert(Image record);
 

@@ -42,7 +42,7 @@ public interface UserMapper {
     List<User> listUsers(User user);
 
     /**
-     * 根据id查询用户信息关联查询头像图片
+     * 根据id查询用户信息
      *
      * @param userId 用户id
      * @return

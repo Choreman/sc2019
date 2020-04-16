@@ -191,24 +191,16 @@
         </if>
     </select>
 
-    <!-- 根据id查询用户信息关联查询图片信息 -->
-    <!-- 不知道有没问题，有就应该可以用左连接 -->
-    <select id="selectByPrimaryKey" resultMap="UserImageResultMap" parameterType="java.lang.String">
+    <!-- 根据id查询用户信息 -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
             <include refid="Base_Column_List"/>
-            , t_image_info.image_id
-            , t_image_info.image_url
         from
-            t_sys_user_info,
-            t_image_info
+            t_sys_user_info
         where
             t_sys_user_info.is_deleted = 1
         and
-            t_image_info.is_deleted = 1
-        and
             user_id = #{userId,jdbcType=VARCHAR}
-        and
-            t_sys_user_info.user_id = t_image_info.image_cate_code
     </select>
 
     <!-- 根据id修改用户信息 -->

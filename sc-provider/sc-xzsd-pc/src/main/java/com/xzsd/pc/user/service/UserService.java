@@ -40,12 +40,12 @@ public class UserService {
 
     /**
      * 新增用户接口
-     *
      * @param user 用户信息
+     * @param imageId 上传的头像图片编号
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse addUser(MultipartFile headImage, User user) {
+    public AppResponse addUser(User user, String imageId) {
         //判断用户账号是否为null或者""
         if (user.getUserLoginName() == null || "".equals(user.getUserLoginName().trim())) {
             return AppResponse.bizError("用户账号输入有误，请重新输入");
@@ -72,13 +72,19 @@ public class UserService {
         int status = userMapper.insertSelective(user);
         //用户新增成功
         if (status > 0) {
-            //上传头像
-            int headImageStatus = uploadHeadImage(headImage, user.getUserId());
-            //-1表示上传图片出现异常，0表示新增图片信息失败
-            if(headImageStatus == -1 || headImageStatus == 0){
-                //回滚事物
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return AppResponse.bizError("图片上传失败，请重试");
+            //如果新增用户时有上传头像
+            if(imageId != null && !"".equals(imageId)){
+                Image image = new Image();
+                image.setImageId(imageId);
+                image.setImageCateCode(user.getUserId());
+                //通过图片的id，把用户表的用户信息和图片表的头像图片关联起来
+                int headImageStatus = imageMapper.updateByPrimaryKeySelective(image);
+                //头像和用户信息没有关联成功
+                if(headImageStatus == 0){
+                    //回滚事物
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return AppResponse.bizError("新增用户信息失败，请输入正确的头像地址");
+                }
             }
             return AppResponse.success("新增用户信息成功");
         }
@@ -86,11 +92,12 @@ public class UserService {
     }
 
     /**
-     * 上传头像
+     * 上传头像（需求更改，此方法弃用）
      * @param headImage 头像图片
      * @param imageCateCode 图片类别编号，此处是用户编号
      * @return
      */
+    @Deprecated
     private int uploadHeadImage(MultipartFile headImage, String imageCateCode){
         Image image = new Image();
         //设置UUID为主键
@@ -123,11 +130,12 @@ public class UserService {
     }
 
     /**
-     * 更新头像图片
+     * 更新头像图片（需求更改，此方法弃用）
      * @param headImage 要更新的头像图片
      * @param imageCateCode 图片分类的编号
      * @return
      */
+    @Deprecated
     private int updateHeadImage(MultipartFile headImage, String imageCateCode){
         Image image = new Image();
         //设置图片分类的编号
@@ -200,7 +208,7 @@ public class UserService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse updateUserById(MultipartFile headImage, User user) {
+    public AppResponse updateUserById(User user, String imageId) {
         //校验用户id不为null或着""
         if (user.getUserId() == null || "".equals(user.getUserId())) {
             return AppResponse.Error("没有该用户信息");
@@ -224,13 +232,22 @@ public class UserService {
         user.setVersion(oldUser.getVersion() + 1);
         int status = userMapper.updateByPrimaryKeySelective(user);
         if (status > 0) {
-            //更新用户的头像
-            int headImageStatus = updateHeadImage(headImage, oldUser.getUserId());
-            //当为-1时，表示图片上传出现异常，为0时表示图片信息插入失败
-            if(headImageStatus <= 0){
-                //回滚事物
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return AppResponse.bizError("图片上传失败，请重试");
+            //如果修改用户时有上传头像
+            if(imageId != null && !"".equals(imageId)){
+                //把之前的用户头像进行删除
+                imageMapper.deleteImageByImageCateCode(user.getUserId(), AuthUtils.getCurrentUserId());
+
+                Image image = new Image();
+                image.setImageId(imageId);
+                image.setImageCateCode(user.getUserId());
+                //通过图片的id，把用户表的用户信息和图片表的头像图片关联起来
+                int headImageStatus = imageMapper.updateByPrimaryKeySelective(image);
+                //头像和用户信息没有关联成功
+                if(headImageStatus == 0){
+                    //回滚事物
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return AppResponse.bizError("修改用户信息失败，请输入正确的头像地址");
+                }
             }
             return AppResponse.success("修改用户信息成功");
         } else {
