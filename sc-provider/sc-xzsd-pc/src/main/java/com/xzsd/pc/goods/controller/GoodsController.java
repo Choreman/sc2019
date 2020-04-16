@@ -31,14 +31,14 @@ public class GoodsController {
 
     /**
      * 新增商品接口
-     * @param goodsImage 商品图片
      * @param goods 商品信息
+     * @param imageId 商品图片编号
      * @return
      */
     @PostMapping("/addGoods")
-    public AppResponse addGoods(@RequestParam("goodsImage") MultipartFile goodsImage, Goods goods) {
+    public AppResponse addGoods(Goods goods, String imageId) {
         try {
-            return goodsService.addGoods(goodsImage, goods);
+            return goodsService.addGoods(goods, imageId);
         } catch (Exception e) {
             logger.error("新增商品信息异常", e);
             System.out.println(e.toString());
@@ -65,14 +65,14 @@ public class GoodsController {
 
     /**
      * 修改商品信息接口
-     * @param goodsImage 要修改的商品图片
      * @param goods 要修改的商品信息
+     * @param imageId 要修改的商品图片编号
      * @return
      */
     @PostMapping("/updateGoodsById")
-    public AppResponse updateGoodsById(@RequestParam("goodsImage") MultipartFile goodsImage, Goods goods){
+    public AppResponse updateGoodsById(Goods goods, String imageId){
         try {
-            return goodsService.updateGoodsById(goodsImage, goods);
+            return goodsService.updateGoodsById(goods, imageId);
         } catch (Exception e) {
             logger.error("修改商品信息异常", e);
             System.out.println(e.toString());

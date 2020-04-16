@@ -301,19 +301,14 @@
             t_goods_info.create_time
     </select>
 
-    <!-- 根据商品id查询商品信息关联查询商品图片 -->
+    <!-- 根据商品id查询商品信息 -->
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
-            t_goods_info.*,
-            t_image_info.image_id,
-            t_image_info.image_url
+            <include refid="Display_Column_List"/>
         FROM
             t_goods_info
-        LEFT JOIN t_image_info on t_goods_info.goods_id = t_image_info.image_cate_code
         WHERE
             t_goods_info.is_deleted = 1
-        and
-            t_image_info.is_deleted = 1
         and
             goods_id = #{goodsId}
     </select>

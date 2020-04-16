@@ -158,6 +158,23 @@
         </foreach>
     </update>
 
+    <!-- 批量删除轮播图的图片信息（修改字段is_delete状态，并非真正删除） -->
+    <update id="deleteImageByRollImageId" parameterType="java.lang.String">
+        update
+            t_image_info
+        set
+            is_deleted = 0,
+            update_time = now(),
+            update_person = #{updatePersonId},
+            version = version + 1
+        where
+            image_cate_code
+        in
+        <foreach item="rollImageId" index="index" collection="listIds" open="(" separator="," close=")">
+            #{rollImageId}
+        </foreach>
+    </update>
+
     <!-- 根据图片分类编号修改图片信息 -->
     <update id="updateByImageCateCodeSelective" parameterType="com.xzsd.pc.image.entity.Image">
         update t_image_info

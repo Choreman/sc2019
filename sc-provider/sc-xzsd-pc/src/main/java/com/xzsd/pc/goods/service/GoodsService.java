@@ -41,12 +41,12 @@ public class GoodsService {
 
     /**
      * 新增商品接口
-     * @param goodsImage 商品图片
      * @param goods 商品信息
+     * @param imageId 商品图片编号
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse addGoods(MultipartFile goodsImage, Goods goods) {
+    public AppResponse addGoods(Goods goods, String imageId) {
         if(goods.getGoodsIsbn() == null || "".equals(goods.getGoodsIsbn())){
             return AppResponse.Error("商品书号错误，新增失败");
         }
@@ -77,13 +77,19 @@ public class GoodsService {
         int status = goodsMapper.insertSelective(goods);
         //商品新增成功
         if (status > 0) {
-            //上传商品图片
-            int headImageStatus = uploadGoodsImage(goodsImage, goods.getGoodsId());
-            //-1表示上传图片出现异常，0表示新增图片信息失败
-            if(headImageStatus == -1 || headImageStatus == 0){
-                //回滚事物
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return AppResponse.bizError("图片上传失败，请重试");
+            //如果新增商品时有上传商品图片
+            if(imageId != null && !"".equals(imageId)){
+                Image image = new Image();
+                image.setImageId(imageId);
+                image.setImageCateCode(goods.getGoodsId());
+                //通过图片的id修改图片的分类编号，把商品表的商品信息和图片表的商品图片关联起来
+                int headImageStatus = imageMapper.updateByPrimaryKeySelective(image);
+                //商品图片和商品信息没有关联成功
+                if(headImageStatus == 0){
+                    //回滚事务
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return AppResponse.bizError("新增商品信息失败，请输入正确的头像地址");
+                }
             }
             return AppResponse.success("新增商品信息成功");
         }
@@ -91,11 +97,12 @@ public class GoodsService {
     }
 
     /**
-     * 上传商品图片
+     * 上传商品图片（需求更改，此方法弃用）
      * @param goodsImage 商品图片
      * @param imageCateCode 图片类别编号，此处是商品编号
      * @return
      */
+    @Deprecated
     private int uploadGoodsImage(MultipartFile goodsImage, String imageCateCode){
         Image image = new Image();
         //设置UUID为主键
@@ -128,11 +135,12 @@ public class GoodsService {
     }
 
     /**
-     * 更新商品图片
+     * 更新商品图片（需求更改，此方法弃用）
      * @param goodsImage 要更新的商品图片
      * @param imageCateCode 图片分类的编号
      * @return
      */
+    @Deprecated
     private int updateGoodsImage(MultipartFile goodsImage, String imageCateCode){
         Image image = new Image();
         //设置图片分类的编号
@@ -178,12 +186,12 @@ public class GoodsService {
 
     /**
      * 修改商品信息接口
-     * @param goodsImage 要修改的商品图片
      * @param goods 要修改的商品信息
+     * @param imageId 要修改的商品图片编号
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse updateGoodsById(MultipartFile goodsImage, Goods goods){
+    public AppResponse updateGoodsById(Goods goods, String imageId){
         //校验商品id不为null或着""
         if (goods.getGoodsId() == null || "".equals(goods.getGoodsId())) {
             return AppResponse.Error("没有该商品信息");
@@ -201,13 +209,21 @@ public class GoodsService {
         goods.setVersion(oldGoods.getVersion() + 1);
         int status = goodsMapper.updateByPrimaryKeySelective(goods);
         if (status > 0) {
-            //更新商品的图片
-            int goodsImageStatus = updateGoodsImage(goodsImage, oldGoods.getGoodsId());
-            //当为-1时，表示图片上传出现异常，为0时表示图片信息插入失败
-            if(goodsImageStatus <= 0){
-                //回滚事物
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return AppResponse.bizError("图片上传失败，请重试");
+            //如果修改商品时有上传商品图
+            if(imageId != null && !"".equals(imageId)){
+                //把之前的商品图片进行删除
+                imageMapper.deleteImageByImageCateCode(goods.getGoodsId(), AuthUtils.getCurrentUserId());
+                Image image = new Image();
+                image.setImageId(imageId);
+                image.setImageCateCode(goods.getGoodsId());
+                //通过图片的id，把商品表的商品信息和图片表的商品图片关联起来
+                int headImageStatus = imageMapper.updateByPrimaryKeySelective(image);
+                //商品图片和商品信息没有关联成功
+                if(headImageStatus == 0){
+                    //回滚事务
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return AppResponse.bizError("修改商品信息失败，请输入正确的头像地址");
+                }
             }
             return AppResponse.success("修改商品信息成功");
         } else {

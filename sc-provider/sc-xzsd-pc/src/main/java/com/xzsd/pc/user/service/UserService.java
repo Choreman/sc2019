@@ -225,7 +225,7 @@ public class UserService {
             return AppResponse.Error("信息已更新，请重试");
         }
         //查询数据库中是否有该账号的用户
-        int count = userMapper.countUserByUserLoginName(user.getUserLoginName());
+        int count = userMapper.countUserByUserLoginNameAndUserId(user);
         //数据库中存在相同账号的用户
         if (count != 0) {
             return AppResponse.Error("用户账号已存在");

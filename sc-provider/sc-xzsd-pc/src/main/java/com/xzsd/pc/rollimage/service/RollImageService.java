@@ -48,12 +48,12 @@ public class RollImageService {
     /**
      * 新增轮播图接口
      *
-     * @param rollImageFile 轮播图图片
-     * @param rollImage     轮播图信息
+     * @param rollImage 轮播图信息
+     * @param imageId   轮播图图片编号
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse addRollImage(MultipartFile rollImageFile, RollImage rollImage) {
+    public AppResponse addRollImage(RollImage rollImage, String imageId) {
         //判断选择商品编号是否为null或者""
         if (rollImage.getRollImageGoodsCode() == null || "".equals(rollImage.getRollImageGoodsCode())) {
             return AppResponse.bizError("商品编号输入有误，请重新输入");
@@ -94,13 +94,19 @@ public class RollImageService {
         int status = rollImageMapper.insertSelective(rollImage);
         //轮播图新增成功
         if (status > 0) {
-            //上传轮播图
-            int headImageStatus = uploadHeadImage(rollImageFile, rollImage.getRollImageId());
-            //-1表示上传图片出现异常，0表示新增图片信息失败
-            if (headImageStatus == -1 || headImageStatus == 0) {
-                //回滚事物
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return AppResponse.bizError("图片上传失败，请重试");
+            //如果新增轮播图时有上传图片
+            if(imageId != null && !"".equals(imageId)){
+                Image image = new Image();
+                image.setImageId(imageId);
+                image.setImageCateCode(rollImage.getRollImageId());
+                //通过图片的id修改图片的分类编号，把轮播图表的轮播图信息和图片表的轮播图图片关联起来
+                int headImageStatus = imageMapper.updateByPrimaryKeySelective(image);
+                //轮播图图片和轮播图信息没有关联成功
+                if(headImageStatus == 0){
+                    //回滚事务
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return AppResponse.bizError("新增轮播图信息失败，请输入正确的头像地址");
+                }
             }
             return AppResponse.success("新增轮播图信息成功");
         }
@@ -108,12 +114,13 @@ public class RollImageService {
     }
 
     /**
-     * 上传轮播图
+     * 上传轮播图（需求更改，此方法弃用）
      *
      * @param rollImage     轮播图图片
      * @param imageCateCode 图片类别编号，此处是轮播图编号
      * @return
      */
+    @Deprecated
     private int uploadHeadImage(MultipartFile rollImage, String imageCateCode) {
         Image image = new Image();
         //设置UUID为主键
@@ -161,13 +168,14 @@ public class RollImageService {
 
     /**
      * 修改轮播图状态接口
-     * @param rollImageIds 轮播图编号列表
+     *
+     * @param rollImageIds       轮播图编号列表
      * @param rollImageCondition 轮播图状态
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
     public AppResponse updateRollImageConditionById(String rollImageIds, int rollImageCondition) {
-        if(rollImageIds == null || "".equals(rollImageIds)){
+        if (rollImageIds == null || "".equals(rollImageIds)) {
             return AppResponse.Error("轮播图编号错误");
         }
         List<String> listIds = Arrays.asList(rollImageIds.split(","));
@@ -186,11 +194,12 @@ public class RollImageService {
 
     /**
      * 删除轮播图接口
+     *
      * @param rollImageIds 轮播图编号列表（批量删除用逗号分开）
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse deleteRollImageById(String rollImageIds){
+    public AppResponse deleteRollImageById(String rollImageIds) {
         //检验要删除的ids是否为null或者""
         if (rollImageIds == null || "".equals(rollImageIds)) {
             return AppResponse.Error("没有该轮播图信息，删除失败");
@@ -203,8 +212,11 @@ public class RollImageService {
             //回滚事物
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return AppResponse.bizError("所选列表有未存在数据，删除失败");
+        }else{
+            //同时删除轮播图信息列表关联的轮播图图片
+            imageMapper.deleteImageByRollImageId(listIds, AuthUtils.getCurrentUserId());
+            return AppResponse.success("删除成功");
         }
-        return AppResponse.success("删除成功");
     }
 
 }

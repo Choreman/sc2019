@@ -172,6 +172,20 @@
             user_login_name = #{userLoginName,jdbcType=VARCHAR}
     </select>
 
+    <!-- 根据用户账号计算用户数（排除用户本身） -->
+    <select id="countUserByUserLoginNameAndUserId" parameterType="com.xzsd.pc.user.entity.User" resultType="int">
+        SELECT
+            count(*)
+        FROM
+            t_sys_user_info
+        WHERE
+            is_deleted = 1
+        and
+            user_login_name = #{userLoginName,jdbcType=VARCHAR}
+        and
+            user_id != #{userId}
+    </select>
+
     <!-- 根据用户信息条件查询用户信息（管理员、店长、司机） -->
     <select id="listUsers" parameterType="com.xzsd.pc.user.entity.User" resultMap="BaseResultMap">
         SELECT

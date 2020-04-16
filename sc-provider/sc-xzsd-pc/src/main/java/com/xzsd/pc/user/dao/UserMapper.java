@@ -34,6 +34,13 @@ public interface UserMapper {
     int countUserByUserLoginName(@Param("userLoginName") String userLoginName);
 
     /**
+     * 根据用户账号计算用户数（排除用户本身）
+     * @param user 用户账号和用户编号
+     * @return
+     */
+    int countUserByUserLoginNameAndUserId(User user);
+
+    /**
      * 根据用户信息条件查询用户信息（管理员、店长、司机）
      *
      * @param user 查询的用户信息条件

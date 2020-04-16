@@ -48,7 +48,7 @@ public interface GoodsMapper {
     List<Goods> listGoods(Goods goods);
 
     /**
-     * 根据商品id查询商品信息关联查询商品图片
+     * 根据商品id查询商品信息
      * @param goodsId 商品id
      * @return
      */
