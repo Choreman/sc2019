@@ -77,11 +77,11 @@ public class UserService {
                 Image image = new Image();
                 image.setImageId(imageId);
                 image.setImageCateCode(user.getUserId());
-                //通过图片的id，把用户表的用户信息和图片表的头像图片关联起来
+                //通过图片的id修改图片的分类编号，把用户表的用户信息和图片表的头像图片关联起来
                 int headImageStatus = imageMapper.updateByPrimaryKeySelective(image);
                 //头像和用户信息没有关联成功
                 if(headImageStatus == 0){
-                    //回滚事物
+                    //回滚事务
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return AppResponse.bizError("新增用户信息失败，请输入正确的头像地址");
                 }
@@ -211,7 +211,7 @@ public class UserService {
     public AppResponse updateUserById(User user, String imageId) {
         //校验用户id不为null或着""
         if (user.getUserId() == null || "".equals(user.getUserId())) {
-            return AppResponse.Error("没有该用户信息");
+            return AppResponse.Error("用户编号输入错误");
         }
         //校验用户角色不为null或着0
         if (user.getUserRole() == null || user.getUserRole() == 0) {
@@ -223,6 +223,12 @@ public class UserService {
             return AppResponse.Error("没有该用户信息");
         } else if (!oldUser.getVersion().equals(user.getVersion())) {
             return AppResponse.Error("信息已更新，请重试");
+        }
+        //查询数据库中是否有该账号的用户
+        int count = userMapper.countUserByUserLoginName(user.getUserLoginName());
+        //数据库中存在相同账号的用户
+        if (count != 0) {
+            return AppResponse.Error("用户账号已存在");
         }
         //加密密码
         user.setUserPassword(PasswordUtils.generatePassword(user.getUserPassword()));
@@ -236,7 +242,6 @@ public class UserService {
             if(imageId != null && !"".equals(imageId)){
                 //把之前的用户头像进行删除
                 imageMapper.deleteImageByImageCateCode(user.getUserId(), AuthUtils.getCurrentUserId());
-
                 Image image = new Image();
                 image.setImageId(imageId);
                 image.setImageCateCode(user.getUserId());
@@ -244,7 +249,7 @@ public class UserService {
                 int headImageStatus = imageMapper.updateByPrimaryKeySelective(image);
                 //头像和用户信息没有关联成功
                 if(headImageStatus == 0){
-                    //回滚事物
+                    //回滚事务
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return AppResponse.bizError("修改用户信息失败，请输入正确的头像地址");
                 }
@@ -269,9 +274,9 @@ public class UserService {
         List<String> listIds = Arrays.asList(ids.split(","));
         //删除用户信息列表集合，设置更新人id
         int count = userMapper.deleteUserById(listIds, AuthUtils.getCurrentUserId());
-        //当要删除的用户总数和已删除的总数不等时，回滚事物，删除失败
+        //当要删除的用户总数和已删除的总数不等时，回滚事务，删除失败
         if (count != listIds.size()) {
-            //回滚事物
+            //回滚事务
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return AppResponse.bizError("所选列表有未存在数据，删除失败");
         } else {

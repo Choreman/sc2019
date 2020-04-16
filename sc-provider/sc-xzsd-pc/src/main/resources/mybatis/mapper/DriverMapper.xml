@@ -187,6 +187,49 @@
             </if>
     </select>
 
+    <!-- 根据传入的查询条件查询司机自身存放在user表中的信息 -->
+    <select id="listSelfDrivers" resultType="com.xzsd.pc.user.entity.User">
+        SELECT
+            user_id,
+            user_code,
+            user_name,
+            user_phone,
+            user_idcard,
+            user_login_name,
+            t_sys_user_info.version
+        from
+            t_sys_user_info
+            <if test="driver.driverProvinceCode != null or
+                driver.driverCityCode != null or driver.driverRegionCode != null">
+            , t_driver_info
+        </if>
+        where
+            t_sys_user_info.is_deleted = 1
+        and
+            t_sys_user_info.user_id = #{user.userId,jdbcType=VARCHAR}
+        and
+            t_sys_user_info.user_role = 3
+            <if test="driver.driverProvinceCode != null or
+                driver.driverCityCode != null or driver.driverRegionCode != null">
+                and t_driver_info.driver_user_code = t_sys_user_info.user_id
+            </if>
+            <if test="user.userCode != null and user.userCode != ''">
+                and user_code like CONCAT('%', #{user.userCode,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="user.userName != null and user.userName != ''">
+                and user_name like CONCAT('%', #{user.userName,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="driver.driverProvinceCode != null and driver.driverProvinceCode != ''">
+                and driver_province_code = #{driver.driverProvinceCode,jdbcType=VARCHAR}
+            </if>
+            <if test="driver.driverCityCode != null and driver.driverCityCode != ''">
+                and driver_city_code = #{driver.driverCityCode,jdbcType=VARCHAR}
+            </if>
+            <if test="driver.driverRegionCode != null and driver.driverRegionCode != ''">
+            and driver_region_code = #{driver.driverRegionCode,jdbcType=VARCHAR}
+        </if>
+    </select>
+
     <!-- 根据id查询司机信息（包含用户表、司机表、区域名称表里的信息） -->
     <select id="findDriverById" resultMap="UserDriverAreaResultMap">
         SELECT

@@ -66,11 +66,11 @@
             </if>
         AND t_sys_user_info.user_store_id = (
             SELECT
-                user_store_id
+                store_id
             FROM
-                t_sys_user_info
+                t_store_info
             WHERE
-                user_id = #{userId}
+                t_store_info.store_manager_id = #{userId}
         )
     </select>
 

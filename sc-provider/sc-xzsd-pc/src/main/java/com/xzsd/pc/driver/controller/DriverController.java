@@ -30,20 +30,17 @@ public class DriverController {
     @Autowired
     private DriverService driverService;
 
-    @Autowired
-    private UserService userService;
-
     /**
      * 新增司机信息接口
-     * @param headImage 司机头像
      * @param user 存放司机关联的用户表的信息
      * @param driver 存放司机表的信息
+     * @param imageId 头像图片id
      * @return
      */
     @PostMapping("/addDriver")
-    public AppResponse addDriver(@RequestParam("headImage") MultipartFile headImage, User user, Driver driver){
+    public AppResponse addDriver(User user, Driver driver, String imageId){
         try {
-            return driverService.addDriver(headImage, user, driver);
+            return driverService.addDriver(user, driver, imageId);
         } catch (Exception e) {
             logger.error("新增司机异常", e);
             System.out.println(e.toString());
@@ -53,6 +50,9 @@ public class DriverController {
 
     /**
      * 查询司机信息列表接口
+     * - 管理员查询所有司机信息列表
+     * - 司机查询自己的信息列表
+     *
      * @param pageBean 分页信息
      * @param user 查询条件，存放在user表里的司机信息
      * @param driver 查询条件，存放在driver表里的司机信息
@@ -87,15 +87,15 @@ public class DriverController {
 
     /**
      * 修改司机信息接口
-     * @param headImage 头像图片
      * @param user 要修改的在用户表的信息
      * @param driver 要修改的在司机表的信息
+     * @param imageId 头像图片的id
      * @return
      */
     @PostMapping("/updateDriversById")
-    public AppResponse updateDriversById(@RequestParam("headImage") MultipartFile headImage, User user, Driver driver){
+    public AppResponse updateDriversById(User user, Driver driver, String imageId){
         try {
-            return driverService.updateDriversById(headImage, user, driver);
+            return driverService.updateDriversById(user, driver, imageId);
         } catch (Exception e) {
             logger.error("修改司机信息异常", e);
             System.out.println(e.toString());
