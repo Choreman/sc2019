@@ -1,6 +1,7 @@
 package com.xzsd.pc.hotgoods.entity;
 
 import com.xzsd.pc.base.entity.BaseEntity;
+import com.xzsd.pc.goods.entity.Goods;
 
 import java.util.Date;
 
@@ -25,6 +26,23 @@ public class HotGoods extends BaseEntity {
      * 热门商品的权重（权值越小排名越前，默认为：99999）
      */
     private Integer hotGoodsWeight;
+
+    //-----------------关联关系-----------------
+
+    /**
+     * 一个热门位商品关联一件商品，一对一
+     */
+    private Goods goods;
+
+    //-----------------get和set方法-----------------
+
+    public Goods getGoods() {
+        return goods;
+    }
+
+    public void setGoods(Goods goods) {
+        this.goods = goods;
+    }
 
     public String getHotGoodsId() {
         return hotGoodsId;

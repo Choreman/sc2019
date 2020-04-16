@@ -297,6 +297,9 @@
             <if test="goodsCondition != null">
                 and goods_condition = #{goodsCondition}
             </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and goods_code like CONCAT('%', #{goodsCode}, '%')
+            </if>
         order by
             t_goods_info.create_time
     </select>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.pc.dict.dao.DictMapper">
+    <resultMap id="BaseResultMap" type="com.xzsd.pc.dict.entity.Dict">
+        <id column="dict_id" property="dictId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="dict_key" property="dictKey" jdbcType="VARCHAR"/>
+        <result column="dict_value" property="dictValue" jdbcType="VARCHAR"/>
+        <result column="dict_comment" property="dictComment" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    dict_id, create_time, create_person, update_time, update_person, version, is_deleted, 
+    dict_key, dict_value, dict_comment
+  </sql>
+    <!-- 前台展示字段 -->
+    <sql id="Display_Column_List">
+      dict_id, version, dict_key, dict_value, dict_comment
+    </sql>
+
+    <!-- 根据字典的key去更新字典的value -->
+    <update id="updateDictByKey" parameterType="com.xzsd.pc.dict.entity.Dict">
+        update
+            t_dict_info
+        set
+            update_time = now(),
+            update_person = #{updatePersonId},
+            version = version + 1,
+            dict_value = #{dict.dictValue}
+        where
+            dict_key = #{dict.dictKey}
+    </update>
+
+    <!-- Mybatis generator自动生成代码 -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_dict_info
+        where dict_id = #{dictId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_dict_info
+    where dict_id = #{dictId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.xzsd.pc.dict.entity.Dict">
+    insert into t_dict_info (dict_id, create_time, create_person, 
+      update_time, update_person, version, 
+      is_deleted, dict_key, dict_value, 
+      dict_comment)
+    values (#{dictId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
+      #{isDeleted,jdbcType=INTEGER}, #{dictKey,jdbcType=VARCHAR}, #{dictValue,jdbcType=VARCHAR}, 
+      #{dictComment,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.xzsd.pc.dict.entity.Dict">
+        insert into t_dict_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="dictId != null">
+                dict_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createPerson != null">
+                create_person,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updatePerson != null">
+                update_person,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="dictKey != null">
+                dict_key,
+            </if>
+            <if test="dictValue != null">
+                dict_value,
+            </if>
+            <if test="dictComment != null">
+                dict_comment,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="dictId != null">
+                #{dictId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="dictKey != null">
+                #{dictKey,jdbcType=VARCHAR},
+            </if>
+            <if test="dictValue != null">
+                #{dictValue,jdbcType=VARCHAR},
+            </if>
+            <if test="dictComment != null">
+                #{dictComment,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.pc.dict.entity.Dict">
+        update t_dict_info
+        <set>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                create_person = #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                update_person = #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                version = #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="dictKey != null">
+                dict_key = #{dictKey,jdbcType=VARCHAR},
+            </if>
+            <if test="dictValue != null">
+                dict_value = #{dictValue,jdbcType=VARCHAR},
+            </if>
+            <if test="dictComment != null">
+                dict_comment = #{dictComment,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where dict_id = #{dictId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.dict.entity.Dict">
+    update t_dict_info
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_person = #{createPerson,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_person = #{updatePerson,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      is_deleted = #{isDeleted,jdbcType=INTEGER},
+      dict_key = #{dictKey,jdbcType=VARCHAR},
+      dict_value = #{dictValue,jdbcType=VARCHAR},
+      dict_comment = #{dictComment,jdbcType=VARCHAR}
+    where dict_id = #{dictId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -64,9 +64,8 @@ public class StoreService {
                 return AppResponse.success("新增门店信息成功");
             }
             return AppResponse.bizError("新增门店信息失败");
-        } else {
-            return AppResponse.Error("店长编号不存在，新增失败");
         }
+        return AppResponse.Error("店长编号不存在，新增失败");
     }
 
     /**

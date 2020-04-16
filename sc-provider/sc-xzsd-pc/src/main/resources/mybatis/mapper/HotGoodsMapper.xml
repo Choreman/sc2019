@@ -1,32 +1,260 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.xzsd.pc.hotgoods.dao.HotGoodsMapper" >
-  <resultMap id="BaseResultMap" type="com.xzsd.pc.hotgoods.entity.HotGoods" >
-    <id column="hot_goods_id" property="hotGoodsId" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="create_person" property="createPerson" jdbcType="VARCHAR" />
-    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
-    <result column="version" property="version" jdbcType="INTEGER" />
-    <result column="is_deleted" property="isDeleted" jdbcType="INTEGER" />
-    <result column="hot_goods_goods_code" property="hotGoodsGoodsCode" jdbcType="VARCHAR" />
-    <result column="hot_goods_weight" property="hotGoodsWeight" jdbcType="INTEGER" />
-  </resultMap>
-  <sql id="Base_Column_List" >
-    hot_goods_id, create_time, create_person, update_time, update_person, version, is_deleted, 
-    hot_goods_goods_code, hot_goods_weight
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select 
-    <include refid="Base_Column_List" />
-    from t_hot_goods_info
-    where hot_goods_id = #{hotGoodsId,jdbcType=VARCHAR}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+<mapper namespace="com.xzsd.pc.hotgoods.dao.HotGoodsMapper">
+    <resultMap id="BaseResultMap" type="com.xzsd.pc.hotgoods.entity.HotGoods">
+        <id column="hot_goods_id" property="hotGoodsId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="hot_goods_goods_code" property="hotGoodsGoodsCode" jdbcType="VARCHAR"/>
+        <result column="hot_goods_weight" property="hotGoodsWeight" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+      hot_goods_id, create_time, create_person, update_time, update_person, version, is_deleted,
+      hot_goods_goods_code, hot_goods_weight
+    </sql>
+    <!-- 前台展示字段 -->
+    <sql id="Display_Column_List">
+        hot_goods_id, t_hot_goods_info.version, hot_goods_goods_code, hot_goods_weight
+    </sql>
+
+    <!-- 查询热门位商品信息关联查询商品信息 -->
+    <resultMap id="HotGoodsGoodsResultMap" type="com.xzsd.pc.hotgoods.entity.HotGoods" extends="BaseResultMap">
+        <!-- 关联查询商品信息 -->
+        <association property="goods" javaType="com.xzsd.pc.goods.entity.Goods">
+            <id column="goods_id" property="goodsId" jdbcType="VARCHAR"/>
+            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+            <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+            <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+            <result column="version" property="version" jdbcType="INTEGER"/>
+            <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+            <result column="goods_code" property="goodsCode" jdbcType="VARCHAR"/>
+            <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
+            <result column="goods_fix_price" property="goodsFixPrice" jdbcType="REAL"/>
+            <result column="goods_sale_price" property="goodsSalePrice" jdbcType="REAL"/>
+            <result column="goods_stock" property="goodsStock" jdbcType="INTEGER"/>
+            <result column="goods_sale_sum" property="goodsSaleSum" jdbcType="INTEGER"/>
+            <result column="goods_cate_code" property="goodsCateCode" jdbcType="VARCHAR"/>
+            <result column="goods_advertisement" property="goodsAdvertisement" jdbcType="VARCHAR"/>
+            <result column="goods_description" property="goodsDescription" jdbcType="VARCHAR"/>
+            <result column="goods_condition" property="goodsCondition" jdbcType="INTEGER"/>
+            <result column="goods_sale_time" property="goodsSaleTime" jdbcType="TIMESTAMP"/>
+            <result column="goods_visit_num" property="goodsVisitNum" jdbcType="INTEGER"/>
+            <result column="goods_business" property="goodsBusiness" jdbcType="VARCHAR"/>
+            <result column="goods_isbn" property="goodsIsbn" jdbcType="VARCHAR"/>
+            <result column="goods_publisher" property="goodsPublisher" jdbcType="VARCHAR"/>
+            <result column="goods_author" property="goodsAuthor" jdbcType="VARCHAR"/>
+            <result column="goods_star" property="goodsStar" jdbcType="INTEGER"/>
+        </association>
+    </resultMap>
+
+    <!-- 根据商品编号查询商品是否存在热门位 -->
+    <select id="countHotGoodsByGoodsCode" parameterType="java.lang.String" resultType="int">
+        SELECT
+            count(*)
+        from
+            t_hot_goods_info
+        where
+            is_deleted = 1
+        and
+            t_hot_goods_info.hot_goods_goods_code = #{hotGoodsGoodsCode}
+    </select>
+
+    <!-- 根据商品编号查询商品是否存在热门位（排除热门位商品本身） -->
+    <select id="countHotGoodsSelfByGoodsCode" parameterType="com.xzsd.pc.hotgoods.entity.HotGoods" resultType="int">
+        SELECT
+            count(*)
+        from
+            t_hot_goods_info
+        where
+            is_deleted = 1
+        and
+            t_hot_goods_info.hot_goods_goods_code = #{hotGoodsGoodsCode}
+        and
+            hot_goods_id != #{hotGoodsId}
+    </select>
+
+    <!-- 根据热门商品的排序查询是否已经存在该排序的热门商品 -->
+    <select id="countHotGoodsByWeight" parameterType="int" resultType="int">
+        select
+            count(*)
+        from
+            t_hot_goods_info
+        where
+            is_deleted = 1
+        and
+            hot_goods_weight = #{hotGoodsWeight}
+    </select>
+
+    <!-- 根据热门商品的排序查询是否已经存在该排序的热门商品（排除热门商品本身） -->
+    <select id="countHotGoodsSelfByWeight" parameterType="com.xzsd.pc.hotgoods.entity.HotGoods" resultType="int">
+        select
+            count(*)
+        from
+            t_hot_goods_info
+        where
+            is_deleted = 1
+        and
+            hot_goods_weight = #{hotGoodsWeight}
+        and
+            hot_goods_id != #{hotGoodsId}
+    </select>
+
+    <!-- 新增热门位商品信息 -->
+    <insert id="insertSelective" parameterType="com.xzsd.pc.hotgoods.entity.HotGoods">
+        insert into t_hot_goods_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="hotGoodsId != null">
+                hot_goods_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createPerson != null">
+                create_person,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updatePerson != null">
+                update_person,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="hotGoodsGoodsCode != null">
+                hot_goods_goods_code,
+            </if>
+            <if test="hotGoodsWeight != null">
+                hot_goods_weight,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="hotGoodsId != null">
+                #{hotGoodsId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="hotGoodsGoodsCode != null">
+                #{hotGoodsGoodsCode,jdbcType=VARCHAR},
+            </if>
+            <if test="hotGoodsWeight != null">
+                #{hotGoodsWeight,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 根据商品信息条件查询热门位商品关联查询商品信息 -->
+    <select id="listHotGoods" parameterType="com.xzsd.pc.goods.entity.Goods" resultMap="HotGoodsGoodsResultMap">
+        SELECT
+            <include refid="Display_Column_List"/>
+            , t_goods_info.goods_code
+            , t_goods_info.goods_name
+            , t_goods_info.goods_sale_price
+            , t_goods_info.goods_description
+        FROM
+            t_hot_goods_info
+            LEFT JOIN t_goods_info ON t_hot_goods_info.hot_goods_goods_code = t_goods_info.goods_id
+        WHERE
+            t_hot_goods_info.is_deleted = 1
+            <if test="goodsName != null and goodsName != ''">
+                and t_goods_info.goods_name like CONCAT('%',#{goodsName},'%')
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and t_goods_info.goods_code like CONCAT('%',#{goodsCode},'%')
+            </if>
+    </select>
+
+    <!-- 根据id修改热门位商品信息 -->
+    <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.pc.hotgoods.entity.HotGoods">
+        update t_hot_goods_info
+        <set>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null and createPerson != ''">
+                create_person = #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null and updatePerson != ''">
+                update_person = #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null and version != ''">
+                version = #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                is_deleted = #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="hotGoodsGoodsCode != null and hotGoodsGoodsCode != ''">
+                hot_goods_goods_code = #{hotGoodsGoodsCode,jdbcType=VARCHAR},
+            </if>
+            <if test="hotGoodsWeight != null">
+                hot_goods_weight = #{hotGoodsWeight,jdbcType=INTEGER},
+            </if>
+        </set>
+        where hot_goods_id = #{hotGoodsId,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 根据id查询热门位商品信息 -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            t_hot_goods_info
+        where
+            is_deleted = 1
+        and
+            hot_goods_id = #{hotGoodsId,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 删除热门位信息（修改字段is_delete状态，并非真正删除） -->
+    <update id="deleteHotGoodsById" parameterType="java.lang.String">
+        update
+            t_hot_goods_info
+        set
+            is_deleted = 0,
+            update_time = now(),
+            update_person = #{updatePersonId},
+            version = version + 1
+        where
+            hot_goods_id
+        in
+            <foreach item="hotGoodsId" index="index" collection="listIds" open="(" separator="," close=")">
+                #{hotGoodsId}
+            </foreach>
+    </update>
+
+    <!-- Mybatis generator自动生成代码 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from t_hot_goods_info
     where hot_goods_id = #{hotGoodsId,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.xzsd.pc.hotgoods.entity.HotGoods" >
+    <insert id="insert" parameterType="com.xzsd.pc.hotgoods.entity.HotGoods">
     insert into t_hot_goods_info (hot_goods_id, create_time, create_person, 
       update_time, update_person, version, 
       is_deleted, hot_goods_goods_code, hot_goods_weight
@@ -36,98 +264,7 @@
       #{isDeleted,jdbcType=INTEGER}, #{hotGoodsGoodsCode,jdbcType=VARCHAR}, #{hotGoodsWeight,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.xzsd.pc.hotgoods.entity.HotGoods" >
-    insert into t_hot_goods_info
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="hotGoodsId != null" >
-        hot_goods_id,
-      </if>
-      <if test="createTime != null" >
-        create_time,
-      </if>
-      <if test="createPerson != null" >
-        create_person,
-      </if>
-      <if test="updateTime != null" >
-        update_time,
-      </if>
-      <if test="updatePerson != null" >
-        update_person,
-      </if>
-      <if test="version != null" >
-        version,
-      </if>
-      <if test="isDeleted != null" >
-        is_deleted,
-      </if>
-      <if test="hotGoodsGoodsCode != null" >
-        hot_goods_goods_code,
-      </if>
-      <if test="hotGoodsWeight != null" >
-        hot_goods_weight,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="hotGoodsId != null" >
-        #{hotGoodsId,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createPerson != null" >
-        #{createPerson,jdbcType=VARCHAR},
-      </if>
-      <if test="updateTime != null" >
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updatePerson != null" >
-        #{updatePerson,jdbcType=VARCHAR},
-      </if>
-      <if test="version != null" >
-        #{version,jdbcType=INTEGER},
-      </if>
-      <if test="isDeleted != null" >
-        #{isDeleted,jdbcType=INTEGER},
-      </if>
-      <if test="hotGoodsGoodsCode != null" >
-        #{hotGoodsGoodsCode,jdbcType=VARCHAR},
-      </if>
-      <if test="hotGoodsWeight != null" >
-        #{hotGoodsWeight,jdbcType=INTEGER},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.pc.hotgoods.entity.HotGoods" >
-    update t_hot_goods_info
-    <set >
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createPerson != null" >
-        create_person = #{createPerson,jdbcType=VARCHAR},
-      </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updatePerson != null" >
-        update_person = #{updatePerson,jdbcType=VARCHAR},
-      </if>
-      <if test="version != null" >
-        version = #{version,jdbcType=INTEGER},
-      </if>
-      <if test="isDeleted != null" >
-        is_deleted = #{isDeleted,jdbcType=INTEGER},
-      </if>
-      <if test="hotGoodsGoodsCode != null" >
-        hot_goods_goods_code = #{hotGoodsGoodsCode,jdbcType=VARCHAR},
-      </if>
-      <if test="hotGoodsWeight != null" >
-        hot_goods_weight = #{hotGoodsWeight,jdbcType=INTEGER},
-      </if>
-    </set>
-    where hot_goods_id = #{hotGoodsId,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.hotgoods.entity.HotGoods" >
+    <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.hotgoods.entity.HotGoods">
     update t_hot_goods_info
     set create_time = #{createTime,jdbcType=TIMESTAMP},
       create_person = #{createPerson,jdbcType=VARCHAR},
