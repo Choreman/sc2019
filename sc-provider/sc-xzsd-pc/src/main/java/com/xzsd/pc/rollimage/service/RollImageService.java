@@ -12,10 +12,7 @@ import com.xzsd.pc.image.dao.ImageMapper;
 import com.xzsd.pc.image.entity.Image;
 import com.xzsd.pc.rollimage.dao.RollImageMapper;
 import com.xzsd.pc.rollimage.entity.RollImage;
-import com.xzsd.pc.utils.AppResponse;
-import com.xzsd.pc.utils.AuthUtils;
-import com.xzsd.pc.utils.TencentCOSUtil;
-import com.xzsd.pc.utils.UUIDUtils;
+import com.xzsd.pc.utils.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -53,7 +50,8 @@ public class RollImageService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse addRollImage(RollImage rollImage, String imageId) {
+    public AppResponse addRollImage(RollImage rollImage, String imageId,
+                                    String rollImageBeginDateStr, String rollImageEndDateStr) {
         //判断选择商品编号是否为null或者""
         if (rollImage.getRollImageGoodsCode() == null || "".equals(rollImage.getRollImageGoodsCode())) {
             return AppResponse.bizError("商品编号输入有误，请重新输入");
@@ -63,6 +61,12 @@ public class RollImageService {
         if (count > 0) {
             return AppResponse.Error("已经存在该商品的轮播图，新增失败");
         }
+        //转换时间格式，String --> Date
+        Date rollImageBeginDate = DateFormatUtil.string2date(rollImageBeginDateStr, DateFormatUtil.YYYY_MM_DD);
+        Date rollImageEndDate = DateFormatUtil.string2date(rollImageEndDateStr, DateFormatUtil.YYYY_MM_DD);
+        //设置轮播图时间
+        rollImage.setRollImageBeginDate(rollImageBeginDate);
+        rollImage.setRollImageEndDate(rollImageEndDate);
         //校验开始和结束时间是否符合规定
         if (rollImage.getRollImageBeginDate().equals(rollImage.getRollImageEndDate())) {
             return AppResponse.Error("开始和结束时间不能一致");

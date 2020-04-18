@@ -42,19 +42,16 @@ public class AreaService {
     /**
      * 根据父级编号查询区域名称列表接口
      *
-     * @param pageBean           分页信息
      * @param areaNameParentCode 父级编号
      * @return
      */
-    public AppResponse listAreasByParentCode(PageBean pageBean, String areaNameParentCode) {
+    public AppResponse listAreasByParentCode(String areaNameParentCode) {
         //当传入的父级编号为空字符串""或者"null"时，设置为null
         if ("".equals(areaNameParentCode) || "null".equals(areaNameParentCode)) {
             areaNameParentCode = null;
         }
-        PageHelper.startPage(pageBean.getPageNum(), pageBean.getPageSize());
         List<Area> areas = areaMapper.listAreasByParentCode(areaNameParentCode);
-        PageInfo<Area> pageData = new PageInfo<Area>(areas);
-        return AppResponse.success("查询成功!", pageData);
+        return AppResponse.success("查询成功!", areas);
     }
 
     /**

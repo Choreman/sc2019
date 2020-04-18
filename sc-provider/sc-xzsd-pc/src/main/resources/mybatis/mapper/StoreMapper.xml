@@ -35,62 +35,16 @@
 
     <!-- 门店关联查询店长信息ResultMap -->
     <resultMap id="StoreUserResultMap" type="com.xzsd.pc.store.entity.Store" extends="BaseResultMap">
-        <association property="user" javaType="com.xzsd.pc.user.entity.User">
-            <id column="user_id" property="userId" jdbcType="VARCHAR"/>
-            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-            <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
-            <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
-            <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
-            <result column="version" property="version" jdbcType="INTEGER"/>
-            <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
-            <result column="user_code" property="userCode" jdbcType="VARCHAR"/>
-            <result column="user_login_name" property="userLoginName" jdbcType="VARCHAR"/>
-            <result column="user_password" property="userPassword" jdbcType="VARCHAR"/>
-            <result column="user_role" property="userRole" jdbcType="INTEGER"/>
-            <result column="user_name" property="userName" jdbcType="VARCHAR"/>
-            <result column="user_sex" property="userSex" jdbcType="INTEGER"/>
-            <result column="user_phone" property="userPhone" jdbcType="VARCHAR"/>
-            <result column="user_mail" property="userMail" jdbcType="VARCHAR"/>
-            <result column="user_idcard" property="userIdcard" jdbcType="VARCHAR"/>
-            <result column="user_store_id" property="userStoreId" jdbcType="VARCHAR"/>
-        </association>
+        <result column="user_login_name" property="userLoginName" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- 门店关联查询店长信息关联查询区域名称信息ResultMap -->
-    <resultMap id="StoreUserAreaResultMap" type="com.xzsd.pc.store.entity.Store" extends="BaseResultMap">
-        <!-- 关联店长信息 -->
-        <association property="user" javaType="com.xzsd.pc.user.entity.User">
-            <id column="user_id" property="userId" jdbcType="VARCHAR"/>
-            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-            <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
-            <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
-            <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
-            <result column="version" property="version" jdbcType="INTEGER"/>
-            <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
-            <result column="user_code" property="userCode" jdbcType="VARCHAR"/>
-            <result column="user_login_name" property="userLoginName" jdbcType="VARCHAR"/>
-            <result column="user_password" property="userPassword" jdbcType="VARCHAR"/>
-            <result column="user_role" property="userRole" jdbcType="INTEGER"/>
-            <result column="user_name" property="userName" jdbcType="VARCHAR"/>
-            <result column="user_sex" property="userSex" jdbcType="INTEGER"/>
-            <result column="user_phone" property="userPhone" jdbcType="VARCHAR"/>
-            <result column="user_mail" property="userMail" jdbcType="VARCHAR"/>
-            <result column="user_idcard" property="userIdcard" jdbcType="VARCHAR"/>
-            <result column="user_store_id" property="userStoreId" jdbcType="VARCHAR"/>
-        </association>
-        <!-- 关联查询区域信息 -->
-        <collection property="areaList" ofType="com.xzsd.pc.area.entity.Area">
-            <id column="area_name_id" property="areaNameId" jdbcType="VARCHAR"/>
-            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-            <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
-            <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
-            <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
-            <result column="version" property="version" jdbcType="INTEGER"/>
-            <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
-            <result column="area_name" property="areaName" jdbcType="VARCHAR"/>
-            <result column="area_name_level" property="areaNameLevel" jdbcType="INTEGER"/>
-            <result column="area_name_parent_code" property="areaNameParentCode" jdbcType="VARCHAR"/>
-        </collection>
+    <resultMap id="StoreAreaResultMap" type="com.xzsd.pc.store.entity.Store" extends="BaseResultMap">
+        <!-- 关联区域名称信息 -->
+        <result column="province_name" property="provinceName" jdbcType="VARCHAR"/>
+        <result column="city_name" property="cityName" jdbcType="VARCHAR"/>
+        <result column="region_name" property="regionName" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- 新增门店信息 -->
@@ -207,55 +161,47 @@
     <!-- 根据传入的查询条件查询门店信息列表 -->
     <select id="listStores" resultMap="StoreUserResultMap">
         select
-        <include refid="display_Column_List"/>
-        , t_sys_user_info.user_name
-        , t_sys_user_info.user_login_name
+            <include refid="display_Column_List"/>
+            , t_sys_user_info.user_name
+            , t_sys_user_info.user_login_name
         from
-        t_store_info,
-        t_sys_user_info
+            t_store_info
+        LEFT JOIN t_sys_user_info on t_store_info.store_manager_id = t_sys_user_info.user_id
         where
-        t_store_info.is_deleted = 1
-        and
-        t_store_info.store_manager_id = t_sys_user_info.user_id
-        <if test="store.storeCode != null and store.storeCode != ''">
-            and store_code like CONCAT('%', #{store.storeCode}, '%')
-        </if>
-        <if test="store.storeName != null and store.storeName != ''">
-            and store_name like CONCAT('%', #{store.storeName}, '%')
-        </if>
-        <if test="store.storeProvinceCode != null and store.storeProvinceCode != ''">
-            and store_province_code = #{store.storeProvinceCode}
-        </if>
-        <if test="store.storeCityCode != null and store.storeCityCode != ''">
-            and store_city_code = #{store.storeCityCode}
-        </if>
-        <if test="store.storeRegionCode != null and store.storeRegionCode != ''">
-            and store_region_code = #{store.storeRegionCode}
-        </if>
-        <if test="managerName != null and managerName != ''">
+            t_store_info.is_deleted = 1
+            <if test="store.storeCode != null and store.storeCode != ''">
+                and store_code like CONCAT('%', #{store.storeCode}, '%')
+            </if>
+            <if test="store.storeName != null and store.storeName != ''">
+                and store_name like CONCAT('%', #{store.storeName}, '%')
+            </if>
+            <if test="store.storeProvinceCode != null and store.storeProvinceCode != ''">
+                and store_province_code = #{store.storeProvinceCode}
+            </if>
+            <if test="store.storeCityCode != null and store.storeCityCode != ''">
+                and store_city_code = #{store.storeCityCode}
+            </if>
+            <if test="store.storeRegionCode != null and store.storeRegionCode != ''">
+                and store_region_code = #{store.storeRegionCode}
+            </if>
+            <if test="managerName != null and managerName != ''">
             and t_sys_user_info.user_name like CONCAT('%', #{managerName}, '%')
         </if>
     </select>
 
-    <!-- 根据id查询门店信息关联查询店长信息 -->
-    <select id="findStoresById" parameterType="java.lang.String" resultMap="StoreUserAreaResultMap">
+    <!-- 根据id查询门店信息关联查询区域名称信息 -->
+    <select id="findStoresById" parameterType="java.lang.String" resultMap="StoreAreaResultMap">
         SELECT
             <include refid="display_Column_List"/>
-            , t_sys_user_info.user_name
-            , t_sys_user_info.user_login_name
-            , t_area_name.area_name_id
-            , t_area_name.area_name
-            , t_area_name.area_name_level
+            , (select area_name from t_area_name where t_store_info.store_province_code = area_name_id) as province_name
+            , (select area_name from t_area_name where t_store_info.store_city_code = area_name_id) as city_name
+            , (select area_name from t_area_name where t_store_info.store_region_code = area_name_id) as region_name
         FROM
             t_store_info
-        left join t_sys_user_info on t_store_info.store_manager_id = t_sys_user_info.user_id
-        left JOIN t_area_name on t_area_name.area_name_id in (store_province_code, store_city_code, store_region_code)
         WHERE
             t_store_info.is_deleted = 1
         AND
             t_store_info.store_id = #{storeId}
-        ORDER BY
-            t_area_name.area_name_level
     </select>
 
     <!-- 根据id查询是否包含此条记录 -->

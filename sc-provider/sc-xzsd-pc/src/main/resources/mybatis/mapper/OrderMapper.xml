@@ -1,38 +1,166 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.xzsd.pc.order.dao.OrderMapper" >
-  <resultMap id="BaseResultMap" type="com.xzsd.pc.order.entity.Order" >
-    <id column="order_id" property="orderId" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="create_person" property="createPerson" jdbcType="VARCHAR" />
-    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
-    <result column="version" property="version" jdbcType="INTEGER" />
-    <result column="is_deleted" property="isDeleted" jdbcType="INTEGER" />
-    <result column="order_code" property="orderCode" jdbcType="VARCHAR" />
-    <result column="order_client_code" property="orderClientCode" jdbcType="VARCHAR" />
-    <result column="order_store_code" property="orderStoreCode" jdbcType="VARCHAR" />
-    <result column="order_total_price" property="orderTotalPrice" jdbcType="REAL" />
-    <result column="order_condition" property="orderCondition" jdbcType="INTEGER" />
-    <result column="order_pay_condition" property="orderPayCondition" jdbcType="INTEGER" />
-    <result column="order_pay_time" property="orderPayTime" jdbcType="TIMESTAMP" />
-  </resultMap>
-  <sql id="Base_Column_List" >
-    order_id, create_time, create_person, update_time, update_person, version, is_deleted, 
-    order_code, order_client_code, order_store_code, order_total_price, order_condition, 
-    order_pay_condition, order_pay_time
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select 
-    <include refid="Base_Column_List" />
-    from t_order
-    where order_id = #{orderId,jdbcType=VARCHAR}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+<mapper namespace="com.xzsd.pc.order.dao.OrderMapper">
+    <resultMap id="BaseResultMap" type="com.xzsd.pc.order.entity.Order">
+        <id column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="order_code" property="orderCode" jdbcType="VARCHAR"/>
+        <result column="order_client_code" property="orderClientCode" jdbcType="VARCHAR"/>
+        <result column="order_store_code" property="orderStoreCode" jdbcType="VARCHAR"/>
+        <result column="order_total_price" property="orderTotalPrice" jdbcType="REAL"/>
+        <result column="order_condition" property="orderCondition" jdbcType="INTEGER"/>
+        <result column="order_pay_condition" property="orderPayCondition" jdbcType="INTEGER"/>
+        <result column="order_pay_time" property="orderPayTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+      order_id, create_time, create_person, update_time, update_person, version, is_deleted,
+      order_code, order_client_code, order_store_code, order_total_price, order_condition,
+      order_pay_condition, order_pay_time
+    </sql>
+    <!-- 前台展示字段 -->
+    <sql id="Display_Column_List">
+      order_id, t_order.version, order_code, order_client_code, order_store_code, order_total_price, order_condition,
+      order_pay_condition, order_pay_time
+    </sql>
+
+    <!-- 查询订单信息关联查询订单详情 -->
+    <resultMap id="OrderOrderDetailResultMap" type="com.xzsd.pc.order.entity.Order" extends="BaseResultMap">
+        <!-- 关联查询订单详情 -->
+        <collection property="orderDetailList" ofType="com.xzsd.pc.orderdetail.entity.OrderDetail">
+            <id column="order_detail_id" jdbcType="VARCHAR" property="orderDetailId" />
+            <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+            <result column="create_person" jdbcType="VARCHAR" property="createPerson" />
+            <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+            <result column="update_person" jdbcType="VARCHAR" property="updatePerson" />
+            <result column="version" jdbcType="INTEGER" property="version" />
+            <result column="is_deleted" jdbcType="INTEGER" property="isDeleted" />
+            <result column="order_detail_order_code" jdbcType="VARCHAR" property="orderDetailOrderCode" />
+            <result column="order_detail_goods_code" jdbcType="VARCHAR" property="orderDetailGoodsCode" />
+            <result column="order_detail_goods_num" jdbcType="INTEGER" property="orderDetailGoodsNum" />
+            <result column="order_detail_goods_total_price" jdbcType="REAL" property="orderDetailGoodsTotalPrice" />
+            <result column="order_detail_goods_sale_price" jdbcType="REAL" property="orderDetailGoodsSalePrice" />
+            <result column="order_detail_goods_fix_price" jdbcType="REAL" property="orderDetailGoodsFixPrice" />
+            <result column="order_detail_goods_name" jdbcType="VARCHAR" property="orderDetailGoodsName" />
+            <result column="order_detail_goods_display_code" jdbcType="VARCHAR" property="orderDetailGoodsDisplayCode" />
+            <!-- 关联查询用户编号 -->
+            <result column="user_code" jdbcType="VARCHAR" property="userCode" />
+        </collection>
+    </resultMap>
+
+    <!-- 根据传入条件查询全部订单列表 -->
+    <select id="listOrders" resultType="com.xzsd.pc.order.entity.Order">
+        SELECT
+            <include refid="Display_Column_List"/>
+            ,t_sys_user_info.user_name
+            ,t_sys_user_info.user_phone
+            ,t_store_info.store_code
+        from
+            t_order
+        LEFT JOIN t_sys_user_info on t_order.order_client_code = t_sys_user_info.user_id
+        LEFT JOIN t_store_info on t_order.order_store_code = t_store_info.store_id
+        where
+            t_order.is_deleted = 1
+            <if test="user.userName != null and user.userName != ''">
+                and t_sys_user_info.user_name like CONCAT('%',#{user.userName},'%')
+            </if>
+            <if test="user.userPhone != null and user.userPhone != ''">
+                and t_sys_user_info.user_phone like CONCAT('%',#{user.userPhone},'%')
+            </if>
+            <if test="order.orderCode != null and order.orderCode != ''">
+                and t_order.order_code like CONCAT('%',#{order.orderCode},'%')
+            </if>
+            <if test="order.orderCondition != null and order.orderCondition != ''">
+                and t_order.order_condition = #{order.orderCondition}
+            </if>
+            <if test="orderBiginPayTime != null">
+                and t_order.order_pay_time >= #{orderBiginPayTime}
+            </if>
+            <if test="orderEndPayTime != null">
+                and #{orderEndPayTime} >= t_order.order_pay_time
+            </if>
+    </select>
+
+    <!-- 根据传入条件查询门店所有订单信息 -->
+    <select id="listStoreOrders" resultType="com.xzsd.pc.order.entity.Order">
+        SELECT
+            <include refid="Display_Column_List"/>
+            ,t_sys_user_info.user_name
+            ,t_sys_user_info.user_phone
+            ,t_store_info.store_code
+        from
+            t_order
+        LEFT JOIN t_sys_user_info on t_order.order_client_code = t_sys_user_info.user_id
+        LEFT JOIN t_store_info on t_order.order_store_code = t_store_info.store_id
+        where
+            t_order.is_deleted = 1
+            <if test="user.userName != null and user.userName != ''">
+                and t_sys_user_info.user_name like CONCAT('%',#{user.userName},'%')
+            </if>
+            <if test="user.userPhone != null and user.userPhone != ''">
+                and t_sys_user_info.user_phone like CONCAT('%',#{user.userPhone},'%')
+            </if>
+            <if test="order.orderCode != null and order.orderCode != ''">
+                and t_order.order_code like CONCAT('%',#{order.orderCode},'%')
+            </if>
+            <if test="order.orderCondition != null and order.orderCondition != ''">
+                and t_order.order_condition = #{order.orderCondition}
+            </if>
+            <if test="orderBiginPayTime != null">
+                and t_order.order_pay_time >= #{orderBiginPayTime}
+            </if>
+            <if test="orderEndPayTime != null">
+                and #{orderEndPayTime} >= t_order.order_pay_time
+            </if>
+        AND t_order.order_store_code = (
+                    SELECT
+                        store_id
+                    FROM
+                        t_store_info
+                    WHERE
+                        t_store_info.store_manager_id = #{user.userId}
+            )
+    </select>
+
+    <!-- 根据订单id关联查询订单详情关联查询用户编号 -->
+    <select id="listOrderDetailsById" parameterType="java.lang.String" resultMap="OrderOrderDetailResultMap">
+        SELECT
+            t_order.order_id,
+            t_sys_user_info.user_code,
+            t_order_detail.order_detail_id,
+            t_order_detail.order_detail_order_code,
+            t_order_detail.order_detail_goods_display_code,
+            t_order_detail.order_detail_goods_name,
+            t_order_detail.order_detail_goods_num,
+            t_order_detail.order_detail_goods_total_price,
+            t_order_detail.order_detail_goods_sale_price,
+            t_order_detail.order_detail_goods_fix_price
+        from
+            t_order_detail
+        left join t_order on t_order.order_id = t_order_detail.order_detail_order_code
+        LEFT JOIN t_sys_user_info on t_order.order_client_code = t_sys_user_info.user_id
+        where
+            t_order_detail.is_deleted = 1
+        and
+            t_order.order_id = #{orderId}
+    </select>
+
+    <!-- Mybatis generator自动生成代码 -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_order
+        where order_id = #{orderId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from t_order
     where order_id = #{orderId,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.xzsd.pc.order.entity.Order" >
+    <insert id="insert" parameterType="com.xzsd.pc.order.entity.Order">
     insert into t_order (order_id, create_time, create_person, 
       update_time, update_person, version, 
       is_deleted, order_code, order_client_code, 
@@ -44,143 +172,143 @@
       #{orderStoreCode,jdbcType=VARCHAR}, #{orderTotalPrice,jdbcType=REAL}, #{orderCondition,jdbcType=INTEGER}, 
       #{orderPayCondition,jdbcType=INTEGER}, #{orderPayTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.xzsd.pc.order.entity.Order" >
-    insert into t_order
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="orderId != null" >
-        order_id,
-      </if>
-      <if test="createTime != null" >
-        create_time,
-      </if>
-      <if test="createPerson != null" >
-        create_person,
-      </if>
-      <if test="updateTime != null" >
-        update_time,
-      </if>
-      <if test="updatePerson != null" >
-        update_person,
-      </if>
-      <if test="version != null" >
-        version,
-      </if>
-      <if test="isDeleted != null" >
-        is_deleted,
-      </if>
-      <if test="orderCode != null" >
-        order_code,
-      </if>
-      <if test="orderClientCode != null" >
-        order_client_code,
-      </if>
-      <if test="orderStoreCode != null" >
-        order_store_code,
-      </if>
-      <if test="orderTotalPrice != null" >
-        order_total_price,
-      </if>
-      <if test="orderCondition != null" >
-        order_condition,
-      </if>
-      <if test="orderPayCondition != null" >
-        order_pay_condition,
-      </if>
-      <if test="orderPayTime != null" >
-        order_pay_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="orderId != null" >
-        #{orderId,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createPerson != null" >
-        #{createPerson,jdbcType=VARCHAR},
-      </if>
-      <if test="updateTime != null" >
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updatePerson != null" >
-        #{updatePerson,jdbcType=VARCHAR},
-      </if>
-      <if test="version != null" >
-        #{version,jdbcType=INTEGER},
-      </if>
-      <if test="isDeleted != null" >
-        #{isDeleted,jdbcType=INTEGER},
-      </if>
-      <if test="orderCode != null" >
-        #{orderCode,jdbcType=VARCHAR},
-      </if>
-      <if test="orderClientCode != null" >
-        #{orderClientCode,jdbcType=VARCHAR},
-      </if>
-      <if test="orderStoreCode != null" >
-        #{orderStoreCode,jdbcType=VARCHAR},
-      </if>
-      <if test="orderTotalPrice != null" >
-        #{orderTotalPrice,jdbcType=REAL},
-      </if>
-      <if test="orderCondition != null" >
-        #{orderCondition,jdbcType=INTEGER},
-      </if>
-      <if test="orderPayCondition != null" >
-        #{orderPayCondition,jdbcType=INTEGER},
-      </if>
-      <if test="orderPayTime != null" >
-        #{orderPayTime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.pc.order.entity.Order" >
-    update t_order
-    <set >
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createPerson != null" >
-        create_person = #{createPerson,jdbcType=VARCHAR},
-      </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updatePerson != null" >
-        update_person = #{updatePerson,jdbcType=VARCHAR},
-      </if>
-      <if test="version != null" >
-        version = #{version,jdbcType=INTEGER},
-      </if>
-      <if test="isDeleted != null" >
-        is_deleted = #{isDeleted,jdbcType=INTEGER},
-      </if>
-      <if test="orderCode != null" >
-        order_code = #{orderCode,jdbcType=VARCHAR},
-      </if>
-      <if test="orderClientCode != null" >
-        order_client_code = #{orderClientCode,jdbcType=VARCHAR},
-      </if>
-      <if test="orderStoreCode != null" >
-        order_store_code = #{orderStoreCode,jdbcType=VARCHAR},
-      </if>
-      <if test="orderTotalPrice != null" >
-        order_total_price = #{orderTotalPrice,jdbcType=REAL},
-      </if>
-      <if test="orderCondition != null" >
-        order_condition = #{orderCondition,jdbcType=INTEGER},
-      </if>
-      <if test="orderPayCondition != null" >
-        order_pay_condition = #{orderPayCondition,jdbcType=INTEGER},
-      </if>
-      <if test="orderPayTime != null" >
-        order_pay_time = #{orderPayTime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where order_id = #{orderId,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.order.entity.Order" >
+    <insert id="insertSelective" parameterType="com.xzsd.pc.order.entity.Order">
+        insert into t_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createPerson != null">
+                create_person,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updatePerson != null">
+                update_person,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="orderCode != null">
+                order_code,
+            </if>
+            <if test="orderClientCode != null">
+                order_client_code,
+            </if>
+            <if test="orderStoreCode != null">
+                order_store_code,
+            </if>
+            <if test="orderTotalPrice != null">
+                order_total_price,
+            </if>
+            <if test="orderCondition != null">
+                order_condition,
+            </if>
+            <if test="orderPayCondition != null">
+                order_pay_condition,
+            </if>
+            <if test="orderPayTime != null">
+                order_pay_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">
+                #{orderId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="orderCode != null">
+                #{orderCode,jdbcType=VARCHAR},
+            </if>
+            <if test="orderClientCode != null">
+                #{orderClientCode,jdbcType=VARCHAR},
+            </if>
+            <if test="orderStoreCode != null">
+                #{orderStoreCode,jdbcType=VARCHAR},
+            </if>
+            <if test="orderTotalPrice != null">
+                #{orderTotalPrice,jdbcType=REAL},
+            </if>
+            <if test="orderCondition != null">
+                #{orderCondition,jdbcType=INTEGER},
+            </if>
+            <if test="orderPayCondition != null">
+                #{orderPayCondition,jdbcType=INTEGER},
+            </if>
+            <if test="orderPayTime != null">
+                #{orderPayTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.pc.order.entity.Order">
+        update t_order
+        <set>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                create_person = #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                update_person = #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                version = #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="orderCode != null">
+                order_code = #{orderCode,jdbcType=VARCHAR},
+            </if>
+            <if test="orderClientCode != null">
+                order_client_code = #{orderClientCode,jdbcType=VARCHAR},
+            </if>
+            <if test="orderStoreCode != null">
+                order_store_code = #{orderStoreCode,jdbcType=VARCHAR},
+            </if>
+            <if test="orderTotalPrice != null">
+                order_total_price = #{orderTotalPrice,jdbcType=REAL},
+            </if>
+            <if test="orderCondition != null">
+                order_condition = #{orderCondition,jdbcType=INTEGER},
+            </if>
+            <if test="orderPayCondition != null">
+                order_pay_condition = #{orderPayCondition,jdbcType=INTEGER},
+            </if>
+            <if test="orderPayTime != null">
+                order_pay_time = #{orderPayTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where order_id = #{orderId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.order.entity.Order">
     update t_order
     set create_time = #{createTime,jdbcType=TIMESTAMP},
       create_person = #{createPerson,jdbcType=VARCHAR},

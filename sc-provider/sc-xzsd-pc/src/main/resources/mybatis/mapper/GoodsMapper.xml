@@ -269,39 +269,72 @@
         </trim>
     </insert>
 
-    <!-- 根据查询条件查询商品信息列表 -->
+    <!-- 根据查询条件查询商品信息列表（多层级关联） -->
     <select id="listGoods" parameterType="com.xzsd.pc.goods.entity.Goods" resultMap="GoodsGoodsCateResultMap">
         SELECT
-            <include refid="Display_Column_List"/>
-            , t_goods_cate_info.goods_cate_id
-            , t_goods_cate_info.cate_name
-            , t_goods_cate_info.cate_parent
-            , t_goods_cate_info.cate_level
+        <include refid="Display_Column_List"/>
+        , t_goods_cate_info.goods_cate_id
+        , t_goods_cate_info.cate_name
+        , t_goods_cate_info.cate_parent
+        , t_goods_cate_info.cate_level
         FROM
-            t_goods_info
+        t_goods_info
         left join t_goods_cate_info on t_goods_info.goods_cate_code = t_goods_cate_info.goods_cate_id
         WHERE
-            t_goods_info.is_deleted = 1
-            <if test="goodsName != null and goodsName != ''">
-                and goods_name like CONCAT('%', #{goodsName}, '%')
-            </if>
-            <if test="goodsAdvertisement != null and goodsAdvertisement != ''">
-                and goods_advertisement like CONCAT('%', #{goodsAdvertisement}, '%')
-            </if>
-            <if test="goodsPublisher != null and goodsPublisher != ''">
-                and goods_publisher like CONCAT('%', #{goodsPublisher}, '%')
-            </if>
-            <if test="goodsAuthor != null and goodsAuthor != ''">
-                and goods_author like CONCAT('%', #{goodsAuthor}, '%')
-            </if>
-            <if test="goodsCondition != null">
-                and goods_condition = #{goodsCondition}
-            </if>
-            <if test="goodsCode != null and goodsCode != ''">
-                and goods_code like CONCAT('%', #{goodsCode}, '%')
-            </if>
+        t_goods_info.is_deleted = 1
+        <if test="goodsName != null and goodsName != ''">
+            and goods_name like CONCAT('%', #{goodsName}, '%')
+        </if>
+        <if test="goodsAdvertisement != null and goodsAdvertisement != ''">
+            and goods_advertisement like CONCAT('%', #{goodsAdvertisement}, '%')
+        </if>
+        <if test="goodsPublisher != null and goodsPublisher != ''">
+            and goods_publisher like CONCAT('%', #{goodsPublisher}, '%')
+        </if>
+        <if test="goodsAuthor != null and goodsAuthor != ''">
+            and goods_author like CONCAT('%', #{goodsAuthor}, '%')
+        </if>
+        <if test="goodsCondition != null">
+            and goods_condition = #{goodsCondition}
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and goods_code like CONCAT('%', #{goodsCode}, '%')
+        </if>
         order by
-            t_goods_info.create_time
+        t_goods_info.create_time
+    </select>
+
+    <!-- 根据查询条件查询商品信息列表（平级查询关联信息） -->
+    <select id="listAllGoods" parameterType="com.xzsd.pc.goods.entity.Goods" resultType="com.xzsd.pc.goods.entity.Goods">
+        SELECT
+            <include refid="Display_Column_List"/>
+            , t2.cate_name as second_goods_cate_name
+            , (SELECT cate_name from t_goods_cate_info t1 where t1.goods_cate_id = t2.cate_parent) as first_goods_cate_name
+        FROM
+            t_goods_info
+        left join t_goods_cate_info t2 on t_goods_info.goods_cate_code = t2.goods_cate_id
+        WHERE
+        t_goods_info.is_deleted = 1
+        <if test="goodsName != null and goodsName != ''">
+            and goods_name like CONCAT('%', #{goodsName}, '%')
+        </if>
+        <if test="goodsAdvertisement != null and goodsAdvertisement != ''">
+            and goods_advertisement like CONCAT('%', #{goodsAdvertisement}, '%')
+        </if>
+        <if test="goodsPublisher != null and goodsPublisher != ''">
+            and goods_publisher like CONCAT('%', #{goodsPublisher}, '%')
+        </if>
+        <if test="goodsAuthor != null and goodsAuthor != ''">
+            and goods_author like CONCAT('%', #{goodsAuthor}, '%')
+        </if>
+        <if test="goodsCondition != null">
+            and goods_condition = #{goodsCondition}
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and goods_code like CONCAT('%', #{goodsCode}, '%')
+        </if>
+        order by
+            t_goods_info.create_time DESC
     </select>
 
     <!-- 根据商品id查询商品信息 -->
@@ -393,6 +426,26 @@
         where goods_id = #{goodsId,jdbcType=VARCHAR}
     </update>
 
+    <!-- 根据商品列表信息修改商品列表信息 -->
+    <update id="updateGoodsListCondition" parameterType="com.xzsd.pc.goods.entity.Goods">
+        update
+            t_goods_info
+        set
+            update_time = now(),
+            update_person = #{updatePersonId},
+            version = version + 1,
+            goods_condition = #{goodsCondition}
+            <if test="goodsCondition == 1">
+                , goods_sale_time = now()
+            </if>
+        where
+            goods_id
+        in
+            <foreach item="goodsId" index="index" collection="listIds" open="(" separator="," close=")">
+                #{goodsId}
+            </foreach>
+    </update>
+
     <!-- 删除商品信息（修改字段is_delete状态，并非真正删除） -->
     <update id="deleteGoodsById" parameterType="java.lang.String">
         update
@@ -409,6 +462,22 @@
                 #{goodsId}
             </foreach>
     </update>
+
+    <!-- 根据商品id列表，查询商品信息列表 -->
+    <select id="findGoodsById" resultType="com.xzsd.pc.goods.entity.Goods">
+        select
+            <include refid="Display_Column_List"/>
+        from
+            t_goods_info
+        where
+            is_deleted = 1
+        and
+            goods_id
+        in
+            <foreach item="goodsId" index="index" collection="listIds" open="(" separator="," close=")">
+                #{goodsId}
+            </foreach>
+    </select>
 
     <!-- Mybatis generator自动生成代码 -->
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">

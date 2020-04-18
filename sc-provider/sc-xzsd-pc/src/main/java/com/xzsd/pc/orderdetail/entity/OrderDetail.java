@@ -2,7 +2,6 @@ package com.xzsd.pc.orderdetail.entity;
 
 import com.xzsd.pc.base.entity.BaseEntity;
 
-
 /**
  * 订单明细实体类
  * 继承BaseEntity获取公有属性
@@ -11,7 +10,6 @@ import com.xzsd.pc.base.entity.BaseEntity;
  * @date 2020-03-27
  */
 public class OrderDetail extends BaseEntity {
-
     /**
      * 订单明细唯一标识，主键
      */
@@ -31,7 +29,41 @@ public class OrderDetail extends BaseEntity {
     /**
      * 该明细中购买商品的总价格
      */
-    private Float orderDetailGoodsPrice;
+    private Float orderDetailGoodsTotalPrice;
+    /**
+     * 该明细中购买商品的售价
+     */
+    private Float orderDetailGoodsSalePrice;
+    /**
+     * 该明细中购买商品的定价
+     */
+    private Float orderDetailGoodsFixPrice;
+    /**
+     * 该明细中购买商品的名称
+     */
+    private String orderDetailGoodsName;
+    /**
+     * 该明细中购买商品的展示编号
+     */
+    private String orderDetailGoodsDisplayCode;
+
+    //-----------------关联关系-----------------
+
+    /**
+     * 用户展示的编号（年月日时分秒+2位随机数）
+     */
+    private String userCode;
+
+    //-----------------get和set方法-----------------
+
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
 
     public String getOrderDetailId() {
         return orderDetailId;
@@ -65,11 +97,43 @@ public class OrderDetail extends BaseEntity {
         this.orderDetailGoodsNum = orderDetailGoodsNum;
     }
 
-    public Float getOrderDetailGoodsPrice() {
-        return orderDetailGoodsPrice;
+    public Float getOrderDetailGoodsTotalPrice() {
+        return orderDetailGoodsTotalPrice;
     }
 
-    public void setOrderDetailGoodsPrice(Float orderDetailGoodsPrice) {
-        this.orderDetailGoodsPrice = orderDetailGoodsPrice;
+    public void setOrderDetailGoodsTotalPrice(Float orderDetailGoodsTotalPrice) {
+        this.orderDetailGoodsTotalPrice = orderDetailGoodsTotalPrice;
+    }
+
+    public Float getOrderDetailGoodsSalePrice() {
+        return orderDetailGoodsSalePrice;
+    }
+
+    public void setOrderDetailGoodsSalePrice(Float orderDetailGoodsSalePrice) {
+        this.orderDetailGoodsSalePrice = orderDetailGoodsSalePrice;
+    }
+
+    public Float getOrderDetailGoodsFixPrice() {
+        return orderDetailGoodsFixPrice;
+    }
+
+    public void setOrderDetailGoodsFixPrice(Float orderDetailGoodsFixPrice) {
+        this.orderDetailGoodsFixPrice = orderDetailGoodsFixPrice;
+    }
+
+    public String getOrderDetailGoodsName() {
+        return orderDetailGoodsName;
+    }
+
+    public void setOrderDetailGoodsName(String orderDetailGoodsName) {
+        this.orderDetailGoodsName = orderDetailGoodsName == null ? null : orderDetailGoodsName.trim();
+    }
+
+    public String getOrderDetailGoodsDisplayCode() {
+        return orderDetailGoodsDisplayCode;
+    }
+
+    public void setOrderDetailGoodsDisplayCode(String orderDetailGoodsDisplayCode) {
+        this.orderDetailGoodsDisplayCode = orderDetailGoodsDisplayCode == null ? null : orderDetailGoodsDisplayCode.trim();
     }
 }

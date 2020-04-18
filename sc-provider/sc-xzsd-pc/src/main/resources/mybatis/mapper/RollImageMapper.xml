@@ -30,19 +30,8 @@
     <!-- 查询轮播图信息关联查询图片信息 -->
     <resultMap id="RollImageImageResultMap" type="com.xzsd.pc.rollimage.entity.RollImage" extends="BaseResultMap">
         <!-- 关联查询图片信息 -->
-        <association property="image" javaType="com.xzsd.pc.image.entity.Image">
-            <id column="image_id" property="imageId" jdbcType="VARCHAR"/>
-            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-            <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
-            <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
-            <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
-            <result column="version" property="version" jdbcType="INTEGER"/>
-            <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
-            <result column="image_cate" property="imageCate" jdbcType="INTEGER"/>
-            <result column="image_cate_code" property="imageCateCode" jdbcType="VARCHAR"/>
-            <result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
-            <result column="image_weight" property="imageWeight" jdbcType="INTEGER"/>
-        </association>
+        <result column="image_id" property="imageId" jdbcType="VARCHAR"/>
+        <result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- 根据所选商品编号查询是否已经存在该商品的轮播图 -->
@@ -159,15 +148,15 @@
     <!-- 根据轮播图状态查询轮播图列表 -->
     <select id="listRollImages" parameterType="java.lang.String" resultMap="RollImageImageResultMap">
         SELECT
-        <include refid="Display_Column_List"/>
-        , t_image_info.image_id
-        , t_image_info.image_url
+            <include refid="Display_Column_List"/>
+            , t_image_info.image_id
+            , t_image_info.image_url
         FROM
-        t_roll_image
+            t_roll_image
         left join t_image_info on t_image_info.image_cate_code = t_roll_image.roll_image_id
         WHERE
-        t_roll_image.is_deleted = 1
-        <if test="rollImageCondition != 2">
+            t_roll_image.is_deleted = 1
+            <if test="rollImageCondition != 2">
             and roll_image_condition = #{rollImageCondition}
         </if>
     </select>

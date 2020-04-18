@@ -43,32 +43,13 @@
         <result column="user_idcard" property="userIdcard" jdbcType="VARCHAR"/>
         <result column="user_store_id" property="userStoreId" jdbcType="VARCHAR"/>
         <!-- 关联查询司机信息 -->
-        <association property="driver" javaType="com.xzsd.pc.driver.entity.Driver">
-            <id column="driver_id" property="driverId" jdbcType="VARCHAR"/>
-            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-            <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
-            <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
-            <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
-            <result column="version" property="version" jdbcType="INTEGER"/>
-            <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
-            <result column="driver_client_code" property="driverUserCode" jdbcType="VARCHAR"/>
-            <result column="driver_province_code" property="driverProvinceCode" jdbcType="VARCHAR"/>
-            <result column="driver_city_code" property="driverCityCode" jdbcType="VARCHAR"/>
-            <result column="driver_region_code" property="driverRegionCode" jdbcType="VARCHAR"/>
-            <!-- 关联查询区域信息 -->
-            <collection property="areaList" ofType="com.xzsd.pc.area.entity.Area">
-                <id column="area_name_id" property="areaNameId" jdbcType="VARCHAR"/>
-                <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-                <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
-                <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
-                <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
-                <result column="version" property="version" jdbcType="INTEGER"/>
-                <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
-                <result column="area_name" property="areaName" jdbcType="VARCHAR"/>
-                <result column="area_name_level" property="areaNameLevel" jdbcType="INTEGER"/>
-                <result column="area_name_parent_code" property="areaNameParentCode" jdbcType="VARCHAR"/>
-            </collection>
-        </association>
+        <result column="driver_province_code" property="driverProvinceCode" jdbcType="VARCHAR"/>
+        <result column="driver_city_code" property="driverCityCode" jdbcType="VARCHAR"/>
+        <result column="driver_region_code" property="driverRegionCode" jdbcType="VARCHAR"/>
+        <!-- 关联区域名称信息 -->
+        <result column="province_name" property="provinceName" jdbcType="VARCHAR"/>
+        <result column="city_name" property="cityName" jdbcType="VARCHAR"/>
+        <result column="region_name" property="regionName" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- 新增司机信息 -->
@@ -239,18 +220,16 @@
             t_sys_user_info.user_login_name,
             t_sys_user_info.user_password,
             t_sys_user_info.user_idcard,
-            t_driver_info.*,
-            t_area_name.area_name_id,
-            t_area_name.area_name,
-            t_area_name.area_name_level,
-            t_area_name.area_name_parent_code
+            t_sys_user_info.version,
+            t_driver_info.driver_province_code,
+            t_driver_info.driver_city_code,
+            t_driver_info.driver_region_code,
+            (select area_name from t_area_name where t_driver_info.driver_province_code = area_name_id) as province_name ,
+            (select area_name from t_area_name where t_driver_info.driver_city_code = area_name_id) as city_name ,
+            (select area_name from t_area_name where t_driver_info.driver_region_code = area_name_id) as region_name
         FROM
             t_sys_user_info,
             t_driver_info
-        left join
-            t_area_name
-        on
-            t_area_name.area_name_id in (driver_province_code, driver_city_code, driver_region_code)
         WHERE
             t_sys_user_info.is_deleted = 1
         and
@@ -259,9 +238,6 @@
             t_sys_user_info.user_role = 3
         AND
             t_sys_user_info.user_id = #{userId, jdbcType=VARCHAR}
-        ORDER BY
-            user_name,
-            area_name_level
     </select>
 
     <!-- 根据司机表关联的用户表编号修改司机信息 -->

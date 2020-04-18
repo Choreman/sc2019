@@ -1,6 +1,7 @@
 package com.xzsd.pc.hotgoods.controller;
 
 import com.xzsd.pc.base.bean.PageBean;
+import com.xzsd.pc.dict.entity.Dict;
 import com.xzsd.pc.goods.entity.Goods;
 import com.xzsd.pc.hotgoods.entity.HotGoods;
 import com.xzsd.pc.hotgoods.service.HotGoodsService;
@@ -97,15 +98,31 @@ public class HotGoodsController {
     }
 
     /**
+     * 查询热门位商品展示数量接口
+     *
+     * @return
+     */
+    @PostMapping("/findDisplayNum")
+    public AppResponse findDisplayNum() {
+        try {
+            return hotGoodsService.findDisplayNum();
+        } catch (Exception e) {
+            logger.error("查询热门位商品展示数量异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
      * 修改热门位商品展示数量接口
      *
-     * @param hotGoodsDisplayNum 热门位商品的展示数量
+     * @param dict 要修改的字典信息
      * @return
      */
     @PostMapping("/updateDisplayNum")
-    public AppResponse updateDisplayNum(int hotGoodsDisplayNum) {
+    public AppResponse updateDisplayNum(Dict dict) {
         try {
-            return hotGoodsService.updateDisplayNum(hotGoodsDisplayNum);
+            return hotGoodsService.updateDisplayNum(dict);
         } catch (Exception e) {
             logger.error("修改热门位商品展示数量异常", e);
             System.out.println(e.toString());

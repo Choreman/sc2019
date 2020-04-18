@@ -19,6 +19,7 @@ public interface StoreMapper {
 
     /**
      * 新增门店信息
+     *
      * @param store 门店信息
      * @return 0：新增失败，1：新增成功
      */
@@ -26,14 +27,16 @@ public interface StoreMapper {
 
     /**
      * 根据传入的查询条件查询门店信息列表
-     * @param store 门店信息查询条件
+     *
+     * @param store       门店信息查询条件
      * @param managerName 店长名称查询条件
      * @return
      */
     List<Store> listStores(@Param("store") Store store, @Param("managerName") String managerName);
 
     /**
-     * 根据id查询门店信息关联查询店长信息关联查询区域名称信息
+     * 根据id查询门店信息关联查询区域名称信息
+     *
      * @param storeId 门店id
      * @return
      */
@@ -41,6 +44,7 @@ public interface StoreMapper {
 
     /**
      * 根据id查询门店信息
+     *
      * @param storeId 门店id
      * @return
      */
@@ -48,6 +52,7 @@ public interface StoreMapper {
 
     /**
      * 根据id修改门店信息
+     *
      * @param store 门店信息
      * @return
      */
@@ -55,7 +60,8 @@ public interface StoreMapper {
 
     /**
      * 删除门店信息（修改字段is_delete状态，并非真正删除）
-     * @param listIds 要删除的门店信息列表
+     *
+     * @param listIds        要删除的门店信息列表
      * @param updatePersonId 更新人id
      * @return
      */

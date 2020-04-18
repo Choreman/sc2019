@@ -41,14 +41,24 @@ public interface GoodsMapper {
     int insertSelective(Goods goods);
 
     /**
-     * 根据查询条件查询商品信息列表
+     * 根据查询条件查询商品信息列表（多层级关联）
+     *
      * @param goods 商品信息查询条件
      * @return
      */
     List<Goods> listGoods(Goods goods);
 
     /**
+     * 根据查询条件查询商品信息列表（平级查询关联信息）
+     *
+     * @param goods 商品信息查询条件
+     * @return
+     */
+    List<Goods> listAllGoods(Goods goods);
+
+    /**
      * 根据商品id查询商品信息
+     *
      * @param goodsId 商品id
      * @return
      */
@@ -63,6 +73,18 @@ public interface GoodsMapper {
     int updateByPrimaryKeySelective(Goods goods);
 
     /**
+     * 根据id列表批量修改商品状态
+     *
+     * @param listIds        商品列表
+     * @param goodsCondition 商品状态
+     * @param updatePersonId 更新人id
+     * @return
+     */
+    int updateGoodsListCondition(@Param("listIds") List<String> listIds,
+                                 @Param("goodsCondition") int goodsCondition,
+                                 @Param("updatePersonId") String updatePersonId);
+
+    /**
      * 删除商品信息（修改字段is_delete状态，并非真正删除）
      *
      * @param listIds        要删除的商品信息列表
@@ -70,6 +92,14 @@ public interface GoodsMapper {
      * @return
      */
     int deleteGoodsById(@Param("listIds") List<String> listIds, @Param("updatePersonId") String updatePersonId);
+
+    /**
+     * 根据商品id列表，查询商品信息列表
+     *
+     * @param listIds 商品id列表
+     * @return
+     */
+    List<Goods> findGoodsById(@Param("listIds") List<String> listIds);
 
     int deleteByPrimaryKey(String goodsId);
 

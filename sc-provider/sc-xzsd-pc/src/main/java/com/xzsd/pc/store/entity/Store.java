@@ -64,31 +64,67 @@ public class Store extends BaseEntity {
     //-----------------关联关系-----------------
 
     /**
-     * 一个门店关联一个店长，一对一
+     * 关联区域表的省份名称
      */
-    private User user;
-
+    private String provinceName;
     /**
-     * 一个门店关联三个区域名称，省市区，一对多
+     * 关联区域表的市级名称
      */
-    private List<Area> areaList;
+    private String cityName;
+    /**
+     * 关联区域表的区（县）名称
+     */
+    private String regionName;
+    /**
+     * 门店关联的用户名称
+     */
+    private String userName;
+    /**
+     * 门店关联的用户账号
+     */
+    private String userLoginName;
 
     //-----------------get和set方法-----------------
 
-    public List<Area> getAreaList() {
-        return areaList;
+
+    public String getUserName() {
+        return userName;
     }
 
-    public void setAreaList(List<Area> areaList) {
-        this.areaList = areaList;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public User getUser() {
-        return user;
+    public String getUserLoginName() {
+        return userLoginName;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserLoginName(String userLoginName) {
+        this.userLoginName = userLoginName;
+    }
+
+    public String getProvinceName() {
+        return provinceName;
+    }
+
+    public void setProvinceName(String provinceName) {
+        this.provinceName = provinceName;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
     }
 
     public String getStoreId() {

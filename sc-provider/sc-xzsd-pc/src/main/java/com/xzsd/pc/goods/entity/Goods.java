@@ -102,9 +102,33 @@ public class Goods extends BaseEntity {
      * 一个商品有第一级、第二级分类
      */
     private GoodsCate goodsCate;
+    /**
+     * 商品对应的二级分类名称
+     */
+    private String secondGoodsCateName;
+    /**
+     * 商品对应的一级分类名称
+     */
+    private String firstGoodsCateName;
 
     //-----------------get和set方法-----------------
 
+
+    public String getSecondGoodsCateName() {
+        return secondGoodsCateName;
+    }
+
+    public void setSecondGoodsCateName(String secondGoodsCateName) {
+        this.secondGoodsCateName = secondGoodsCateName;
+    }
+
+    public String getFirstGoodsCateName() {
+        return firstGoodsCateName;
+    }
+
+    public void setFirstGoodsCateName(String firstGoodsCateName) {
+        this.firstGoodsCateName = firstGoodsCateName;
+    }
 
     public GoodsCate getGoodsCate() {
         return goodsCate;

@@ -64,21 +64,81 @@ public class User extends BaseEntity {
      * 一个用户关联一张头像图片，一对一
      */
     private Image image;
-
     /**
-     * 一个司机角色的用户对应一个司机信息，一对一
+     * 关联司机表的省份编号
      */
-    private Driver driver;
+    private String driverProvinceCode;
+    /**
+     * 关联司机表的市级编号
+     */
+    private String driverCityCode;
+    /**
+     * 关联司机表的区（县）编号
+     */
+    private String driverRegionCode;
+    /**
+     * 关联区域表的省份名称
+     */
+    private String provinceName;
+    /**
+     * 关联区域表的市级名称
+     */
+    private String cityName;
+    /**
+     * 关联区域表的区（县）名称
+     */
+    private String regionName;
+
 
     //-----------------get和set方法-----------------
 
 
-    public Driver getDriver() {
-        return driver;
+    public String getDriverProvinceCode() {
+        return driverProvinceCode;
     }
 
-    public void setDriver(Driver driver) {
-        this.driver = driver;
+    public void setDriverProvinceCode(String driverProvinceCode) {
+        this.driverProvinceCode = driverProvinceCode;
+    }
+
+    public String getDriverCityCode() {
+        return driverCityCode;
+    }
+
+    public void setDriverCityCode(String driverCityCode) {
+        this.driverCityCode = driverCityCode;
+    }
+
+    public String getDriverRegionCode() {
+        return driverRegionCode;
+    }
+
+    public void setDriverRegionCode(String driverRegionCode) {
+        this.driverRegionCode = driverRegionCode;
+    }
+
+    public String getProvinceName() {
+        return provinceName;
+    }
+
+    public void setProvinceName(String provinceName) {
+        this.provinceName = provinceName;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
     }
 
     public Image getImage() {

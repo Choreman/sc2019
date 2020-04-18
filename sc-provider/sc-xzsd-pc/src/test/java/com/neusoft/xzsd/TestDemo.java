@@ -39,14 +39,14 @@ public class TestDemo {
     public void testDateFormatUtil() {
         System.out.println(DateFormatUtil.date2string(new Date(), DateFormatUtil.YYYYMMDDHHMMSS));
 
-        String date1Str = "2018-01-01 00:00:00";
+        String date1Str = "2018-01-02 00:00:00";
         String date2Str = "2018-01-02 00:00:00";
 
-        Date date1 = DateFormatUtil.string2date(date1Str, DateFormatUtil.YYYYMMDDHHMMSS);
+        Date date1 = DateFormatUtil.string2date(date1Str, DateFormatUtil.YYYY_MM_DD);
         Date date2 = DateFormatUtil.string2date(date2Str, DateFormatUtil.YYYYMMDDHHMMSS);
 
-        System.out.println(date1.before(date2));
-        System.out.println(date1.equals(date2));
+        System.out.println(date1);
+        System.out.println(date2);
 
     }
 
@@ -59,8 +59,13 @@ public class TestDemo {
 
     @Test
     public void testArrayList() {
-        int[] list1 = {1, 2};
-        boolean contains = IntStream.of(list1).anyMatch(x -> x == 2);
-        System.out.println(contains);
+        List<String> stringList = new ArrayList<>();
+        stringList.add("str1");
+        stringList.add("str2");
+        stringList.add("str3");
+        stringList.removeIf(str -> str.equals("str2"));
+        for (String s : stringList){
+            System.out.println(s);
+        }
     }
 }

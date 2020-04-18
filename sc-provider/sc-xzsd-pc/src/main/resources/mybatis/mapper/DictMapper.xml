@@ -22,6 +22,16 @@
       dict_id, version, dict_key, dict_value, dict_comment
     </sql>
 
+    <!-- 根据key查找字典值 -->
+    <select id="selectDictByKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+            <include refid="Display_Column_List"/>
+        from
+            t_dict_info
+        where
+            dict_key = #{key,jdbcType=VARCHAR}
+    </select>
+
     <!-- 根据字典的key去更新字典的value -->
     <update id="updateDictByKey" parameterType="com.xzsd.pc.dict.entity.Dict">
         update
@@ -32,16 +42,10 @@
             version = version + 1,
             dict_value = #{dict.dictValue}
         where
-            dict_key = #{dict.dictKey}
+            dict_id = #{dict.dictId}
     </update>
 
     <!-- Mybatis generator自动生成代码 -->
-    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
-        select
-        <include refid="Base_Column_List"/>
-        from t_dict_info
-        where dict_id = #{dictId,jdbcType=VARCHAR}
-    </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from t_dict_info
     where dict_id = #{dictId,jdbcType=VARCHAR}

@@ -34,15 +34,17 @@ public class RollImageController {
 
     /**
      * 新增轮播图接口
-     *
      * @param rollImage 轮播图信息
-     * @param imageId   轮播图图片编号
+     * @param imageId 轮播图图片编号
+     * @param rollImageBeginDateStr 轮播图开始时间
+     * @param rollImageEndDateStr 轮播图结束时间
      * @return
      */
     @PostMapping("/addRollImage")
-    public AppResponse addRollImage(RollImage rollImage, String imageId){
+    public AppResponse addRollImage(RollImage rollImage, String imageId,
+                                    String rollImageBeginDateStr, String rollImageEndDateStr){
         try {
-            return rollImageService.addRollImage(rollImage, imageId);
+            return rollImageService.addRollImage(rollImage, imageId, rollImageBeginDateStr, rollImageEndDateStr);
         } catch (Exception e) {
             logger.error("新增轮播图异常", e);
             System.out.println(e.toString());

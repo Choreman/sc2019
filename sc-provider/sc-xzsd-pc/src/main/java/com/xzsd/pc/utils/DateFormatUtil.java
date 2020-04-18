@@ -85,7 +85,7 @@ public class DateFormatUtil {
         DateFormat format = new SimpleDateFormat(formatStr);
         try {
             formateDate = format.parse(dateString);
-        } catch (ParseException e) {
+        } catch (ParseException | NullPointerException e) {
             return null;
         }
         return formateDate;

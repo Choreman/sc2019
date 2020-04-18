@@ -46,9 +46,9 @@ public class AreaController {
      * @return
      */
     @PostMapping("/listAreasByParentCode")
-    public AppResponse listAreasByParentCode(PageBean pageBean, String areaNameParentCode) {
+    public AppResponse listAreasByParentCode(String areaNameParentCode) {
         try {
-            return areaService.listAreasByParentCode(pageBean, areaNameParentCode);
+            return areaService.listAreasByParentCode(areaNameParentCode);
         } catch (Exception e) {
             logger.error("查询父级区域名称列表异常", e);
             System.out.println(e.toString());

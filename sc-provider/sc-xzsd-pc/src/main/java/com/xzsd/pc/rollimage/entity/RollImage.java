@@ -1,7 +1,9 @@
 package com.xzsd.pc.rollimage.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.xzsd.pc.base.entity.BaseEntity;
 import com.xzsd.pc.image.entity.Image;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -33,10 +35,14 @@ public class RollImage extends BaseEntity {
     /**
      * 轮播图的图片起始时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date rollImageBeginDate;
     /**
      * 轮播图的图片终止时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date rollImageEndDate;
     /**
      * 轮播图的图片状态（0：禁用，1：启用）
@@ -46,19 +52,32 @@ public class RollImage extends BaseEntity {
     //-----------------关联关系-----------------
 
     /**
-     * 一张轮播图对应一张图片，一对一
+     * 轮播图对应的图片id
      */
-    private Image image;
+    private String imageId;
+    /**
+     * 轮播图对应的图片url
+     */
+    private String imageUrl;
+
 
     //-----------------get和set方法-----------------
 
 
-    public Image getImage() {
-        return image;
+    public String getImageId() {
+        return imageId;
     }
 
-    public void setImage(Image image) {
-        this.image = image;
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public String getRollImageId() {

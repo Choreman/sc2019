@@ -166,19 +166,26 @@ public class HotGoodsService {
     }
 
     /**
+     * 查询热门位商品展示数量接口
+     *
+     * @return
+     */
+    public AppResponse findDisplayNum() {
+        Dict dict = dictMapper.selectDictByKey("hotGoodsDisplayNum");
+        return AppResponse.success("查询成功", dict);
+    }
+
+    /**
      * 修改热门位商品展示数量接口
      *
-     * @param hotGoodsDisplayNum 热门位商品的展示数量
+     * @param dict 要修改的字典信息
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse updateDisplayNum(int hotGoodsDisplayNum) {
-        if(hotGoodsDisplayNum <= 0){
+    public AppResponse updateDisplayNum(Dict dict) {
+        if(Integer.parseInt(dict.getDictValue()) <= 0){
             return AppResponse.Error("展示数量需要大于0");
         }
-        Dict dict = new Dict();
-        dict.setDictKey("hotGoodsDisplayNum");
-        dict.setDictValue(String.valueOf(hotGoodsDisplayNum));
         int status = dictMapper.updateDictByKey(dict, AuthUtils.getCurrentUserId());
         if (status > 0){
             return AppResponse.success("热门商品展示数量修改成功");

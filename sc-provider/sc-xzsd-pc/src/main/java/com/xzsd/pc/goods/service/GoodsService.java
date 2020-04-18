@@ -17,6 +17,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -41,13 +42,14 @@ public class GoodsService {
 
     /**
      * 新增商品接口
-     * @param goods 商品信息
+     *
+     * @param goods   商品信息
      * @param imageId 商品图片编号
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
     public AppResponse addGoods(Goods goods, String imageId) {
-        if(goods.getGoodsIsbn() == null || "".equals(goods.getGoodsIsbn())){
+        if (goods.getGoodsIsbn() == null || "".equals(goods.getGoodsIsbn())) {
             return AppResponse.Error("商品书号错误，新增失败");
         }
         int count = goodsMapper.countGoodsByIsbn(goods.getGoodsIsbn());
@@ -78,14 +80,14 @@ public class GoodsService {
         //商品新增成功
         if (status > 0) {
             //如果新增商品时有上传商品图片
-            if(imageId != null && !"".equals(imageId)){
+            if (imageId != null && !"".equals(imageId)) {
                 Image image = new Image();
                 image.setImageId(imageId);
                 image.setImageCateCode(goods.getGoodsId());
                 //通过图片的id修改图片的分类编号，把商品表的商品信息和图片表的商品图片关联起来
                 int headImageStatus = imageMapper.updateByPrimaryKeySelective(image);
                 //商品图片和商品信息没有关联成功
-                if(headImageStatus == 0){
+                if (headImageStatus == 0) {
                     //回滚事务
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return AppResponse.bizError("新增商品信息失败，请输入正确的头像地址");
@@ -98,12 +100,13 @@ public class GoodsService {
 
     /**
      * 上传商品图片（需求更改，此方法弃用）
-     * @param goodsImage 商品图片
+     *
+     * @param goodsImage    商品图片
      * @param imageCateCode 图片类别编号，此处是商品编号
      * @return
      */
     @Deprecated
-    private int uploadGoodsImage(MultipartFile goodsImage, String imageCateCode){
+    private int uploadGoodsImage(MultipartFile goodsImage, String imageCateCode) {
         Image image = new Image();
         //设置UUID为主键
         image.setImageId(UUIDUtils.getUUID());
@@ -124,7 +127,7 @@ public class GoodsService {
             try {
                 //上传到指定的文件夹里面
                 url = tencentCOSUtil.uploadImage(goodsImage, TencentCOSUtil.GOODSIMAGEFOLDER);
-            }catch (Exception e){
+            } catch (Exception e) {
                 //表示上传图片出现异常
                 return -1;
             }
@@ -136,12 +139,13 @@ public class GoodsService {
 
     /**
      * 更新商品图片（需求更改，此方法弃用）
-     * @param goodsImage 要更新的商品图片
+     *
+     * @param goodsImage    要更新的商品图片
      * @param imageCateCode 图片分类的编号
      * @return
      */
     @Deprecated
-    private int updateGoodsImage(MultipartFile goodsImage, String imageCateCode){
+    private int updateGoodsImage(MultipartFile goodsImage, String imageCateCode) {
         Image image = new Image();
         //设置图片分类的编号
         image.setImageCateCode(imageCateCode);
@@ -154,12 +158,12 @@ public class GoodsService {
             //根据图片分类的编号修改图片信息
             status = imageMapper.updateByImageCateCodeSelective(image);
             //当传入要修改的商品图片时
-        }else{
+        } else {
             String url = null;
             try {
                 //上传到指定的文件夹里面
                 url = tencentCOSUtil.uploadImage(goodsImage, TencentCOSUtil.GOODSIMAGEFOLDER);
-            }catch (Exception e){
+            } catch (Exception e) {
                 //表示上传图片出现异常
                 return -1;
             }
@@ -173,11 +177,12 @@ public class GoodsService {
 
     /**
      * 查询商品列表接口
+     *
      * @param pageBean 分页信息
-     * @param goods 查询商品信息条件
+     * @param goods    查询商品信息条件
      * @return
      */
-    public AppResponse listGoods(PageBean pageBean, Goods goods){
+    public AppResponse listGoods(PageBean pageBean, Goods goods) {
         PageHelper.startPage(pageBean.getPageNum(), pageBean.getPageSize());
         List<Goods> goodses = goodsMapper.listGoods(goods);
         PageInfo<Goods> pageData = new PageInfo<Goods>(goodses);
@@ -185,13 +190,28 @@ public class GoodsService {
     }
 
     /**
+     * 查询商品列表接口
+     *
+     * @param pageBean 分页信息
+     * @param goods    查询商品信息条件
+     * @return
+     */
+    public AppResponse listAllGoods(PageBean pageBean, Goods goods) {
+        PageHelper.startPage(pageBean.getPageNum(), pageBean.getPageSize());
+        List<Goods> goodses = goodsMapper.listAllGoods(goods);
+        PageInfo<Goods> pageData = new PageInfo<Goods>(goodses);
+        return AppResponse.success("查询成功!", pageData);
+    }
+
+    /**
      * 修改商品信息接口
-     * @param goods 要修改的商品信息
+     *
+     * @param goods   要修改的商品信息
      * @param imageId 要修改的商品图片编号
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse updateGoodsById(Goods goods, String imageId){
+    public AppResponse updateGoodsById(Goods goods, String imageId) {
         //校验商品id不为null或着""
         if (goods.getGoodsId() == null || "".equals(goods.getGoodsId())) {
             return AppResponse.Error("没有该商品信息");
@@ -210,7 +230,7 @@ public class GoodsService {
         int status = goodsMapper.updateByPrimaryKeySelective(goods);
         if (status > 0) {
             //如果修改商品时有上传商品图
-            if(imageId != null && !"".equals(imageId)){
+            if (imageId != null && !"".equals(imageId)) {
                 //把之前的商品图片进行删除
                 imageMapper.deleteImageByImageCateCode(goods.getGoodsId(), AuthUtils.getCurrentUserId());
                 Image image = new Image();
@@ -219,7 +239,7 @@ public class GoodsService {
                 //通过图片的id，把商品表的商品信息和图片表的商品图片关联起来
                 int headImageStatus = imageMapper.updateByPrimaryKeySelective(image);
                 //商品图片和商品信息没有关联成功
-                if(headImageStatus == 0){
+                if (headImageStatus == 0) {
                     //回滚事务
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return AppResponse.bizError("修改商品信息失败，请输入正确的头像地址");
@@ -233,22 +253,35 @@ public class GoodsService {
 
     /**
      * 修改商品状态接口
-     * @param goods 要修改的商品信息
+     *
+     * @param goodsIds       要修改的商品编号（批量修改用逗号分开）
+     * @param goodsCondition 要修改的商品状态
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse updateGoodsConditionById(Goods goods){
-        if(goods.getGoodsId() == null || "".equals(goods.getGoodsId())){
+    public AppResponse updateGoodsConditionById(String goodsIds, int goodsCondition) {
+        if (goodsIds == null || "".equals(goodsIds)) {
             return AppResponse.Error("商品编号输入错误");
         }
-        //当上架商品时
-        if(goods.getGoodsCondition() == 1){
-            //设置上架时间
-            goods.setGoodsSaleTime(new Date());
+        //获取商品id列表
+        List<String> listIds = Arrays.asList(goodsIds.split(","));
+        //当上架商品时，需要剔除库存小于0的商品
+        if (goodsCondition == 1) {
+            //查询商品id列表里的所有商品列表信息
+            List<Goods> goodsList = goodsMapper.findGoodsById(listIds);
+            //初始化商品id列表，可以重新添加剔除后的商品id列表
+            listIds = new ArrayList<String>();
+            //循环查询商品列表
+            for (Goods goods : goodsList) {
+                //当商品还有库存时才符合上架条件
+                if (goods.getGoodsStock() > 0) {
+                    listIds.add(goods.getGoodsId());
+                }
+            }
         }
-        //修改商品状态（上架、下架）
-        int status = goodsMapper.updateByPrimaryKeySelective(goods);
-        if(status > 0){
+        //修改商品信息（上架、下架、上架时间）
+        int status = goodsMapper.updateGoodsListCondition(listIds, goodsCondition, AuthUtils.getCurrentUserId());
+        if (status > 0) {
             return AppResponse.success("商品状态修改成功");
         }
         return AppResponse.bizError("商品状态修改失败");
@@ -256,11 +289,12 @@ public class GoodsService {
 
     /**
      * 删除商品接口
+     *
      * @param goodsIds 商品编号（批量删除用逗号分开）
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse deleteGoodsById(String goodsIds){
+    public AppResponse deleteGoodsById(String goodsIds) {
         //检验要删除的goodsIds是否为null或者""
         if (goodsIds == null || "".equals(goodsIds)) {
             return AppResponse.Error("没有该商品信息，删除失败");
