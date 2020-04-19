@@ -88,10 +88,21 @@ public class User extends BaseEntity {
      * 关联区域表的区（县）名称
      */
     private String regionName;
-
+    /**
+     * 用户头像的存储url地址
+     */
+    private String imageUrl;
 
     //-----------------get和set方法-----------------
 
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public String getDriverProvinceCode() {
         return driverProvinceCode;

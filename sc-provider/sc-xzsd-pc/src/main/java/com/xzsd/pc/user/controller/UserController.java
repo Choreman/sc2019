@@ -29,8 +29,25 @@ public class UserController {
     private UserService userService;
 
     /**
+     * 顶部栏接口
+     *
+     * @return
+     */
+    @PostMapping("/topInfo")
+    public AppResponse topInfo() {
+        try {
+            return userService.topInfo();
+        } catch (Exception e) {
+            logger.error("查询顶部栏信息异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
      * 新增用户接口
-     * @param user 用户信息
+     *
+     * @param user    用户信息
      * @param imageId 上传的头像图片编号
      * @return
      */
@@ -66,7 +83,7 @@ public class UserController {
      * 根据用户信息条件查询用户信息（管理员、店长、司机）
      *
      * @param pageBean 分页信息
-     * @param user 查询的用户信息条件
+     * @param user     查询的用户信息条件
      * @return
      */
     @PostMapping("/listUsers")
@@ -82,6 +99,7 @@ public class UserController {
 
     /**
      * 修改用户信息接口
+     *
      * @param user 要修改的用户信息
      * @return
      */
@@ -98,6 +116,7 @@ public class UserController {
 
     /**
      * 删除用户接口
+     *
      * @param ids 要删除的id（批量删除用逗号分开）
      * @return
      */

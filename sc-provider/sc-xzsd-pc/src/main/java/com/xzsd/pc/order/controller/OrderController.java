@@ -72,6 +72,24 @@ public class OrderController {
         }
     }
 
+    /**
+     * 修改订单状态接口
+     *
+     * @param orderIds       订单编号（批量修改用逗号分开）
+     * @param orderCondition 订单状态
+     * @return
+     */
+    @PostMapping("/updateOrderConditionById")
+    public AppResponse updateOrderConditionById(String orderIds, int orderCondition) {
+        try {
+            return orderService.updateOrderConditionById(orderIds, orderCondition);
+        } catch (Exception e) {
+            logger.error("修改订单状态信息异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
 }
 
 

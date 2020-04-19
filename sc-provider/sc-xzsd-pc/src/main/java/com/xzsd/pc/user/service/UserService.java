@@ -39,6 +39,19 @@ public class UserService {
     private TencentCOSUtil tencentCOSUtil;
 
     /**
+     * 顶部栏接口
+     *
+     * @return
+     */
+    public AppResponse topInfo(){
+        User user = userMapper.findUserById(AuthUtils.getCurrentUserId());
+        if(user != null){
+            return AppResponse.success("顶部栏信息查询成功", user);
+        }
+        return AppResponse.bizError("顶部栏信息查询失败");
+    }
+
+    /**
      * 新增用户接口
      * @param user 用户信息
      * @param imageId 上传的头像图片编号

@@ -13,8 +13,11 @@ import com.xzsd.pc.utils.AppResponse;
 import com.xzsd.pc.utils.AuthUtils;
 import com.xzsd.pc.utils.DateFormatUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -48,7 +51,7 @@ public class OrderService {
     public AppResponse listOrders(PageBean pageBean, User user, Order order,
                                   String orderBeginPayTimeStr, String orderEndPayTimeStr) {
         //根据当前登录用户的id查找用户信息
-        User loginUser = userMapper.findUserById(AuthUtils.getCurrentUserId());
+        User loginUser = userMapper.selectByPrimaryKey(AuthUtils.getCurrentUserId());
         if (loginUser == null) {
             return AppResponse.Error("登录用户信息获取失败");
         }
@@ -86,6 +89,30 @@ public class OrderService {
         }
         List<Order> orders = orderMapper.listOrderDetailsById(orderId);
         return AppResponse.success("查询成功", orders);
+    }
+
+    /**
+     * 修改订单状态接口
+     *
+     * @param orderIds       订单编号（批量修改用逗号分开）
+     * @param orderCondition 订单状态
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public AppResponse updateOrderConditionById(String orderIds, int orderCondition) {
+        //检验要修改的orderIds是否为null或者""
+        if (orderIds == null || "".equals(orderIds)) {
+            return AppResponse.Error("没有该订单信息，修改失败");
+        }
+        List<String> listIds = Arrays.asList(orderIds.split(","));
+        //根据订单id列表批量修改订单状态
+        int count = orderMapper.updateOrderConditionById(listIds, AuthUtils.getCurrentUserId(), orderCondition);
+        if(count != listIds.size()){
+            //回滚事务
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return AppResponse.bizError("所选列表有未存在数据，修改失败");
+        }
+        return AppResponse.success("修改订单状态成功");
     }
 
 }

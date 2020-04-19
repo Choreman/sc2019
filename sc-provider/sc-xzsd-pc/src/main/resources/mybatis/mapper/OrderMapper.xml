@@ -149,6 +149,23 @@
             t_order.order_id = #{orderId}
     </select>
 
+    <!-- 批量修改订单状态信息 -->
+    <update id="updateOrderConditionById" parameterType="java.lang.String">
+        update
+            t_order
+        set
+            update_time = now(),
+            update_person = #{updatePersonId},
+            version = version + 1,
+            order_condition = #{orderCondition}
+        where
+            order_id
+        in
+            <foreach item="orderId" index="index" collection="listIds" open="(" separator="," close=")">
+                #{orderId}
+            </foreach>
+    </update>
+
     <!-- Mybatis generator自动生成代码 -->
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
         select

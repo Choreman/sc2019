@@ -48,6 +48,18 @@ public interface OrderMapper {
      */
     List<Order> listOrderDetailsById(@Param("orderId") String orderId);
 
+    /**
+     * 批量修改订单状态信息
+     *
+     * @param listIds        要修改的订单信息列表
+     * @param updatePersonId 更新人id
+     * @param orderCondition 订单状态
+     * @return
+     */
+    int updateOrderConditionById(@Param("listIds") List<String> listIds,
+                                 @Param("updatePersonId") String updatePersonId,
+                                 @Param("orderCondition") int orderCondition);
+
     int deleteByPrimaryKey(String orderId);
 
     int insert(Order record);

@@ -180,7 +180,26 @@ public class MenuService {
         //管理员登录
         if(userRole == 1){
             //获取所有的菜单管理
-            menus = menuMapper.listMenus();
+            //用户管理
+            menus.add(menuMapper.selectByPrimaryKey("84df3e18781e4a429f71be59ff398564"));
+            //菜单管理
+            menus.add(menuMapper.selectByPrimaryKey("bf4c65bf987f40208e523b2f36684b61"));
+            //商品管理
+            menus.add(menuMapper.selectByPrimaryKey("b76d8707354e4e94a7d22a4af878c63a"));
+            //首页轮播图管理
+            menus.add(menuMapper.selectByPrimaryKey("71ddeb86cb6343d98172ede6f5367046"));
+            //商品分类管理
+            menus.add(menuMapper.selectByPrimaryKey("b1e37dd0cb7442c1be7903e91dcf49d4"));
+            //客户管理
+            menus.add(menuMapper.selectByPrimaryKey("fc0178ce8d3242f786ed65d81def650f"));
+            //订单管理
+            menus.add(menuMapper.selectByPrimaryKey("16c2299d0f6744ba941d1abae2b5ab3c"));
+            //热门位管理
+            menus.add(menuMapper.selectByPrimaryKey("62058671ac4343d0baadf95f6ae9ef8c"));
+            //门店管理
+            menus.add(menuMapper.selectByPrimaryKey("c6f7d04cf7b24315b796e0ba8ba75216"));
+            //司机信息管理
+            menus.add(menuMapper.selectByPrimaryKey("6aa3f4b4cc7a47348788ed6600fa96c3"));
         //店长登录
         }else if(userRole == 2){
             //获取订单管理和客户管理

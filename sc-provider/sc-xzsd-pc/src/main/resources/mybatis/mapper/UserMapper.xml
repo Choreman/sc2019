@@ -28,7 +28,7 @@
   </sql>
     <!-- 用户信息前台展示字段 -->
     <sql id="Display_Column_List">
-    user_id, version, user_code, user_login_name, user_password, user_role, user_name, user_sex, user_phone,
+    user_id, t_sys_user_info.version, user_code, user_login_name, user_password, user_role, user_name, user_sex, user_phone,
     user_mail, user_idcard, user_store_id
   </sql>
 
@@ -294,8 +294,10 @@
     <select id="findUserById" parameterType="java.lang.String" resultType="com.xzsd.pc.user.entity.User">
         select
             <include refid="Display_Column_List"/>
+            , t_image_info.image_url
         from
             t_sys_user_info
+        LEFT JOIN t_image_info on user_id = image_cate_code
         where
             t_sys_user_info.is_deleted = 1
         and

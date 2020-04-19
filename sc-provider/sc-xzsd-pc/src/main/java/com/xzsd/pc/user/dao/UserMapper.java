@@ -35,6 +35,7 @@ public interface UserMapper {
 
     /**
      * 根据用户账号计算用户数（排除用户本身）
+     *
      * @param user 用户账号和用户编号
      * @return
      */
@@ -74,7 +75,8 @@ public interface UserMapper {
     int deleteUserById(@Param("listIds") List<String> listIds, @Param("updatePersonId") String updatePersonId);
 
     /**
-     * 根据id查询用户信息
+     * 根据id查询用户信息关联查询头像信息
+     *
      * @param userId 用户id
      * @return
      */

@@ -39,7 +39,7 @@ public class ClientService {
      */
     public AppResponse listClients(PageBean pageBean, User user){
         //根据当前登录用户的id查找用户信息
-        User loginUser = userMapper.findUserById(AuthUtils.getCurrentUserId());
+        User loginUser = userMapper.selectByPrimaryKey(AuthUtils.getCurrentUserId());
         if(loginUser == null){
             return AppResponse.Error("登录用户信息获取失败");
         }
