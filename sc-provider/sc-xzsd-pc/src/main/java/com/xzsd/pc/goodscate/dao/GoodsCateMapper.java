@@ -68,6 +68,13 @@ public interface GoodsCateMapper {
      */
     int deleteGoodsCateById(@Param("goodsCateId") String goodsCateId, @Param("updatePersonId") String updatePersonId);
 
+    /**
+     * 根据父级编号查询子商品分类信息列表，传入null表示查询第一级商品分类信息
+     *
+     * @return
+     */
+    List<GoodsCate> listGoodsCatesByParentCode(@Param("cateParent") String cateParent);
+
     int deleteByPrimaryKey(String goodsCateId);
 
     int insert(GoodsCate record);

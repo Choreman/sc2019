@@ -165,6 +165,20 @@ public class GoodsCateService {
         return AppResponse.success("商品分类删除成功");
     }
 
+    /**
+     * 根据父级编号查询商品分类列表接口
+     * @param cateParent 父级商品分类编号
+     * @return
+     */
+    public AppResponse listGoodsCatesByParentCode(String cateParent){
+        //当传入的父级编号为空字符串""或者"null"时，设置为null
+        if ("".equals(cateParent) || "null".equals(cateParent)) {
+            cateParent = null;
+        }
+        List<GoodsCate> goodsCates = goodsCateMapper.listGoodsCatesByParentCode(cateParent);
+        return AppResponse.success("查询成功!", goodsCates);
+    }
+
 }
 
 

@@ -226,6 +226,25 @@
             goods_cate_id = #{goodsCateId,jdbcType=VARCHAR}
     </update>
 
+    <!-- 根据父级编号查询子商品分类信息列表，传入null表示查询第一级商品分类信息 -->
+    <select id="listGoodsCatesByParentCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+            <include refid="Display_Column_List"/>
+        from
+            t_goods_cate_info
+        where
+            is_deleted = 1
+        and
+            <choose>
+                <when test="cateParent != null">
+                    cate_parent = #{cateParent}
+                </when>
+                <otherwise>
+                    cate_parent is NULL
+                </otherwise>
+            </choose>
+    </select>
+
     <!-- Mybatis generator自动生成代码 -->
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
         select

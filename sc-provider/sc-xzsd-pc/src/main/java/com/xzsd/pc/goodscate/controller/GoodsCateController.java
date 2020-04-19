@@ -106,6 +106,22 @@ public class GoodsCateController {
         }
     }
 
+    /**
+     * 根据父级编号查询商品分类列表接口
+     * @param cateParent 父级商品分类编号
+     * @return
+     */
+    @PostMapping("/listGoodsCatesByParentCode")
+    public AppResponse listGoodsCatesByParentCode(String cateParent){
+        try {
+            return goodsCateService.listGoodsCatesByParentCode(cateParent);
+        } catch (Exception e) {
+            logger.error("查询父级商品分类信息列表异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
 }
 
 
