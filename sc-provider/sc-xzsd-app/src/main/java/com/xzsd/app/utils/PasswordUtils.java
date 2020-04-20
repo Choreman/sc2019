@@ -1,4 +1,4 @@
-package com.xzsd.pc.utils;
+package com.xzsd.app.utils;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

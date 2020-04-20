@@ -6,6 +6,7 @@ import com.xzsd.pc.image.entity.Image;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 轮播图实体类
@@ -59,10 +60,22 @@ public class RollImage extends BaseEntity {
      * 轮播图对应的图片url
      */
     private String imageUrl;
+    /**
+     * 前端说用来展示预览效果需要传递一个List
+     */
+    private List<Image> imageList;
 
 
     //-----------------get和set方法-----------------
 
+
+    public List<Image> getImageList() {
+        return imageList;
+    }
+
+    public void setImageList(List<Image> imageList) {
+        this.imageList = imageList;
+    }
 
     public String getImageId() {
         return imageId;

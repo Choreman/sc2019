@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.image.dao.ImageMapper">
+    <resultMap id="BaseResultMap" type="com.xzsd.app.image.entity.Image">
+        <id column="image_id" property="imageId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="image_cate" property="imageCate" jdbcType="INTEGER"/>
+        <result column="image_cate_code" property="imageCateCode" jdbcType="VARCHAR"/>
+        <result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
+        <result column="image_weight" property="imageWeight" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    image_id, create_time, create_person, update_time, update_person, version, is_deleted, 
+    image_cate, image_cate_code, image_url, image_weight
+  </sql>
+    <!-- 前台展示字段 -->
+    <sql id="Display_Column_List">
+    image_id, version, image_cate, image_cate_code, image_url, image_weight
+  </sql>
+
+    <!-- 新增图片信息 -->
+    <insert id="insertSelective" parameterType="com.xzsd.app.image.entity.Image">
+        insert into t_image_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="imageId != null">
+                image_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createPerson != null">
+                create_person,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updatePerson != null">
+                update_person,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="imageCate != null">
+                image_cate,
+            </if>
+            <if test="imageCateCode != null">
+                image_cate_code,
+            </if>
+            <if test="imageUrl != null">
+                image_url,
+            </if>
+            <if test="imageWeight != null">
+                image_weight,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="imageId != null">
+                #{imageId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="imageCate != null">
+                #{imageCate,jdbcType=INTEGER},
+            </if>
+            <if test="imageCateCode != null">
+                #{imageCateCode,jdbcType=VARCHAR},
+            </if>
+            <if test="imageUrl != null">
+                #{imageUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="imageWeight != null">
+                #{imageWeight,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+
+
+</mapper>

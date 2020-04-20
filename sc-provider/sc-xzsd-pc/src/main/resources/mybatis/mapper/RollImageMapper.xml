@@ -32,6 +32,10 @@
         <!-- 关联查询图片信息 -->
         <result column="image_id" property="imageId" jdbcType="VARCHAR"/>
         <result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
+        <!-- 前端要预览效果需要传递一个List -->
+        <collection property="imageList" ofType="com.xzsd.pc.image.entity.Image">
+            <result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
+        </collection>
     </resultMap>
 
     <!-- 根据所选商品编号查询是否已经存在该商品的轮播图 -->

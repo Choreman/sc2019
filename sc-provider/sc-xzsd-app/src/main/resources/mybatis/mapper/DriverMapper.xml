@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.driver.dao.DriverMapper">
+    <resultMap id="BaseResultMap" type="com.xzsd.app.driver.entity.Driver">
+        <id column="driver_id" property="driverId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="driver_client_code" property="driverUserCode" jdbcType="VARCHAR"/>
+        <result column="driver_province_code" property="driverProvinceCode" jdbcType="VARCHAR"/>
+        <result column="driver_city_code" property="driverCityCode" jdbcType="VARCHAR"/>
+        <result column="driver_region_code" property="driverRegionCode" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+      driver_id, create_time, create_person, update_time, update_person, version, is_deleted,
+      driver_user_code, driver_province_code, driver_city_code, driver_region_code
+    </sql>
+    <!-- 前台展示字段 -->
+    <sql id="Display_Column_List">
+        driver_id, driver_user_code, driver_province_code, driver_city_code, driver_region_code
+    </sql>
+
+
+
+</mapper>

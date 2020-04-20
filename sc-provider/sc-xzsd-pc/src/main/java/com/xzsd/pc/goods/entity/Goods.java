@@ -110,9 +110,21 @@ public class Goods extends BaseEntity {
      * 商品对应的一级分类名称
      */
     private String firstGoodsCateName;
+    /**
+     * 商品对应的一级分类编号id
+     */
+    private String firstGoodsCateId;
 
     //-----------------get和set方法-----------------
 
+
+    public String getFirstGoodsCateId() {
+        return firstGoodsCateId;
+    }
+
+    public void setFirstGoodsCateId(String firstGoodsCateId) {
+        this.firstGoodsCateId = firstGoodsCateId;
+    }
 
     public String getSecondGoodsCateName() {
         return secondGoodsCateName;

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.store.dao.StoreMapper">
+    <resultMap id="BaseResultMap" type="com.xzsd.app.store.entity.Store">
+        <id column="store_id" property="storeId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="store_code" property="storeCode" jdbcType="VARCHAR"/>
+        <result column="store_name" property="storeName" jdbcType="VARCHAR"/>
+        <result column="store_phone" property="storePhone" jdbcType="VARCHAR"/>
+        <result column="store_manager_id" property="storeManagerId" jdbcType="VARCHAR"/>
+        <result column="store_license_code" property="storeLicenseCode" jdbcType="VARCHAR"/>
+        <result column="store_address" property="storeAddress" jdbcType="VARCHAR"/>
+        <result column="store_invitation_code" property="storeInvitationCode" jdbcType="VARCHAR"/>
+        <result column="store_province_code" property="storeProvinceCode" jdbcType="VARCHAR"/>
+        <result column="store_city_code" property="storeCityCode" jdbcType="VARCHAR"/>
+        <result column="store_region_code" property="storeRegionCode" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    store_id, t_store_info.create_time, t_store_info.create_person, t_store_info.update_time,
+    t_store_info.update_person, t_store_info.version, t_store_info.is_deleted,
+    store_code, store_name, store_phone, store_manager_id, store_license_code, store_address,
+    store_invitation_code, store_province_code, store_city_code, store_region_code
+    </sql>
+    <!-- 门店展示的字段 -->
+    <sql id="display_Column_List">
+    store_id, t_store_info.version, store_code, store_name, store_phone, store_manager_id,
+    store_license_code, store_address, store_invitation_code,
+    store_province_code, store_city_code, store_region_code
+  </sql>
+
+    <!-- 查询门店信息关联查询店长信息关联查询区域名称信息 -->
+    <resultMap id="StoreManagerResultMap" type="com.xzsd.app.store.entity.Store" extends="BaseResultMap">
+        <!-- 关联查询店长信息 -->
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR"/>
+        <!-- 关联查询区域名称信息 -->
+        <result column="province_name" property="provinceName" jdbcType="VARCHAR"/>
+        <result column="city_name" property="cityName" jdbcType="VARCHAR"/>
+        <result column="region_name" property="regionName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 根据司机的用户id获取司机负责的门店列表信息 -->
+    <select id="listDriverStores" parameterType="java.lang.String" resultMap="StoreManagerResultMap">
+        SELECT
+            t_store_info.store_code,
+            t_store_info.store_name,
+            t_store_info.store_address,
+            t_sys_user_info.user_name,
+            t_sys_user_info.user_phone,
+            (SELECT area_name from t_area_name where t_store_info.store_province_code = t_area_name.area_name_id) as province_name,
+            (SELECT area_name from t_area_name where t_store_info.store_city_code = t_area_name.area_name_id) as city_name,
+            (SELECT area_name from t_area_name where t_store_info.store_region_code = t_area_name.area_name_id) as region_name
+        from
+            t_store_info
+        LEFT JOIN t_sys_user_info on t_sys_user_info.user_id = t_store_info.store_manager_id
+        where
+            t_store_info.store_province_code =
+            (SELECT driver_province_code from t_driver_info where driver_user_code = #{userId})
+        and
+            t_store_info.store_city_code =
+            (SELECT driver_city_code from t_driver_info where driver_user_code = #{userId})
+        and
+            t_store_info.store_region_code =
+            (SELECT driver_region_code from t_driver_info where driver_user_code = #{userId})
+    </select>
+
+</mapper>

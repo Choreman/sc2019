@@ -68,4 +68,13 @@ public class TestDemo {
             System.out.println(s);
         }
     }
+
+    @Test
+    public void testPasswordUtils() {
+        String p1 = "123456";
+        String p2 = "123456";
+        System.out.println("p1   " + PasswordUtils.generatePassword(p1));
+        System.out.println("p2   " + PasswordUtils.generatePassword(p2));
+        System.out.println(PasswordUtils.generatePassword(p1).equals(PasswordUtils.generatePassword(p2)));
+    }
 }

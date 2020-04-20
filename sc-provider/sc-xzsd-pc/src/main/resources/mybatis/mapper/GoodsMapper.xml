@@ -310,6 +310,7 @@
             <include refid="Display_Column_List"/>
             , t2.cate_name as second_goods_cate_name
             , (SELECT cate_name from t_goods_cate_info t1 where t1.goods_cate_id = t2.cate_parent) as first_goods_cate_name
+            , (SELECT goods_cate_id from t_goods_cate_info t1 where t1.goods_cate_id = t2.cate_parent) as first_goods_cate_id
         FROM
             t_goods_info
         left join t_goods_cate_info t2 on t_goods_info.goods_cate_code = t2.goods_cate_id

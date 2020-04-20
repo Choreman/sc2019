@@ -297,7 +297,7 @@
             , t_image_info.image_url
         from
             t_sys_user_info
-        LEFT JOIN t_image_info on user_id = image_cate_code
+        LEFT JOIN t_image_info on user_id = image_cate_code and t_image_info.is_deleted = 1
         where
             t_sys_user_info.is_deleted = 1
         and

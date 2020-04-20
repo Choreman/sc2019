@@ -156,6 +156,7 @@
             <if test="goodsCode != null and goodsCode != ''">
                 and t_goods_info.goods_code like CONCAT('%',#{goodsCode},'%')
             </if>
+            order by hot_goods_weight
     </select>
 
     <!-- 根据id修改热门位商品信息 -->
