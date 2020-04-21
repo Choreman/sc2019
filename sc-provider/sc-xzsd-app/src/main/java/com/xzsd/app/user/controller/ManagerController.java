@@ -1,6 +1,7 @@
 package com.xzsd.app.user.controller;
 
 import com.xzsd.app.base.bean.PageBean;
+import com.xzsd.app.order.entity.Order;
 import com.xzsd.app.user.service.ManagerService;
 import com.xzsd.app.utils.AppResponse;
 import org.slf4j.Logger;
@@ -38,7 +39,41 @@ public class ManagerController {
         try {
             return managerService.listStoreOrders(pageBean, userId, orderCondition);
         } catch (Exception e) {
-            logger.error("查询个人信息异常", e);
+            logger.error("查询门店订单信息异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
+     * 修改店铺订单状态接口
+     *
+     * @param order 包含订单id、订单状态、版本号
+     * @return
+     */
+    @PostMapping("/updateStoreOrderCondition")
+    public AppResponse updateStoreOrderCondition(Order order) {
+        try {
+            return managerService.updateStoreOrderCondition(order);
+        } catch (Exception e) {
+            logger.error("修改门店订单状态异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
+     * 查询店铺订单详情接口
+     *
+     * @param orderId 订单编号
+     * @return
+     */
+    @PostMapping("/findStoreOrderDetail")
+    public AppResponse findStoreOrderDetail(String orderId) {
+        try {
+            return managerService.findStoreOrderDetail(orderId);
+        } catch (Exception e) {
+            logger.error("查询门店订单详情异常", e);
             System.out.println(e.toString());
             return AppResponse.bizError("出现异常");
         }

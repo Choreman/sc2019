@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xzsd.app.orderdetail.dao.OrderDetailMapper">
+  <resultMap id="BaseResultMap" type="com.xzsd.app.orderdetail.dao.OrderDetailMapper">
+    <id column="order_detail_id" jdbcType="VARCHAR" property="orderDetailId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_person" jdbcType="VARCHAR" property="createPerson" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_person" jdbcType="VARCHAR" property="updatePerson" />
+    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="is_deleted" jdbcType="INTEGER" property="isDeleted" />
+    <result column="order_detail_order_code" jdbcType="VARCHAR" property="orderDetailOrderCode" />
+    <result column="order_detail_goods_code" jdbcType="VARCHAR" property="orderDetailGoodsCode" />
+    <result column="order_detail_goods_num" jdbcType="INTEGER" property="orderDetailGoodsNum" />
+    <result column="order_detail_goods_total_price" jdbcType="REAL" property="orderDetailGoodsTotalPrice" />
+    <result column="order_detail_goods_sale_price" jdbcType="REAL" property="orderDetailGoodsSalePrice" />
+    <result column="order_detail_goods_fix_price" jdbcType="REAL" property="orderDetailGoodsFixPrice" />
+    <result column="order_detail_goods_name" jdbcType="VARCHAR" property="orderDetailGoodsName" />
+    <result column="order_detail_goods_display_code" jdbcType="VARCHAR" property="orderDetailGoodsDisplayCode" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    order_detail_id, create_time, create_person, update_time, update_person, version, 
+    is_deleted, order_detail_order_code, order_detail_goods_code, order_detail_goods_num, 
+    order_detail_goods_total_price, order_detail_goods_sale_price, order_detail_goods_fix_price, 
+    order_detail_goods_name, order_detail_goods_display_code
+  </sql>
+
+
+
+</mapper>

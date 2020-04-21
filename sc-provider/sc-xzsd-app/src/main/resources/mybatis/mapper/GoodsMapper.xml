@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.goods.dao.GoodsMapper">
+    <resultMap id="BaseResultMap" type="com.xzsd.app.goods.entity.Goods">
+        <id column="goods_id" property="goodsId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="goods_code" property="goodsCode" jdbcType="VARCHAR"/>
+        <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
+        <result column="goods_fix_price" property="goodsFixPrice" jdbcType="REAL"/>
+        <result column="goods_sale_price" property="goodsSalePrice" jdbcType="REAL"/>
+        <result column="goods_stock" property="goodsStock" jdbcType="INTEGER"/>
+        <result column="goods_sale_sum" property="goodsSaleSum" jdbcType="INTEGER"/>
+        <result column="goods_cate_code" property="goodsCateCode" jdbcType="VARCHAR"/>
+        <result column="goods_advertisement" property="goodsAdvertisement" jdbcType="VARCHAR"/>
+        <result column="goods_description" property="goodsDescription" jdbcType="VARCHAR"/>
+        <result column="goods_condition" property="goodsCondition" jdbcType="INTEGER"/>
+        <result column="goods_sale_time" property="goodsSaleTime" jdbcType="TIMESTAMP"/>
+        <result column="goods_visit_num" property="goodsVisitNum" jdbcType="INTEGER"/>
+        <result column="goods_business" property="goodsBusiness" jdbcType="VARCHAR"/>
+        <result column="goods_isbn" property="goodsIsbn" jdbcType="VARCHAR"/>
+        <result column="goods_publisher" property="goodsPublisher" jdbcType="VARCHAR"/>
+        <result column="goods_author" property="goodsAuthor" jdbcType="VARCHAR"/>
+        <result column="goods_star" property="goodsStar" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+      goods_id, create_time, create_person, update_time, update_person, version, is_deleted,
+      goods_code, goods_name, goods_fix_price, goods_sale_price, goods_stock,
+      goods_sale_sum, goods_cate_code, goods_advertisement, goods_description, goods_condition,
+      goods_sale_time, goods_visit_num, goods_business, goods_isbn, goods_publisher, goods_author,
+      goods_star
+    </sql>
+    <!-- 前台展示字段 -->
+    <sql id="Display_Column_List">
+      goods_id, t_goods_info.version, goods_code, goods_name, goods_fix_price, goods_sale_price, goods_stock,
+      goods_sale_sum, goods_cate_code, goods_advertisement, goods_description, goods_condition,
+      goods_sale_time, goods_visit_num, goods_business, goods_isbn, goods_publisher, goods_author,
+      goods_star
+    </sql>
+
+
+
+</mapper>

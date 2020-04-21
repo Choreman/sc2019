@@ -51,7 +51,8 @@
     <!-- 根据id查询用户信息关联查询头像和门店和区域名称信息 -->
     <select id="findUserById" parameterType="java.lang.String" resultMap="UserImageStoreAreaResultMap">
         select
-            t_sys_user_info.user_name
+            t_sys_user_info.user_id
+            , t_sys_user_info.user_name
             , t_sys_user_info.user_role
             , t_sys_user_info.user_phone
             , t_image_info.image_url

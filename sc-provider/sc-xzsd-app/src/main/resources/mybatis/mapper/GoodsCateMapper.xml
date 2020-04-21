@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.goodscate.dao.GoodsCateMapper">
+    <resultMap id="BaseResultMap" type="com.xzsd.app.goodscate.entity.GoodsCate">
+        <id column="goods_cate_id" property="goodsCateId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="cate_name" property="cateName" jdbcType="VARCHAR"/>
+        <result column="cate_level" property="cateLevel" jdbcType="INTEGER"/>
+        <result column="cate_parent" property="cateParent" jdbcType="VARCHAR"/>
+        <result column="cate_comment" property="cateComment" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        goods_cate_id, create_time, create_person, update_time, update_person, version, is_deleted,
+        cate_name, cate_level, cate_parent, cate_comment
+    </sql>
+    <!-- 前台展示字段 -->
+    <sql id="Display_Column_List">
+        goods_cate_id, version, cate_name, cate_level, cate_parent, cate_comment
+    </sql>
+
+
+
+</mapper>
