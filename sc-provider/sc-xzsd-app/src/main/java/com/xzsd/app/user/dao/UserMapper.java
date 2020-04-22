@@ -17,12 +17,19 @@ import java.util.List;
 public interface UserMapper {
 
     /**
-     * 根据id查询用户信息关联查询头像和门店和区域名称信息
+     * 根据id查询用户信息关联查询头像和门店和区域名称信息（店长、司机）
      *
      * @param userId 用户id
      * @return
      */
     User findUserById(@Param("userId") String userId);
+
+    /**
+     * 根据id查询客户信息关联查询头像和门店和区域名称信息（客户）
+     * @param userId 客户id
+     * @return
+     */
+    User findClientById(@Param("userId") String userId);
 
     /**
      * 根据id查询用户信息

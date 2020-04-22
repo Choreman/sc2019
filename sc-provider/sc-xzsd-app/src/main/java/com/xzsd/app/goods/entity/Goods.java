@@ -113,9 +113,21 @@ public class Goods extends BaseEntity {
      * 商品对应的一级分类编号id
      */
     private String firstGoodsCateId;
+    /**
+     * 商品图片
+     */
+    private String imageUrl;
 
     //-----------------get和set方法-----------------
 
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public String getFirstGoodsCateId() {
         return firstGoodsCateId;

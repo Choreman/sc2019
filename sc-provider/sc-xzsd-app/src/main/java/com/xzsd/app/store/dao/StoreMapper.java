@@ -24,4 +24,12 @@ public interface StoreMapper {
      */
     List<Store> listDriverStores(String userId);
 
+    /**
+     * 根据门店邀请码查询门店信息
+     *
+     * @param storeInvitationCode 门店邀请码
+     * @return
+     */
+    Store selectStoreByStoreInvitationCode(String storeInvitationCode);
+
 }

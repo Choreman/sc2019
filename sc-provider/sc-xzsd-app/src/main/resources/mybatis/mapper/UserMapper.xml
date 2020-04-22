@@ -42,13 +42,9 @@
         <result column="store_name" property="storeName" jdbcType="VARCHAR"/>
         <result column="store_invitation_code" property="storeInvitationCode" jdbcType="VARCHAR"/>
         <result column="store_address" property="storeAddress" jdbcType="VARCHAR"/>
-        <!-- 关联查询区域名称信息 -->
-        <result column="province_name" property="provinceName" jdbcType="VARCHAR"/>
-        <result column="city_name" property="cityName" jdbcType="VARCHAR"/>
-        <result column="region_name" property="regionName" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <!-- 根据id查询用户信息关联查询头像和门店和区域名称信息 -->
+    <!-- 根据id查询用户信息关联查询头像和门店和区域名称信息（店长、司机） -->
     <select id="findUserById" parameterType="java.lang.String" resultMap="UserImageStoreAreaResultMap">
         select
             t_sys_user_info.user_id
@@ -60,14 +56,44 @@
             , t_store_info.store_id
             , t_store_info.store_name
             , t_store_info.store_invitation_code
-            , t_store_info.store_address
-            , (SELECT area_name from t_area_name where t_store_info.store_province_code = t_area_name.area_name_id) as province_name
-            , (SELECT area_name from t_area_name where t_store_info.store_city_code = t_area_name.area_name_id) as city_name
-            , (SELECT area_name from t_area_name where t_store_info.store_region_code = t_area_name.area_name_id) as region_name
+            , CONCAT(
+				(SELECT area_name from t_area_name where t_store_info.store_province_code = t_area_name.area_name_id),
+				(SELECT area_name from t_area_name where t_store_info.store_city_code = t_area_name.area_name_id),
+                (SELECT area_name from t_area_name where t_store_info.store_region_code = t_area_name.area_name_id),
+				t_store_info.store_address
+			) as store_address
         from
             t_sys_user_info
         LEFT JOIN t_image_info on t_sys_user_info.user_id = t_image_info.image_cate_code and t_image_info.is_deleted = 1
         LEFT JOIN t_store_info on t_sys_user_info.user_id = t_store_info.store_manager_id and t_store_info.is_deleted = 1
+        where
+            t_sys_user_info.is_deleted = 1
+        and
+            user_id = #{userId,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据id查询客户信息关联查询头像和门店和区域名称信息（客户） -->
+    <select id="findClientById" parameterType="java.lang.String" resultMap="UserImageStoreAreaResultMap">
+        select
+            t_sys_user_info.user_id
+            , t_sys_user_info.user_name
+            , t_sys_user_info.user_role
+            , t_sys_user_info.user_phone
+            , t_image_info.image_url
+            , t_image_info.image_id
+            , t_store_info.store_id
+            , t_store_info.store_name
+            , t_store_info.store_invitation_code
+            , CONCAT(
+				(SELECT area_name from t_area_name where t_store_info.store_province_code = t_area_name.area_name_id),
+				(SELECT area_name from t_area_name where t_store_info.store_city_code = t_area_name.area_name_id),
+                (SELECT area_name from t_area_name where t_store_info.store_region_code = t_area_name.area_name_id),
+				t_store_info.store_address
+			) as store_address
+        from
+            t_sys_user_info
+        LEFT JOIN t_image_info on t_sys_user_info.user_id = t_image_info.image_cate_code and t_image_info.is_deleted = 1
+        LEFT JOIN t_store_info on t_sys_user_info.user_store_id = t_store_info.store_id and t_store_info.is_deleted = 1
         where
             t_sys_user_info.is_deleted = 1
         and

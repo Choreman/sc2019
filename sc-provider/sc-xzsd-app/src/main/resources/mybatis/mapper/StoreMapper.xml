@@ -69,4 +69,16 @@
             (SELECT driver_region_code from t_driver_info where driver_user_code = #{userId})
     </select>
 
+    <!-- 根据门店邀请码查询门店信息 -->
+    <select id="selectStoreByStoreInvitationCode" parameterType="java.lang.String" resultType="com.xzsd.app.store.entity.Store">
+        select
+            <include refid="display_Column_List"/>
+        from
+            t_store_info
+        where
+            is_deleted = 1
+        and
+            store_invitation_code = #{storeInvitationCode}
+    </select>
+
 </mapper>

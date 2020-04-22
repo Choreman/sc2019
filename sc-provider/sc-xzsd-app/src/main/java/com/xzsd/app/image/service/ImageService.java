@@ -73,9 +73,11 @@ public class ImageService {
         image.setImageUrl(url);
         //设置基本属性
         image.setCreateTime(new Date());
-        image.setCreatePerson(AuthUtils.getCurrentUserId());
+        //由于上传头像时无需登录，所以获取不到登录人的id，此处随意填写
+        image.setCreatePerson("1");
         image.setUpdateTime(new Date());
-        image.setUpdatePerson(AuthUtils.getCurrentUserId());
+        //由于上传头像时无需登录，所以获取不到登录人的id，此处随意填写
+        image.setUpdatePerson("1");
         image.setIsDeleted(1);
         image.setVersion(1);
 

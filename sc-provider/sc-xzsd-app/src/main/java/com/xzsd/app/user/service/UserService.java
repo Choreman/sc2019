@@ -32,16 +32,17 @@ public class UserService {
      * @return
      */
     public AppResponse findUser() {
-        User user = userMapper.findUserById(AuthUtils.getCurrentUserId());
+        User user = userMapper.selectByPrimaryKey(AuthUtils.getCurrentUserId());
         if (user != null) {
-            //当查询的是店长个人信息时，拼接门店的省市区地址
-            String address = user.getStoreAddress() == null ? "" : user.getStoreAddress();
-            String provinceName = user.getProvinceName() == null ? "" : user.getProvinceName();
-            String cityName = user.getCityName() == null ? "" : user.getCityName();
-            String regionName = user.getRegionName() == null ? "" : user.getRegionName();
-            address = provinceName + cityName + regionName + address;
-            user.setStoreAddress(address);
-            return AppResponse.success("个人信息查询成功", user);
+            User userInfo = null;
+            //当查询的是店长或者司机个人信息时
+            if(user.getUserRole() == 2 || user.getUserRole() == 3){
+                 userInfo = userMapper.findUserById(AuthUtils.getCurrentUserId());
+            //当查询的是客户信息时
+            }else if(user.getUserRole() == 4){
+                userInfo = userMapper.findClientById(AuthUtils.getCurrentUserId());
+            }
+            return AppResponse.success("个人信息查询成功", userInfo);
         }
         return AppResponse.bizError("个人信息查询失败");
     }

@@ -16,6 +16,11 @@ import java.util.List;
 @Mapper
 public interface GoodsMapper {
 
-
+    /**
+     * 根据商品id查询商品详情关联查询商品图片
+     * @param goodsId
+     * @return
+     */
+    Goods findGoodsById(String goodsId);
 
 }

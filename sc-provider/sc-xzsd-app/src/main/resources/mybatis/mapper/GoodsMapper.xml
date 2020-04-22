@@ -42,6 +42,23 @@
       goods_star
     </sql>
 
-
+    <!-- 根据商品id查询商品详情关联查询商品图片 -->
+    <select id="findGoodsById" parameterType="java.lang.String" resultType="com.xzsd.app.goods.entity.Goods">
+        select
+            t_goods_info.goods_id,
+            t_goods_info.goods_name,
+            t_goods_info.goods_description,
+            t_goods_info.goods_sale_price,
+            t_goods_info.goods_fix_price,
+            t_goods_info.goods_stock,
+            t_image_info.image_url
+        FROM
+            t_goods_info
+        LEFT JOIN t_image_info on t_image_info.image_cate_code = t_goods_info.goods_id and t_image_info.is_deleted = 1
+        WHERE
+            t_goods_info.is_deleted = 1
+        and
+            goods_id = #{goodsId}
+    </select>
 
 </mapper>

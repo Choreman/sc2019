@@ -24,4 +24,12 @@ public interface ImageMapper {
      */
     int insertSelective(Image image);
 
+    /**
+     * 根据图片的id修改图片的分类编号
+     *
+     * @param image 包含图片的id和图片分类编号
+     * @return
+     */
+    int updateByPrimaryKeySelective(Image image);
+
 }
