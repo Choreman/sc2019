@@ -42,16 +42,35 @@
       goods_star
     </sql>
 
+    <!-- 查询商品分类关联查询商品信息关联查询商品图片 -->
+    <resultMap id="GoodsCateGoodsImageResultMap" type="com.xzsd.app.goodscate.entity.GoodsCate">
+        <id column="goods_cate_id" property="goodsCateId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="cate_name" property="cateName" jdbcType="VARCHAR"/>
+        <result column="cate_level" property="cateLevel" jdbcType="INTEGER"/>
+        <result column="cate_parent" property="cateParent" jdbcType="VARCHAR"/>
+        <result column="cate_comment" property="cateComment" jdbcType="VARCHAR"/>
+        <!-- 关联查询商品信息 -->
+        <collection property="goodsList" ofType="com.xzsd.app.goods.entity.Goods">
+            <id column="goods_id" property="goodsId" jdbcType="VARCHAR"/>
+            <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
+            <result column="goods_sale_price" property="goodsSalePrice" jdbcType="REAL"/>
+            <result column="goods_fix_price" property="goodsFixPrice" jdbcType="REAL"/>
+            <!-- 关联查询商品图片 -->
+            <result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+
     <!-- 根据商品id查询商品详情关联查询商品图片 -->
     <select id="findGoodsById" parameterType="java.lang.String" resultType="com.xzsd.app.goods.entity.Goods">
         select
-            t_goods_info.goods_id,
-            t_goods_info.goods_name,
-            t_goods_info.goods_description,
-            t_goods_info.goods_sale_price,
-            t_goods_info.goods_fix_price,
-            t_goods_info.goods_stock,
-            t_image_info.image_url
+            <include refid="Display_Column_List"/>
+            , t_image_info.image_url
         FROM
             t_goods_info
         LEFT JOIN t_image_info on t_image_info.image_cate_code = t_goods_info.goods_id and t_image_info.is_deleted = 1
@@ -60,5 +79,38 @@
         and
             goods_id = #{goodsId}
     </select>
+
+    <!-- 根据一级商品分类编号查询一级分类下所有二级分类的所有商品列表接口 -->
+    <select id="listGoodsByGoodsCateCode" parameterType="java.lang.String" resultMap="GoodsCateGoodsImageResultMap">
+        SELECT
+            t_goods_cate_info.goods_cate_id,
+            t_goods_cate_info.cate_name,
+            t_goods_info.goods_id,
+            t_goods_info.goods_name,
+            t_goods_info.goods_sale_price,
+            t_goods_info.goods_fix_price,
+            t_image_info.image_url
+        from
+            t_goods_cate_info
+        LEFT JOIN t_goods_info on t_goods_cate_info.goods_cate_id = t_goods_info.goods_cate_code and t_goods_info.is_deleted = 1
+        LEFT JOIN t_image_info on t_image_info.image_cate_code = t_goods_info.goods_id and t_image_info.is_deleted = 1
+        where
+            t_goods_cate_info.is_deleted = 1
+        AND
+            t_goods_cate_info.cate_parent = #{goodsCateCode}
+    </select>
+
+    <!-- 根据id修改商品信息 -->
+    <update id="updateGoodsStockById">
+        update
+            t_goods_info
+        set
+            update_time = now(),
+            update_person = #{updatePersonId},
+            version = version + 1,
+            goods_stock = #{goodsStock}
+        where
+            goods_id = #{goodsId,jdbcType=VARCHAR}
+    </update>
 
 </mapper>

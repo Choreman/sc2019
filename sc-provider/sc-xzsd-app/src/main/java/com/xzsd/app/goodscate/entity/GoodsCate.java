@@ -1,6 +1,7 @@
 package com.xzsd.app.goodscate.entity;
 
 import com.xzsd.app.base.entity.BaseEntity;
+import com.xzsd.app.goods.entity.Goods;
 
 import java.util.List;
 
@@ -47,9 +48,21 @@ public class GoodsCate extends BaseEntity {
      * 自关联，一对一
      */
     private GoodsCate parentGoodsCate;
+    /**
+     * 一个二级分类下面有多个商品信息，一对多
+     */
+    private List<Goods> goodsList;
 
    //-----------------get和set方法-----------------
 
+
+    public List<Goods> getGoodsList() {
+        return goodsList;
+    }
+
+    public void setGoodsList(List<Goods> goodsList) {
+        this.goodsList = goodsList;
+    }
 
     public GoodsCate getParentGoodsCate() {
         return parentGoodsCate;

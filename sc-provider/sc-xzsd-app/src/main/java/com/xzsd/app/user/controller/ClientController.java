@@ -1,5 +1,9 @@
 package com.xzsd.app.user.controller;
 
+import com.xzsd.app.base.bean.PageBean;
+import com.xzsd.app.order.entity.Order;
+import com.xzsd.app.orderdetail.entity.OrderDetail;
+import com.xzsd.app.shoppingcart.entity.ShoppingCart;
 import com.xzsd.app.user.entity.User;
 import com.xzsd.app.user.service.ClientService;
 import com.xzsd.app.utils.AppResponse;
@@ -103,6 +107,129 @@ public class ClientController {
             return clientService.listHotGoods();
         } catch (Exception e) {
             logger.error("查询热门商品列表异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
+     * 根据父级商品编号查询商品分类列表接口
+     *
+     * @param cateParent 父级商品分类编号
+     * @return
+     */
+    @PostMapping("/listGoodsCatesByParentCode")
+    public AppResponse listGoodsCatesByParentCode(String cateParent) {
+        try {
+            return clientService.listGoodsCatesByParentCode(cateParent);
+        } catch (Exception e) {
+            logger.error("根据父级商品编号查询商品分类信息异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
+     * 根据一级商品分类编号查询一级分类下所有二级分类的所有商品列表接口
+     *
+     * @param goodsCateCode 一级商品分类编号
+     * @return
+     */
+    @PostMapping("/listGoodsByGoodsCateCode")
+    public AppResponse listGoodsByGoodsCateCode(String goodsCateCode) {
+        try {
+            return clientService.listGoodsByGoodsCateCode(goodsCateCode);
+        } catch (Exception e) {
+            logger.error("根据商品分类查询商品列表异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
+     * 新增购物车商品接口
+     *
+     * @param shoppingCart 购物车信息（包含商品编号、添加客户信息、商品数量）
+     * @return
+     */
+    @PostMapping("/addShoppingCart")
+    public AppResponse addShoppingCart(ShoppingCart shoppingCart) {
+        try {
+            return clientService.addShoppingCart(shoppingCart);
+        } catch (Exception e) {
+            logger.error("新增商品购物车异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
+     * 查询购物车列表接口
+     *
+     * @param pageBean               分页信息
+     * @param shoppingCartClientCode 购物车所属的客户编号
+     * @return
+     */
+    @PostMapping("/listShoppingCartsById")
+    public AppResponse listShoppingCartsById(PageBean pageBean, String shoppingCartClientCode) {
+        try {
+            return clientService.listShoppingCartsById(pageBean, shoppingCartClientCode);
+        } catch (Exception e) {
+            logger.error("查询客户购物车列表异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
+     * 修改购物车商品数量接口
+     *
+     * @param shoppingCartId       购物车编号
+     * @param shoppingCartGoodsNum 购物车商品数量
+     * @return
+     */
+    @PostMapping("/updateShoppingCartById")
+    public AppResponse updateShoppingCartById(String shoppingCartId, int shoppingCartGoodsNum) {
+        try {
+            return clientService.updateShoppingCartById(shoppingCartId, shoppingCartGoodsNum);
+        } catch (Exception e) {
+            logger.error("修改购物车商品数量异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
+     * 删除购物车商品接口
+     *
+     * @param shoppingCartIds 购物车编号（批量删除用逗号分开）
+     * @return
+     */
+    @PostMapping("/deleteShoppingCartById")
+    public AppResponse deleteShoppingCartById(String shoppingCartIds) {
+        try {
+            return clientService.deleteShoppingCartById(shoppingCartIds);
+        } catch (Exception e) {
+            logger.error("删除购物车商品异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
+     * 新增客户订单接口
+     *
+     * @param order                 订单信息
+     * @param orderDetail           订单详情
+     * @param shoppingCartIds       购物车商品id（购物车的批量购买用逗号分割）
+     * @return
+     */
+    @PostMapping("/addOrder")
+    public AppResponse addOrder(Order order, OrderDetail orderDetail, String shoppingCartIds) {
+        try {
+            return clientService.addOrder(order, orderDetail, shoppingCartIds);
+        } catch (Exception e) {
+            logger.error("新增订单异常", e);
             System.out.println(e.toString());
             return AppResponse.bizError("出现异常");
         }

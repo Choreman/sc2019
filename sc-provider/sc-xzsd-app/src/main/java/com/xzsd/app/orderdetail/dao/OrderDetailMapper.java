@@ -12,11 +12,17 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface OrderDetailMapper {
 
+    /**
+     * 新增订单详情
+     * @param orderDetail 订单详情信息
+     * @return
+     */
+    int insertSelective(OrderDetail orderDetail);
+
+
     int deleteByPrimaryKey(String orderDetailId);
 
     int insert(OrderDetail record);
-
-    int insertSelective(OrderDetail record);
 
     OrderDetail selectByPrimaryKey(String orderDetailId);
 

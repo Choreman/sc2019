@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.shoppingcart.dao.ShoppingCartMapper">
+    <resultMap id="BaseResultMap" type="com.xzsd.app.shoppingcart.entity.ShoppingCart">
+        <id column="shopping_cart_id" property="shoppingCartId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="shopping_cart_client_code" property="shoppingCartClientCode" jdbcType="VARCHAR"/>
+        <result column="shopping_cart_goods_code" property="shoppingCartGoodsCode" jdbcType="VARCHAR"/>
+        <result column="shopping_cart_goods_num" property="shoppingCartGoodsNum" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    shopping_cart_id, create_time, create_person, update_time, update_person, version, 
+    is_deleted, shopping_cart_client_code, shopping_cart_goods_code, shopping_cart_goods_num
+  </sql>
+    <!-- 前端展示字段 -->
+    <sql id="Display_Column_List">
+        shopping_cart_id, version, shopping_cart_client_code, shopping_cart_goods_code, shopping_cart_goods_num
+    </sql>
+
+    <!-- 新增购物车信息 -->
+    <insert id="insertSelective" parameterType="com.xzsd.app.shoppingcart.entity.ShoppingCart">
+        insert into t_shopping_cart
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="shoppingCartId != null">
+                shopping_cart_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createPerson != null">
+                create_person,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updatePerson != null">
+                update_person,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="shoppingCartClientCode != null">
+                shopping_cart_client_code,
+            </if>
+            <if test="shoppingCartGoodsCode != null">
+                shopping_cart_goods_code,
+            </if>
+            <if test="shoppingCartGoodsNum != null">
+                shopping_cart_goods_num,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="shoppingCartId != null">
+                #{shoppingCartId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="shoppingCartClientCode != null">
+                #{shoppingCartClientCode,jdbcType=VARCHAR},
+            </if>
+            <if test="shoppingCartGoodsCode != null">
+                #{shoppingCartGoodsCode,jdbcType=VARCHAR},
+            </if>
+            <if test="shoppingCartGoodsNum != null">
+                #{shoppingCartGoodsNum,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 根据添加购物车的客户编号和添加购物车的商品查询该是否已经存在该购物车商品信息 -->
+    <select id="findClientShoppingCart" parameterType="java.lang.String"
+            resultType="com.xzsd.app.shoppingcart.entity.ShoppingCart">
+        SELECT
+            <include refid="Display_Column_List"/>
+        from
+            t_shopping_cart
+        where
+            is_deleted = 1
+        and
+            shopping_cart_client_code = #{clientId}
+        and
+            shopping_cart_goods_code = #{goodsId}
+    </select>
+
+    <!-- 修改购物车信息 -->
+    <update id="updateByPrimaryKeySelective" parameterType="com.xzsd.app.shoppingcart.entity.ShoppingCart">
+        update t_shopping_cart
+        <set>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createPerson != null">
+                create_person = #{createPerson,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatePerson != null">
+                update_person = #{updatePerson,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                version = #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="shoppingCartClientCode != null">
+                shopping_cart_client_code = #{shoppingCartClientCode,jdbcType=VARCHAR},
+            </if>
+            <if test="shoppingCartGoodsCode != null">
+                shopping_cart_goods_code = #{shoppingCartGoodsCode,jdbcType=VARCHAR},
+            </if>
+            <if test="shoppingCartGoodsNum != null">
+                shopping_cart_goods_num = #{shoppingCartGoodsNum,jdbcType=INTEGER},
+            </if>
+        </set>
+        where shopping_cart_id = #{shoppingCartId,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 根据客户的编号查询购物车列表 -->
+    <select id="listShoppingCartByClientId" parameterType="java.lang.String"
+            resultType="com.xzsd.app.shoppingcart.entity.ShoppingCart">
+        SELECT
+            t_shopping_cart.shopping_cart_id,
+            t_shopping_cart.shopping_cart_goods_code,
+            t_shopping_cart.shopping_cart_goods_num,
+            t_goods_info.goods_name,
+            t_goods_info.goods_sale_price,
+            t_image_info.image_url
+        from
+            t_shopping_cart,
+            t_goods_info
+        LEFT JOIN t_image_info on t_image_info.image_cate_code = t_goods_info.goods_id and t_image_info.is_deleted = 1
+        where
+            t_goods_info.goods_id = t_shopping_cart.shopping_cart_goods_code
+        and
+            t_goods_info.is_deleted = 1
+        and
+            t_shopping_cart.is_deleted = 1
+        AND
+            shopping_cart_client_code = #{shoppingCartClientCode}
+    </select>
+
+    <!-- 修改购物车的商品数量 -->
+    <update id="updateShoppingCartGoodsNumById">
+        update
+            t_shopping_cart
+        set
+            update_time = now(),
+            update_person = #{updatePersonId},
+            version = version + 1,
+            shopping_cart_goods_num = #{shoppingCartGoodsNum}
+        where
+            shopping_cart_id = #{shoppingCartId}
+    </update>
+
+    <!-- 批量删除购物车信息（修改字段is_delete状态，并非真正删除） -->
+    <update id="deleteShoppingCartById" parameterType="java.lang.String">
+        update
+            t_shopping_cart
+        set
+            is_deleted = 0,
+            update_time = now(),
+            update_person = #{updatePersonId},
+            version = version + 1
+        where
+            shopping_cart_id
+        in
+            <foreach item="shoppingCartId" index="index" collection="listIds" open="(" separator="," close=")">
+                #{shoppingCartId}
+            </foreach>
+    </update>
+
+    <!-- 根据购物车编号列表查询购物车信息 -->
+    <select id="listShoppingCartById" resultType="com.xzsd.app.shoppingcart.entity.ShoppingCart">
+        select
+            <include refid="Display_Column_List"/>
+        from
+            t_goods_cate_info
+        where
+            is_deleted = 1
+        and
+            shopping_cart_id
+        in
+            <foreach item="shoppingCartId" index="index" collection="listIds" open="(" separator="," close=")">
+                #{shoppingCartId}
+            </foreach>
+</select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_shopping_cart
+        where shopping_cart_id = #{shoppingCartId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_shopping_cart
+    where shopping_cart_id = #{shoppingCartId,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.xzsd.app.shoppingcart.entity.ShoppingCart">
+    insert into t_shopping_cart (shopping_cart_id, create_time, create_person, 
+      update_time, update_person, version, 
+      is_deleted, shopping_cart_client_code, shopping_cart_goods_code, 
+      shopping_cart_goods_num)
+    values (#{shoppingCartId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
+      #{isDeleted,jdbcType=INTEGER}, #{shoppingCartClientCode,jdbcType=VARCHAR}, #{shoppingCartGoodsCode,jdbcType=VARCHAR}, 
+      #{shoppingCartGoodsNum,jdbcType=INTEGER})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.xzsd.app.shoppingcart.entity.ShoppingCart">
+    update t_shopping_cart
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_person = #{createPerson,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_person = #{updatePerson,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
+      is_deleted = #{isDeleted,jdbcType=INTEGER},
+      shopping_cart_client_code = #{shoppingCartClientCode,jdbcType=VARCHAR},
+      shopping_cart_goods_code = #{shoppingCartGoodsCode,jdbcType=VARCHAR},
+      shopping_cart_goods_num = #{shoppingCartGoodsNum,jdbcType=INTEGER}
+    where shopping_cart_id = #{shoppingCartId,jdbcType=VARCHAR}
+  </update>
+</mapper>
