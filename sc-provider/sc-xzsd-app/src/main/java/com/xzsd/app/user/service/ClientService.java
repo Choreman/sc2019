@@ -35,10 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 客户管理业务处理类
@@ -351,95 +349,285 @@ public class ClientService {
     }
 
     /**
-     * 新增客户订单接口
+     * 新增订单信息
      *
-     * @param order                 订单信息
-     * @param orderDetail           订单详情
-     * @param shoppingCartIds       购物车商品id（购物车的批量购买用逗号分割）
+     * @param orderClientCode       下单客户编号
+     * @param orderDetailGoodsCodes 下单商品编号（多个编号，用逗号隔开）
+     * @param orderDetailGoodsNums  下单商品数量（多个编号，用逗号隔开）
+     * @param orderStoreCode        收货的门店编号
+     * @param shoppingCartIds       购物车编号（多个编号，用逗号隔开）
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse addOrder(Order order, OrderDetail orderDetail, String shoppingCartIds) {
-        //判断输入的门店是否为空
-        if(order.getOrderStoreCode() == null || "".equals(order.getOrderStoreCode())){
-            return AppResponse.Error("门店编号不存在");
+    public AppResponse addOrder(String orderClientCode, String orderDetailGoodsCodes,
+                                String orderDetailGoodsNums, String orderStoreCode, String shoppingCartIds) {
+        if (orderStoreCode == null || "".equals(orderStoreCode)) {
+            return AppResponse.Error("门店信息不存在，请先绑定门店");
         }
-        //不是从购物车进行下单
-        if(shoppingCartIds == null || "".equals(shoppingCartIds)){
-            Goods goods = goodsMapper.findGoodsById(orderDetail.getOrderDetailGoodsCode());
+        //从商品详情页下单
+        if (shoppingCartIds == null || "".equals(shoppingCartIds)) {
+            Goods goods = goodsMapper.findGoodsById(orderDetailGoodsCodes);
             //如果下单数量大于库存
-            if(orderDetail.getOrderDetailGoodsNum() > goods.getGoodsStock()){
+            if (Integer.parseInt(orderDetailGoodsNums) > goods.getGoodsStock()) {
                 return AppResponse.Error("下单数量过大，库存不足");
             }
-            //设置订单属性
-            //设置UUID
-            order.setOrderId(UUIDUtils.getUUID());
-            //设置订单展示编号（组成：年月日时分秒+2位随机数）
-            order.setOrderCode(UUIDUtils.getTimeRandom(2));
-            //设置购买商品的总价格
-            order.setOrderTotalPrice(goods.getGoodsSalePrice() * orderDetail.getOrderDetailGoodsNum());
-            //设置订单状态为1：已下单
-            order.setOrderCondition(1);
-            //设置订单支付状态为1：已支付
-            order.setOrderPayCondition(1);
-            //设置订单支付时间
-            order.setOrderPayTime(new Date());
-            //设置基本属性
-            order.setCreatePerson(AuthUtils.getCurrentUserId());
-            order.setCreateTime(new Date());
-            order.setUpdatePerson(AuthUtils.getCurrentUserId());
-            order.setUpdateTime(new Date());
-            order.setIsDeleted(1);
-            order.setVersion(1);
-            //设置订单详情属性
-            //设置UUID
-            orderDetail.setOrderDetailId(UUIDUtils.getUUID());
-            //设置订单编号
-            orderDetail.setOrderDetailOrderCode(order.getOrderId());
-            //设置购买该商品的总价格
-            orderDetail.setOrderDetailGoodsTotalPrice(goods.getGoodsSalePrice() * orderDetail.getOrderDetailGoodsNum());
-            //设置购买该商品的销售价格
-            orderDetail.setOrderDetailGoodsSalePrice(goods.getGoodsSalePrice());
-            //设置购买该商品的定价
-            orderDetail.setOrderDetailGoodsFixPrice(goods.getGoodsFixPrice());
-            //设置购买该商品的名称
-            orderDetail.setOrderDetailGoodsName(goods.getGoodsName());
-            //设置购买该商品的展示编号
-            orderDetail.setOrderDetailGoodsDisplayCode(goods.getGoodsCode());
-            //设置基本属性
-            orderDetail.setCreatePerson(AuthUtils.getCurrentUserId());
-            orderDetail.setCreateTime(new Date());
-            orderDetail.setUpdatePerson(AuthUtils.getCurrentUserId());
-            orderDetail.setUpdateTime(new Date());
-            orderDetail.setIsDeleted(1);
-            orderDetail.setVersion(1);
+            //简化代码，调用方法设置订单属性
+            Order order = getOrder(orderClientCode, orderDetailGoodsNums, orderStoreCode, goods.getGoodsSalePrice());
+            //简化代码，调用方法设置订单详情属性
+            OrderDetail orderDetail = getOrderDetail(orderDetailGoodsCodes, orderDetailGoodsNums, order.getOrderId(), goods);
             int orderStatus = orderMapper.insertSelective(order);
             int orderDetailStatus = orderDetailMapper.insertSelective(orderDetail);
-            if(orderStatus > 0 && orderDetailStatus > 0){
+            if (orderStatus > 0 && orderDetailStatus > 0) {
                 //下单成功后减少商品的库存
-                goodsMapper.updateGoodsStockById(goods.getGoodsId(),
-                        goods.getGoodsStock() - orderDetail.getOrderDetailGoodsNum(),
+                int count = goodsMapper.updateGoodsStockById(goods.getGoodsId(),
+                        goods.getGoodsStock() - Integer.parseInt(orderDetailGoodsNums),
                         AuthUtils.getCurrentUserId());
+                if (count == 0) {
+                    //回滚事务
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return AppResponse.bizError("下单异常");
+                }
                 return AppResponse.success("下单成功");
             }
             return AppResponse.bizError("下单失败");
-        //从购物车下单
-        }else {
-            //获取购物车编号列表
+            //从购物车下单
+        } else {
+            //1.获取商品id列表、商品数量列表、购物车编号列表
+            //1.1获取每一个下单的商品编号
+            List<String> orderDetailGoodsCode = Arrays.asList(orderDetailGoodsCodes.split(","));
+            //1.2获取每一个下单的商品数量
+            List<String> orderDetailGoodsNum = Arrays.asList(orderDetailGoodsNums.split(","));
+            //1.3获取每一个下单的购物车编号
             List<String> shoppingCartId = Arrays.asList(shoppingCartIds.split(","));
-            //获取购物车信息列表
-            List<ShoppingCart> shoppingCarts = shoppingCartMapper.listShoppingCartById(shoppingCartId);
-            List<String> goodsIds = new ArrayList<>();
-            for(ShoppingCart shoppingCart : shoppingCarts){
-                goodsIds.add(shoppingCart.getShoppingCartGoodsCode());
+            //1.4要购买的商品Map（商品id : 商品数量）
+            Map<String, String> buyGoodsNumMap = new HashMap<>();
+            //1.5查询出来的商品Map（商品id : 商品库存）
+            Map<String, String> oldGoodsNumMap = new HashMap<>();
+            //1.6下单失败商品信息集合Map(商品编号 ： 超出库存数量)
+            Map<String, Integer> failureGoodsMap = new HashMap<String, Integer>();
+
+            //2.把传入的下单商品id和数量组成Map
+            for (int i = 0; i < orderDetailGoodsCode.size(); i++) {
+                buyGoodsNumMap.put(orderDetailGoodsCode.get(i), orderDetailGoodsNum.get(i));
             }
 
+            //3.根据传入的商品id列表查询出商品信息列表
+            List<Goods> goodsList = goodsMapper.listGoodsById(orderDetailGoodsCode);
 
+            //4.查询出的商品列表也组成Map(商品id ：商品库存)
+            for (Goods goods : goodsList) {
+                oldGoodsNumMap.put(goods.getGoodsId(), String.valueOf(goods.getGoodsStock()));
+            }
+            //可下单的商品信息列表
+            List<Goods> successGoodsList = new ArrayList<>();
+            //不可下单的商品信息列表
+            List<Goods> failureGoodsList = new ArrayList<>();
 
+            //5.循环Map，比较商品数量和库存
+            for (Map.Entry<String, String> entry : buyGoodsNumMap.entrySet()) {
+                //购买商品的数量大于库存
+                if (Integer.parseInt(entry.getValue()) > Integer.parseInt(oldGoodsNumMap.get(entry.getKey()))) {
+                    //计算超出库存的数量
+                    int outOfSize = Integer.parseInt(entry.getValue()) - Integer.parseInt(oldGoodsNumMap.get(entry.getKey()));
+                    //把超出库存的商品id和数量记录
+                    failureGoodsMap.put(entry.getKey(), outOfSize);
+                    //保存库存不足的商品列表
+                    List<Goods> tempGoodsList = goodsList.stream().
+                            filter(a -> a.getGoodsId().equals(entry.getKey())).collect(Collectors.toList());
+                    failureGoodsList.addAll(tempGoodsList);
+                //购买商品的数量不大于库存
+                }else{
+                    //保存库存充足的商品列表
+                    List<Goods> tempGoodsList = goodsList.stream().
+                            filter(g -> g.getGoodsId().equals(entry.getKey())).collect(Collectors.toList());
+                    successGoodsList.addAll(tempGoodsList);
+                }
+            }
+
+            //订单信息
+            Order order = getOrder(orderClientCode, "0", orderStoreCode, 0);
+            //生成多个订单详情
+            List<OrderDetail> orderDetails = new ArrayList<>();
+            float orderTotalPrice = 0;
+            //6.新增订单和订单详情信息
+            for (Goods goods : successGoodsList) {
+                OrderDetail orderDetail = getOrderDetail(goods.getGoodsId(),
+                        buyGoodsNumMap.get(goods.getGoodsId()), order.getOrderId(), goods);
+                orderDetails.add(orderDetail);
+                //把下单的所有商品价格加起来
+                orderTotalPrice += orderDetail.getOrderDetailGoodsTotalPrice();
+            }
+            order.setOrderTotalPrice(orderTotalPrice);
+            int orderStatus = orderMapper.insertSelective(order);
+            int orderDetailStatus = orderDetailMapper.insertOrderDetailList(orderDetails);
+            if(orderStatus == 0 || orderDetailStatus != successGoodsList.size()){
+                //回滚事务
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return AppResponse.bizError("新增订单异常");
+            }
+            //7.修改商品库存
+            int goodsStatus = goodsMapper.updateGoodsStockByOrderDetails(orderDetails);
+            if(goodsStatus == 0){
+                //回滚事务
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return AppResponse.bizError("修改库存异常");
+            }
+            //8.删除下单成功商品的购物车
+            List<ShoppingCart> shoppingCarts = shoppingCartMapper.listShoppingCartById(shoppingCartId);
+            List<String> shoppingCartIdList = new ArrayList<>(shoppingCartId);
+            //循环购物车信息，删除不能下单的商品的购物车编号，剩下的即为下单成功购物车编号
+            for(ShoppingCart shoppingCart : shoppingCarts){
+                if (failureGoodsMap.get(shoppingCart.getShoppingCartGoodsCode()) != null){
+                    shoppingCartIdList.removeIf(s -> s.equals(shoppingCart.getShoppingCartId()));
+                }
+            }
+            //9.删除购物车
+            shoppingCartMapper.deleteShoppingCartById(shoppingCartIdList, AuthUtils.getCurrentUserId());
+
+            //10.处理返回错误数据
+            //下单的购物车商品中有库存不足的商品
+            if(successGoodsList.size() != orderDetailGoodsCode.size()){
+                String failureMsg = "";
+                for(Goods goods : failureGoodsList){
+                    failureMsg = failureMsg + "商品：《" + goods.getGoodsName() + "》，超出库存"
+                            + failureGoodsMap.get(goods.getGoodsId()) + "本\n";
+                }
+                //没有成功下单的商品
+                if (successGoodsList.size() == 0){
+                    return AppResponse.Error(failureMsg);
+                }
+                //部分商品成功下单
+                return AppResponse.success("部分商品成功下单\n" + failureMsg);
+            }
+            return AppResponse.success("下单成功");
         }
-        return null;
     }
 
+    /**
+     * 设置订单属性，简化业务方法
+     *
+     * @param orderClientCode      下单客户编号
+     * @param orderDetailGoodsNums 下单商品数量
+     * @param orderStoreCode       收获门店信息
+     * @param goodsSalePrice       下单商品价格
+     * @return
+     */
+    private Order getOrder(String orderClientCode, String orderDetailGoodsNums, String orderStoreCode,
+                           float goodsSalePrice) {
+        //设置订单属性
+        Order order = new Order();
+        //设置UUID
+        order.setOrderId(UUIDUtils.getUUID());
+        //设置订单展示编号（组成：年月日时分秒+2位随机数）
+        order.setOrderCode(UUIDUtils.getTimeRandom(2));
+        //设置下单的客户编号
+        order.setOrderClientCode(orderClientCode);
+        //设置送货的门店编号
+        order.setOrderStoreCode(orderStoreCode);
+        //设置购买商品的总价格
+        order.setOrderTotalPrice(goodsSalePrice * Integer.parseInt(orderDetailGoodsNums));
+        //设置订单状态为1：已下单
+        order.setOrderCondition(1);
+        //设置订单支付状态为1：已支付
+        order.setOrderPayCondition(1);
+        //设置订单支付时间
+        order.setOrderPayTime(new Date());
+        //设置基本属性
+        order.setCreatePerson(AuthUtils.getCurrentUserId());
+        order.setCreateTime(new Date());
+        order.setUpdatePerson(AuthUtils.getCurrentUserId());
+        order.setUpdateTime(new Date());
+        order.setIsDeleted(1);
+        order.setVersion(1);
+        return order;
+    }
+
+    /**
+     * 设置订单详情属性，简化业务方法
+     *
+     * @param orderDetailGoodsCodes 下单商品编号
+     * @param orderDetailGoodsNums  下单商品数量
+     * @param orderId               订单编号
+     * @param goods                 下单商品信息
+     * @return
+     */
+    private OrderDetail getOrderDetail(String orderDetailGoodsCodes, String orderDetailGoodsNums,
+                                       String orderId, Goods goods) {
+        //设置订单详情属性
+        OrderDetail orderDetail = new OrderDetail();
+        //设置UUID
+        orderDetail.setOrderDetailId(UUIDUtils.getUUID());
+        //设置订单编号
+        orderDetail.setOrderDetailOrderCode(orderId);
+        //设置商品编号
+        orderDetail.setOrderDetailGoodsCode(orderDetailGoodsCodes);
+        //设置商品数量
+        orderDetail.setOrderDetailGoodsNum(Integer.parseInt(orderDetailGoodsNums));
+        //设置购买该商品的总价格
+        orderDetail.setOrderDetailGoodsTotalPrice(goods.getGoodsSalePrice() * orderDetail.getOrderDetailGoodsNum());
+        //设置购买该商品的销售价格
+        orderDetail.setOrderDetailGoodsSalePrice(goods.getGoodsSalePrice());
+        //设置购买该商品的定价
+        orderDetail.setOrderDetailGoodsFixPrice(goods.getGoodsFixPrice());
+        //设置购买该商品的名称
+        orderDetail.setOrderDetailGoodsName(goods.getGoodsName());
+        //设置购买该商品的展示编号
+        orderDetail.setOrderDetailGoodsDisplayCode(goods.getGoodsCode());
+        //设置基本属性
+        orderDetail.setCreatePerson(AuthUtils.getCurrentUserId());
+        orderDetail.setCreateTime(new Date());
+        orderDetail.setUpdatePerson(AuthUtils.getCurrentUserId());
+        orderDetail.setUpdateTime(new Date());
+        orderDetail.setIsDeleted(1);
+        orderDetail.setVersion(1);
+        return orderDetail;
+    }
+
+
+    /**
+     * 查询客户订单列表接口
+     *
+     * @param pageBean        分页信息
+     * @param orderclientCode 客户编号
+     * @param orderCondition  订单状态
+     * @return
+     */
+    public AppResponse listOrdersById(PageBean pageBean, String orderclientCode, int orderCondition) {
+        PageHelper.startPage(pageBean.getPageNum(), pageBean.getPageSize());
+        List<Order> orders = orderMapper.listOrdersById(orderclientCode, orderCondition);
+        PageInfo<Order> pageData = new PageInfo<Order>(orders);
+        return AppResponse.success("查询成功!", pageData);
+    }
+
+    /**
+     * 查询客户订单详情接口
+     *
+     * @param orderId 订单编号
+     * @return
+     */
+    public AppResponse findOrderDetailById(String orderId) {
+        Order order = orderMapper.findOrderDetailById(orderId);
+        if (order != null) {
+            return AppResponse.success("查询成功", order);
+        }
+        return AppResponse.bizError("订单不存在");
+    }
+
+    /**
+     * 修改客户订单状态接口
+     *
+     * @param orderId        订单编号
+     * @param orderCondition 订单状态
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public AppResponse updateOrderConditionById(String orderId, int orderCondition) {
+        int count = orderMapper.updateOrderConditiionById(orderId, AuthUtils.getCurrentUserId(), orderCondition);
+        if (count > 0) {
+            return AppResponse.success("订单状态修改成功");
+        }
+        return AppResponse.bizError("订单状态修改失败");
+    }
 }
 
 

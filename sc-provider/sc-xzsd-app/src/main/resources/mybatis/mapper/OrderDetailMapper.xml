@@ -124,4 +124,46 @@
         </trim>
     </insert>
 
+    <!-- 批量新增订单详情 -->
+    <insert id="insertOrderDetailList" parameterType="java.util.List" useGeneratedKeys="false">
+        insert into
+            t_order_detail(
+                order_detail_id,
+                create_time,
+                create_person,
+                update_time,
+                update_person,
+                version,
+                is_deleted,
+                order_detail_order_code,
+                order_detail_goods_code,
+                order_detail_goods_num,
+                order_detail_goods_total_price,
+                order_detail_goods_sale_price,
+                order_detail_goods_fix_price,
+                order_detail_goods_name,
+                order_detail_goods_display_code
+            )
+        values
+            <foreach collection="OrderDetailList" item="orderDetail" index="index" separator=",">
+                (
+                    #{orderDetail.orderDetailId},
+                    #{orderDetail.createTime},
+                    #{orderDetail.createPerson},
+                    #{orderDetail.updateTime},
+                    #{orderDetail.updatePerson},
+                    #{orderDetail.version},
+                    #{orderDetail.isDeleted},
+                    #{orderDetail.orderDetailOrderCode},
+                    #{orderDetail.orderDetailGoodsCode},
+                    #{orderDetail.orderDetailGoodsNum},
+                    #{orderDetail.orderDetailGoodsTotalPrice},
+                    #{orderDetail.orderDetailGoodsSalePrice},
+                    #{orderDetail.orderDetailGoodsFixPrice},
+                    #{orderDetail.orderDetailGoodsName},
+                    #{orderDetail.orderDetailGoodsDisplayCode}
+                )
+            </foreach>
+    </insert>
+
 </mapper>

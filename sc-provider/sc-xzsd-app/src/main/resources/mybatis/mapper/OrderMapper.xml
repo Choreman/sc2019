@@ -28,6 +28,61 @@
       order_pay_condition, order_pay_time
     </sql>
 
+    <!-- 查询订单关联图片关联商品关联订单详情信息 -->
+    <resultMap id="OrderImageGoodsOrderDetailResultMap" type="com.xzsd.app.order.entity.Order" extends="BaseResultMap">
+        <!-- 关联新属性，订单全部商品数量综合 -->
+        <result column="order_total_num" property="orderTotalNum" jdbcType="INTEGER"/>
+        <!-- 关联订单详情 -->
+        <collection property="orderDetailList" ofType="com.xzsd.app.orderdetail.entity.OrderDetail"
+                    column="order_id" select="selectOrderDetail">
+            <id column="order_detail_id" jdbcType="VARCHAR" property="orderDetailId" />
+            <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+            <result column="create_person" jdbcType="VARCHAR" property="createPerson" />
+            <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+            <result column="update_person" jdbcType="VARCHAR" property="updatePerson" />
+            <result column="version" jdbcType="INTEGER" property="version" />
+            <result column="is_deleted" jdbcType="INTEGER" property="isDeleted" />
+            <result column="order_detail_order_code" jdbcType="VARCHAR" property="orderDetailOrderCode" />
+            <result column="order_detail_goods_code" jdbcType="VARCHAR" property="orderDetailGoodsCode" />
+            <result column="order_detail_goods_num" jdbcType="INTEGER" property="orderDetailGoodsNum" />
+            <result column="order_detail_goods_total_price" jdbcType="REAL" property="orderDetailGoodsTotalPrice" />
+            <result column="order_detail_goods_sale_price" jdbcType="REAL" property="orderDetailGoodsSalePrice" />
+            <result column="order_detail_goods_fix_price" jdbcType="REAL" property="orderDetailGoodsFixPrice" />
+            <result column="order_detail_goods_name" jdbcType="VARCHAR" property="orderDetailGoodsName" />
+            <result column="order_detail_goods_display_code" jdbcType="VARCHAR" property="orderDetailGoodsDisplayCode" />
+            <!-- 关联图片信息，一个订单详情里包含一种商品，一种商品一张图片 -->
+            <result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
+            <!-- 关联商品信息，一个订单详情里包含一种商品，一种商品一个商品介绍 -->
+            <result column="goods_description" property="goodsDescription" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+
+    <!-- 查询订单关联图片关联商品关联门店关联订单详情信息 -->
+    <resultMap id="OrderDetailResultMap" type="com.xzsd.app.order.entity.Order"
+               extends="OrderImageGoodsOrderDetailResultMap">
+        <!-- 关联查询门店信息 -->
+        <result column="store_name" property="storeName" jdbcType="VARCHAR"/>
+        <result column="store_address" property="storeAddress" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 查询订单详情 -->
+    <select id="selectOrderDetail" parameterType="java.lang.String" resultType="com.xzsd.app.orderdetail.entity.OrderDetail">
+        SELECT
+            t_order_detail.order_detail_id,
+            t_order_detail.order_detail_goods_code,
+            t_order_detail.order_detail_goods_name,
+            (select image_url from t_image_info where t_image_info.image_cate_code = t_order_detail.order_detail_goods_code) as image_url,
+            (select goods_description from t_goods_info where t_goods_info.goods_id = t_order_detail.order_detail_goods_code) as goods_description,
+            t_order_detail.order_detail_goods_sale_price,
+            t_order_detail.order_detail_goods_num
+        from
+            t_order_detail
+        where
+            t_order_detail.is_deleted = 1
+        and
+            t_order_detail.order_detail_order_code = #{order_id}
+    </select>
+
     <!-- 根据订单id查询订单信息 -->
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
@@ -145,5 +200,75 @@
             </if>
         </trim>
     </insert>
+
+    <!-- 根据客户编号查询订单信息列表 -->
+    <select id="listOrdersById" parameterType="java.lang.String" resultMap="OrderImageGoodsOrderDetailResultMap">
+        SELECT
+            t_order.order_id,
+            t_order.order_code,
+            t_order.order_condition,
+            t_order.order_total_price,
+            t_order.order_client_code,
+            (select
+                sum(order_detail_goods_num)
+                from
+                        t_order_detail
+                where
+                        t_order_detail.order_detail_order_code = t_order.order_id
+                and
+                        t_order_detail.is_deleted = 1
+            ) as order_total_num
+        from
+            t_order
+        where
+            is_deleted = 1
+        and
+            order_client_code = #{orderclientCode}
+            <if test="orderCondition != -1">
+                <choose>
+                    <when test="orderCondition == 4 or orderCondition == 5">
+                        and t_order.order_condition in (4, 5)
+                    </when>
+                    <otherwise>
+                        and t_order.order_condition = #{orderCondition}
+                    </otherwise>
+                </choose>
+            </if>
+        order by
+            t_order.create_time desc
+    </select>
+
+    <!-- 根据订单编号查询订单详情 -->
+    <select id="findOrderDetailById" parameterType="java.lang.String" resultMap="OrderDetailResultMap">
+        select
+            t_order.order_id,
+            t_order.order_code,
+            t_order.order_pay_time,
+            t_order.order_condition,
+            t_order.order_total_price,
+            (select
+                    sum(order_detail_goods_num)
+            from
+                    t_order_detail
+            where
+                    t_order_detail.order_detail_order_code = t_order.order_id
+            and
+                    t_order_detail.is_deleted = 1
+            ) as order_total_num,
+            t_store_info.store_name,
+            CONCAT(
+                (select area_name from t_area_name where t_store_info.store_province_code = t_area_name.area_name_id),
+                (select area_name from t_area_name where t_store_info.store_city_code = t_area_name.area_name_id),
+                (select area_name from t_area_name where t_store_info.store_region_code = t_area_name.area_name_id),
+                t_store_info.store_address
+            ) as store_address
+        from
+            t_order
+        LEFT JOIN t_store_info on t_order.order_store_code = t_store_info.store_id
+        where
+            t_order.is_deleted = 1
+        and
+            t_order.order_id = #{orderId}
+    </select>
 
 </mapper>

@@ -200,7 +200,7 @@
         select
             <include refid="Display_Column_List"/>
         from
-            t_goods_cate_info
+            t_shopping_cart
         where
             is_deleted = 1
         and
@@ -211,12 +211,19 @@
             </foreach>
 </select>
 
+    <!-- 根据购物车编号查询购物车信息 -->
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
-        <include refid="Base_Column_List"/>
-        from t_shopping_cart
-        where shopping_cart_id = #{shoppingCartId,jdbcType=VARCHAR}
+            <include refid="Base_Column_List"/>
+        from
+            t_shopping_cart
+        where
+            is_deleted = 1
+        and
+            shopping_cart_id = #{shoppingCartId,jdbcType=VARCHAR}
     </select>
+
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from t_shopping_cart
     where shopping_cart_id = #{shoppingCartId,jdbcType=VARCHAR}

@@ -72,16 +72,23 @@ public interface ShoppingCartMapper {
 
     /**
      * 根据购物车编号列表查询购物车信息
+     *
      * @param listIds 购物车编号列表
      * @return
      */
     List<ShoppingCart> listShoppingCartById(@Param("listIds") List<String> listIds);
 
+    /**
+     * 根据购物车编号查询购物车信息
+     *
+     * @param shoppingCartId 购物车编号
+     * @return
+     */
+    ShoppingCart selectByPrimaryKey(String shoppingCartId);
+
     int deleteByPrimaryKey(String shoppingCartId);
 
     int insert(ShoppingCart record);
-
-    ShoppingCart selectByPrimaryKey(String shoppingCartId);
 
     int updateByPrimaryKey(ShoppingCart record);
 }

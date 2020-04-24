@@ -1,5 +1,6 @@
 package com.xzsd.app.user.controller;
 
+import com.github.pagehelper.Page;
 import com.xzsd.app.base.bean.PageBean;
 import com.xzsd.app.order.entity.Order;
 import com.xzsd.app.orderdetail.entity.OrderDetail;
@@ -217,23 +218,83 @@ public class ClientController {
     }
 
     /**
-     * 新增客户订单接口
+     * 新增订单信息
      *
-     * @param order                 订单信息
-     * @param orderDetail           订单详情
-     * @param shoppingCartIds       购物车商品id（购物车的批量购买用逗号分割）
+     * @param orderClientCode       下单客户编号
+     * @param orderDetailGoodsCodes 下单商品编号（多个编号，用逗号隔开）
+     * @param orderDetailGoodsNums  下单商品数量（多个编号，用逗号隔开）
+     * @param orderStoreCode        收货的门店编号
+     * @param shoppingCartIds       购物车编号（多个编号，用逗号隔开）
      * @return
      */
     @PostMapping("/addOrder")
-    public AppResponse addOrder(Order order, OrderDetail orderDetail, String shoppingCartIds) {
+    public AppResponse addOrder(String orderClientCode, String orderDetailGoodsCodes,
+                                String orderDetailGoodsNums, String orderStoreCode, String shoppingCartIds) {
         try {
-            return clientService.addOrder(order, orderDetail, shoppingCartIds);
+            return clientService.addOrder(orderClientCode, orderDetailGoodsCodes,
+                    orderDetailGoodsNums, orderStoreCode, shoppingCartIds);
         } catch (Exception e) {
             logger.error("新增订单异常", e);
             System.out.println(e.toString());
             return AppResponse.bizError("出现异常");
         }
     }
+    //todo
+
+    /**
+     * 查询客户订单列表接口
+     *
+     * @param pageBean        分页信息
+     * @param orderclientCode 客户编号
+     * @param orderCondition  订单状态
+     * @return
+     */
+    @PostMapping("/listOrdersById")
+    public AppResponse listOrdersById(PageBean pageBean, String orderclientCode, int orderCondition) {
+        try {
+            return clientService.listOrdersById(pageBean, orderclientCode, orderCondition);
+        } catch (Exception e) {
+            logger.error("删除购物车商品异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
+     * 查询客户订单详情接口
+     *
+     * @param orderId 订单编号
+     * @return
+     */
+    @PostMapping("/findOrderDetailById")
+    public AppResponse findOrderDetailById(String orderId) {
+        try {
+            return clientService.findOrderDetailById(orderId);
+        } catch (Exception e) {
+            logger.error("查询客户订单详情异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
+     * 修改客户订单状态接口
+     *
+     * @param orderId        订单编号
+     * @param orderCondition 订单状态
+     * @return
+     */
+    @PostMapping("/updateOrderConditionById")
+    public AppResponse updateOrderConditionById(String orderId, int orderCondition) {
+        try {
+            return clientService.updateOrderConditionById(orderId, orderCondition);
+        } catch (Exception e) {
+            logger.error("查询客户订单详情异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
 }
 
 

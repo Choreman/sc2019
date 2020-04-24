@@ -160,4 +160,19 @@ public class OrderDetail extends BaseEntity {
     public void setOrderDetailGoodsDisplayCode(String orderDetailGoodsDisplayCode) {
         this.orderDetailGoodsDisplayCode = orderDetailGoodsDisplayCode == null ? null : orderDetailGoodsDisplayCode.trim();
     }
+
+    @Override
+    public String toString() {
+        return "OrderDetail{" +
+                "orderDetailId='" + orderDetailId + '\'' +
+                ", orderDetailOrderCode='" + orderDetailOrderCode + '\'' +
+                ", orderDetailGoodsCode='" + orderDetailGoodsCode + '\'' +
+                ", orderDetailGoodsNum=" + orderDetailGoodsNum +
+                ", orderDetailGoodsTotalPrice=" + orderDetailGoodsTotalPrice +
+                ", orderDetailGoodsSalePrice=" + orderDetailGoodsSalePrice +
+                ", orderDetailGoodsFixPrice=" + orderDetailGoodsFixPrice +
+                ", orderDetailGoodsName='" + orderDetailGoodsName + '\'' +
+                ", orderDetailGoodsDisplayCode='" + orderDetailGoodsDisplayCode + '\'' +
+                '}';
+    }
 }

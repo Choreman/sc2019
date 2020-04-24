@@ -5,6 +5,8 @@ import com.xzsd.app.order.entity.Order;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 
 @Mapper
 public interface OrderMapper {
@@ -36,5 +38,23 @@ public interface OrderMapper {
      * @return
      */
     int insertSelective(Order order);
+
+    /**
+     * 根据客户编号查询订单信息列表
+     *
+     * @param orderclientCode 客户编号
+     * @param orderCondition  订单状态
+     * @return
+     */
+    List<Order> listOrdersById(@Param("orderclientCode") String orderclientCode,
+                               @Param("orderCondition") int orderCondition);
+
+    /**
+     * 根据订单编号查询订单详情
+     *
+     * @param orderId 订单编号
+     * @return
+     */
+    Order findOrderDetailById(String orderId);
 
 }
