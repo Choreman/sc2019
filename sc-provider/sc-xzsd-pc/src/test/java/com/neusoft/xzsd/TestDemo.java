@@ -1,5 +1,10 @@
 package com.neusoft.xzsd;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.xzsd.pc.goods.entity.Goods;
+import com.xzsd.pc.goodscomment.entity.GoodsComment;
 import com.xzsd.pc.utils.*;
 import org.junit.Test;
 
@@ -76,5 +81,26 @@ public class TestDemo {
         System.out.println("p1   " + PasswordUtils.generatePassword(p1));
         System.out.println("p2   " + PasswordUtils.generatePassword(p2));
         System.out.println(PasswordUtils.generatePassword(p1).equals(PasswordUtils.generatePassword(p2)));
+    }
+
+    @Test
+    public void testJsonUtils() {
+        //JSON格式的字符串，包含多个参数
+        String JSONStr = "{\"userId\":\"111\",\"goodsCommentList\":[{\"goodsCommentGoodsCode\":\"test1\",\"goodsComment\":\"goodsComment1\",\"goodsCommentStar\":5},{\"goodsCommentGoodsCode\":\"test2\",\"goodsComment\":\"goodsComment2\",\"goodsCommentStar\":0}]}";
+        //1.先把JSON格式字符串转换成JSON对象
+        JSONObject jsonObj = JSON.parseObject(JSONStr);
+        //2.可以根据JSON对象获取里面的指定参数
+        System.out.println(jsonObj.get("userId"));
+        System.out.println(jsonObj.getJSONArray("goodsCommentList"));
+        //3.把里面的List列表参数变成JSONArray对象
+        JSONArray jsonArray = jsonObj.getJSONArray("goodsCommentList");
+        //4.通过JSONObject把JSONArray对象变成list<T>的列表对象
+        List<GoodsComment> goodsComments = JSONObject.parseArray(jsonArray.toJSONString(), GoodsComment.class);
+
+        for (GoodsComment goodsComment : goodsComments){
+            System.out.println(goodsComment.getGoodsCommentGoodsCode());
+            System.out.println(goodsComment.getGoodsComment());
+            System.out.println(goodsComment.getGoodsCommentStar());
+        }
     }
 }

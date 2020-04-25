@@ -1,6 +1,9 @@
 package com.xzsd.app.user.service;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.xzsd.app.base.bean.PageBean;
@@ -10,6 +13,8 @@ import com.xzsd.app.goods.dao.GoodsMapper;
 import com.xzsd.app.goods.entity.Goods;
 import com.xzsd.app.goodscate.dao.GoodsCateMapper;
 import com.xzsd.app.goodscate.entity.GoodsCate;
+import com.xzsd.app.goodscomment.dao.GoodsCommentMapper;
+import com.xzsd.app.goodscomment.entity.GoodsComment;
 import com.xzsd.app.hotgoods.dao.HotGoodsMapper;
 import com.xzsd.app.hotgoods.entity.HotGoods;
 import com.xzsd.app.image.dao.ImageMapper;
@@ -79,6 +84,9 @@ public class ClientService {
 
     @Resource
     private OrderDetailMapper orderDetailMapper;
+
+    @Resource
+    private GoodsCommentMapper goodsCommentMapper;
 
 
     /**
@@ -435,8 +443,8 @@ public class ClientService {
                     List<Goods> tempGoodsList = goodsList.stream().
                             filter(a -> a.getGoodsId().equals(entry.getKey())).collect(Collectors.toList());
                     failureGoodsList.addAll(tempGoodsList);
-                //购买商品的数量不大于库存
-                }else{
+                    //购买商品的数量不大于库存
+                } else {
                     //保存库存充足的商品列表
                     List<Goods> tempGoodsList = goodsList.stream().
                             filter(g -> g.getGoodsId().equals(entry.getKey())).collect(Collectors.toList());
@@ -460,14 +468,14 @@ public class ClientService {
             order.setOrderTotalPrice(orderTotalPrice);
             int orderStatus = orderMapper.insertSelective(order);
             int orderDetailStatus = orderDetailMapper.insertOrderDetailList(orderDetails);
-            if(orderStatus == 0 || orderDetailStatus != successGoodsList.size()){
+            if (orderStatus == 0 || orderDetailStatus != successGoodsList.size()) {
                 //回滚事务
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return AppResponse.bizError("新增订单异常");
             }
             //7.修改商品库存
             int goodsStatus = goodsMapper.updateGoodsStockByOrderDetails(orderDetails);
-            if(goodsStatus == 0){
+            if (goodsStatus == 0) {
                 //回滚事务
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return AppResponse.bizError("修改库存异常");
@@ -476,8 +484,8 @@ public class ClientService {
             List<ShoppingCart> shoppingCarts = shoppingCartMapper.listShoppingCartById(shoppingCartId);
             List<String> shoppingCartIdList = new ArrayList<>(shoppingCartId);
             //循环购物车信息，删除不能下单的商品的购物车编号，剩下的即为下单成功购物车编号
-            for(ShoppingCart shoppingCart : shoppingCarts){
-                if (failureGoodsMap.get(shoppingCart.getShoppingCartGoodsCode()) != null){
+            for (ShoppingCart shoppingCart : shoppingCarts) {
+                if (failureGoodsMap.get(shoppingCart.getShoppingCartGoodsCode()) != null) {
                     shoppingCartIdList.removeIf(s -> s.equals(shoppingCart.getShoppingCartId()));
                 }
             }
@@ -486,14 +494,14 @@ public class ClientService {
 
             //10.处理返回错误数据
             //下单的购物车商品中有库存不足的商品
-            if(successGoodsList.size() != orderDetailGoodsCode.size()){
+            if (successGoodsList.size() != orderDetailGoodsCode.size()) {
                 String failureMsg = "";
-                for(Goods goods : failureGoodsList){
+                for (Goods goods : failureGoodsList) {
                     failureMsg = failureMsg + "商品：《" + goods.getGoodsName() + "》，超出库存"
                             + failureGoodsMap.get(goods.getGoodsId()) + "本\n";
                 }
                 //没有成功下单的商品
-                if (successGoodsList.size() == 0){
+                if (successGoodsList.size() == 0) {
                     return AppResponse.Error(failureMsg);
                 }
                 //部分商品成功下单
@@ -526,8 +534,8 @@ public class ClientService {
         order.setOrderStoreCode(orderStoreCode);
         //设置购买商品的总价格
         order.setOrderTotalPrice(goodsSalePrice * Integer.parseInt(orderDetailGoodsNums));
-        //设置订单状态为1：已下单
-        order.setOrderCondition(1);
+        //设置订单状态为0：已下单
+        order.setOrderCondition(0);
         //设置订单支付状态为1：已支付
         order.setOrderPayCondition(1);
         //设置订单支付时间
@@ -628,6 +636,89 @@ public class ClientService {
         }
         return AppResponse.bizError("订单状态修改失败");
     }
+
+    /**
+     * 新增商品评价接口
+     *
+     * @param JSONStr 前端传的JSON字符串（包含评价的客户编号、商品评价内容）
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public AppResponse addGoodsCommentsByGoodsId(String JSONStr) {
+        //1.先把JSON格式字符串转换成JSON对象
+        JSONObject JSONObj = JSON.parseObject(JSONStr);
+        //2.可以根据JSON对象获取里面的指定参数
+        String clientId = (String) JSONObj.get("clientId");
+        //3.把里面的List列表参数变成JSONArray对象
+        JSONArray jsonArray = JSONObj.getJSONArray("goodsCommentList");
+        //4.通过JSONObject把JSONArray对象变成list<T>的列表对象
+        List<GoodsComment> goodsCommentList = JSONObject.parseArray(jsonArray.toJSONString(), GoodsComment.class);
+        //校验客户编号是否存在
+        if(clientId == null || "".equals(clientId)){
+            return AppResponse.Error("客户编号错误");
+        }
+        for (GoodsComment goodsComment : goodsCommentList){
+            //设置UUID
+            goodsComment.setGoodsCommentId(UUIDUtils.getUUID());
+            //设置商品评价的客户编号
+            goodsComment.setGoodsCommentClientCode(clientId);
+            //设置商品评价的时间
+            goodsComment.setGoodsCommentTime(new Date());
+            //对商品评价内容做去除前后空格处理
+            String comment = goodsComment.getGoodsComment() == null ? "" : goodsComment.getGoodsComment();
+            goodsComment.setGoodsComment(comment.trim());
+            //设置基本属性
+            goodsComment.setCreatePerson(AuthUtils.getCurrentUserId());
+            goodsComment.setCreateTime(new Date());
+            goodsComment.setUpdatePerson(AuthUtils.getCurrentUserId());
+            goodsComment.setUpdateTime(new Date());
+            goodsComment.setIsDeleted(1);
+            goodsComment.setVersion(1);
+        }
+        int count = goodsCommentMapper.insertGoodsCommentList(goodsCommentList);
+        //已经新增的评价和要新增的评价数量不一致
+        if(count != goodsCommentList.size()){
+            //回滚事务
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return AppResponse.bizError("新增商品评价异常");
+        }
+        //去除没有评价星级的商品评价信息
+        List<GoodsComment> starGoodsComment = goodsCommentList.stream().
+                filter(a -> a.getGoodsCommentStar() != 0).collect(Collectors.toList());
+
+        int starCount = 0;
+        if (starGoodsComment.size() != 0){
+            //根据评价的星级更新商品的星级
+            starCount = goodsMapper.updateGoodsStarList(starGoodsComment);
+        }
+        //已经修改的商品星级和要修改的商品星级数量不一致
+        if(starCount != starGoodsComment.size()){
+            //回滚事务
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return AppResponse.bizError("修改商品星级异常");
+        }
+        return AppResponse.success("新增商品评价成功");
+    }
+
+    /**
+     * 查询商品评价列表接口
+     *
+     * @param pageBean     分页信息
+     * @param goodsComment 商品评价信息（包含商品编号、商品星级）
+     * @return
+     */
+    public AppResponse listGoodsCommentsById(PageBean pageBean, GoodsComment goodsComment) {
+        if (goodsComment.getGoodsCommentGoodsCode() == null || "".equals(goodsComment.getGoodsCommentGoodsCode())){
+            return AppResponse.Error("商品编号错误");
+        }
+        PageHelper.startPage(pageBean.getPageNum(), pageBean.getPageSize());
+        List<GoodsComment> goodsComments = goodsCommentMapper.listGoodsCommentsById(
+                goodsComment.getGoodsCommentGoodsCode(),
+                goodsComment.getGoodsCommentStar());
+        PageInfo<GoodsComment> pageData = new PageInfo<GoodsComment>(goodsComments);
+        return AppResponse.success("查询成功!", pageData);
+    }
+
 }
 
 

@@ -1,8 +1,9 @@
-package com.xzsd.pc.goodscomment.entity;
+package com.xzsd.app.goodscomment.entity;
 
-import com.xzsd.pc.base.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.xzsd.app.base.entity.BaseEntity;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Date;
  * @author 黄瑞穆
  * @date 2020-03-27
  */
-public class GoodsComment extends BaseEntity implements Serializable {
+public class GoodsComment extends BaseEntity {
 
     /**
      * 商品评价唯一标识，主键
@@ -37,7 +38,27 @@ public class GoodsComment extends BaseEntity implements Serializable {
     /**
      * 评价商品的时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date goodsCommentTime;
+
+    //-----------------关联关系-----------------
+
+    /**
+     * 评价客户的姓名
+     */
+    private String userName;
+
+    //-----------------get和set方法-----------------
+
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public String getGoodsCommentId() {
         return goodsCommentId;

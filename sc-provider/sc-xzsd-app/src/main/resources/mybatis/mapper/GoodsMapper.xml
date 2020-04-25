@@ -149,4 +149,37 @@
         </where>
     </update>
 
+    <!-- 根据商品评价里的商品编号批量更新商品星级 -->
+    <update id="updateGoodsStarList" parameterType="java.util.ArrayList">
+        update t_goods_info
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="goods_star =(case" suffix="end),">
+                <foreach collection="goodsComments" item="goodsComment">
+                    <if test="goodsComment.goodsCommentGoodsCode != null">
+                        when goods_id = #{goodsComment.goodsCommentGoodsCode}
+                        then
+                            (SELECT
+                                    FLOOR(AVG(goods_comment_star))
+                                from
+                                    t_goods_comment
+                                where
+                                    is_deleted = 1
+                                and
+                                    goods_comment_star != 0
+                                and
+                                    goods_comment_goods_code = #{goodsComment.goodsCommentGoodsCode}
+                            )
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        <where>
+            goods_id in
+            <foreach collection="goodsComments" item="goodsComment" index="index" open="(" separator="," close=")">
+                #{goodsComment.goodsCommentGoodsCode}
+            </foreach>
+        </where>
+    </update>
+
+
 </mapper>

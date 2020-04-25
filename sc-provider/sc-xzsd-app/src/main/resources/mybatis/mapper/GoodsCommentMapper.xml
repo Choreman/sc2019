@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xzsd.app.goodscomment.dao.GoodsCommentMapper">
+    <resultMap id="BaseResultMap" type="com.xzsd.app.goodscomment.entity.GoodsComment">
+        <id column="goods_comment_id" property="goodsCommentId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="goods_comment_goods_code" property="goodsCommentGoodsCode" jdbcType="VARCHAR"/>
+        <result column="goods_comment_client_code" property="goodsCommentClientCode" jdbcType="VARCHAR"/>
+        <result column="goods_comment" property="goodsComment" jdbcType="VARCHAR"/>
+        <result column="goods_comment_star" property="goodsCommentStar" jdbcType="INTEGER"/>
+        <result column="goods_comment_time" property="goodsCommentTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+      goods_comment_id, create_time, create_person, update_time, update_person, version,
+      is_deleted, goods_comment_goods_code, goods_comment_client_code, goods_comment, goods_comment_star,
+      goods_comment_time
+    </sql>
+
+    <!-- 批量新增商品评价 -->
+    <insert id="insertGoodsCommentList" parameterType="java.util.List" useGeneratedKeys="false">
+        insert into
+            t_goods_comment(
+            goods_comment_id,
+            create_time,
+            create_person,
+            update_time,
+            update_person,
+            version,
+            is_deleted,
+            goods_comment_goods_code,
+            goods_comment_client_code,
+            goods_comment,
+            goods_comment_star,
+            goods_comment_time
+          )
+        values
+          <foreach collection="goodsCommentList" item="goodsComment" index="index" separator=",">
+              (
+                #{goodsComment.goodsCommentId},
+                #{goodsComment.createTime},
+                #{goodsComment.createPerson},
+                #{goodsComment.updateTime},
+                #{goodsComment.updatePerson},
+                #{goodsComment.version},
+                #{goodsComment.isDeleted},
+                #{goodsComment.goodsCommentGoodsCode},
+                #{goodsComment.goodsCommentClientCode},
+                #{goodsComment.goodsComment},
+                #{goodsComment.goodsCommentStar},
+                #{goodsComment.goodsCommentTime}
+              )
+          </foreach>
+    </insert>
+
+    <!-- 根据商品编号和商品星级查询商品评价列表 -->
+    <select id="listGoodsCommentsById" parameterType="java.lang.String"
+            resultType="com.xzsd.app.goodscomment.entity.GoodsComment">
+        SELECT
+            t_goods_comment.goods_comment_id,
+            t_goods_comment.goods_comment_star,
+            t_goods_comment.goods_comment,
+            t_goods_comment.goods_comment_time,
+            t_sys_user_info.user_name
+        from
+            t_goods_comment
+        LEFT JOIN t_sys_user_info on t_sys_user_info.user_id = t_goods_comment.goods_comment_client_code
+        where
+            t_goods_comment.is_deleted = 1
+        and
+            t_goods_comment.goods_comment_goods_code = #{goodsCommentGoodsCode}
+            <if test="goodsCommentStar != -1">
+                <if test="goodsCommentStar == 1">
+                    and t_goods_comment.goods_comment_star = 1
+                </if>
+                <if test="goodsCommentStar == 2 or goodsCommentStar == 3">
+                    and t_goods_comment.goods_comment_star in (2, 3)
+                </if>
+                <if test="goodsCommentStar == 4 or goodsCommentStar == 5">
+                    and t_goods_comment.goods_comment_star in (4, 5)
+                </if>
+            </if>
+        order by t_goods_comment.create_time desc
+    </select>
+
+</mapper>

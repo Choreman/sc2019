@@ -2,6 +2,7 @@ package com.xzsd.app.goods.dao;
 
 
 import com.xzsd.app.goods.entity.Goods;
+import com.xzsd.app.goodscomment.entity.GoodsComment;
 import com.xzsd.app.orderdetail.entity.OrderDetail;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -35,8 +36,9 @@ public interface GoodsMapper {
 
     /**
      * 根据商品id修改商品的库存信息
-     * @param goodsId 商品id
-     * @param goodsStock 商品库存
+     *
+     * @param goodsId        商品id
+     * @param goodsStock     商品库存
      * @param updatePersonId 新增人id
      * @return
      */
@@ -54,9 +56,18 @@ public interface GoodsMapper {
 
     /**
      * 根据订单详情里的商品编号和商品数量修改商品库存
+     *
      * @param orderDetails 订单详情列表
      * @return
      */
     int updateGoodsStockByOrderDetails(@Param("orderDetails") List<OrderDetail> orderDetails);
+
+    /**
+     * 根据商品评价里的商品编号批量更新商品星级
+     *
+     * @param goodsComments 商品评价列表
+     * @return
+     */
+    int updateGoodsStarList(@Param("goodsComments") List<GoodsComment> goodsComments);
 
 }

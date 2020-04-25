@@ -1,7 +1,11 @@
 package com.xzsd.app.user.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.xzsd.app.base.bean.PageBean;
+import com.xzsd.app.goodscomment.entity.GoodsComment;
 import com.xzsd.app.order.entity.Order;
 import com.xzsd.app.orderdetail.entity.OrderDetail;
 import com.xzsd.app.shoppingcart.entity.ShoppingCart;
@@ -11,9 +15,10 @@ import com.xzsd.app.utils.AppResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 客户管理控制器
@@ -239,7 +244,6 @@ public class ClientController {
             return AppResponse.bizError("出现异常");
         }
     }
-    //todo
 
     /**
      * 查询客户订单列表接口
@@ -290,6 +294,41 @@ public class ClientController {
             return clientService.updateOrderConditionById(orderId, orderCondition);
         } catch (Exception e) {
             logger.error("查询客户订单详情异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
+     * 新增商品评价接口
+     *
+     * @param JSONStr 前端传的JSON字符串（包含评价的客户编号、商品评价内容）
+     * @return
+     */
+    @PostMapping("/addGoodsCommentsByGoodsId")
+    public AppResponse addGoodsCommentsByGoodsId(@RequestBody String JSONStr) {
+        try {
+            return clientService.addGoodsCommentsByGoodsId(JSONStr);
+        } catch (Exception e) {
+            logger.error("新增客户商品评价异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
+     * 查询商品评价列表接口
+     *
+     * @param pageBean     分页信息
+     * @param goodsComment 商品评价信息（包含商品编号、商品星级）
+     * @return
+     */
+    @PostMapping("/listGoodsCommentsById")
+    public AppResponse listGoodsCommentsById(PageBean pageBean, GoodsComment goodsComment) {
+        try {
+            return clientService.listGoodsCommentsById(pageBean, goodsComment);
+        } catch (Exception e) {
+            logger.error("查询商品评价列表异常", e);
             System.out.println(e.toString());
             return AppResponse.bizError("出现异常");
         }
