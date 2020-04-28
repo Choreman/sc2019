@@ -2,6 +2,7 @@ package com.xzsd.pc.user.dao;
 
 import com.xzsd.pc.user.entity.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -29,6 +30,14 @@ public interface ClientMapper {
      * @return
      */
     List<User> listStoreClients(User user);
+
+    /**
+     * 根据门店编号列表批量修改客户对门店的关联关系
+     *
+     * @param listIds 门店编号列表
+     * @return
+     */
+    int updateClientStoreIdByStoreId(@Param("listIds") List<String> listIds);
 
 }
 

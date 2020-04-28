@@ -649,6 +649,7 @@ public class ClientService {
         JSONObject JSONObj = JSON.parseObject(JSONStr);
         //2.可以根据JSON对象获取里面的指定参数
         String clientId = (String) JSONObj.get("clientId");
+        String orderId = (String) JSONObj.get("orderId");
         //3.把里面的List列表参数变成JSONArray对象
         JSONArray jsonArray = JSONObj.getJSONArray("goodsCommentList");
         //4.通过JSONObject把JSONArray对象变成list<T>的列表对象
@@ -696,6 +697,11 @@ public class ClientService {
             //回滚事务
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return AppResponse.bizError("修改商品星级异常");
+        }
+        //评价完成，修改订单状态为5：已完成已评价
+        int orderCount = orderMapper.updateOrderConditiionById(orderId, AuthUtils.getCurrentUserId(), 5);
+        if (orderCount == 0) {
+            return AppResponse.bizError("订单状态修改异常");
         }
         return AppResponse.success("新增商品评价成功");
     }

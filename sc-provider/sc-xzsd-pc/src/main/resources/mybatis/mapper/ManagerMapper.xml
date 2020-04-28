@@ -45,4 +45,16 @@
             user_id = #{managerId,jdbcType=VARCHAR}
     </select>
 
+    <!-- 根据店长编号查询该店长是否已经绑定门店 -->
+    <select id="countStoreManager" parameterType="java.lang.String" resultType="int">
+        SELECT
+            count(*)
+        FROM
+            t_store_info
+        WHERE
+            is_deleted = 1
+        and
+            store_manager_id = #{managerId,jdbcType=VARCHAR}
+    </select>
+
 </mapper>

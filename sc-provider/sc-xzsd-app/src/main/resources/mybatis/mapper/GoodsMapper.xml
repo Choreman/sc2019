@@ -92,12 +92,13 @@
             t_image_info.image_url
         from
             t_goods_cate_info
-        LEFT JOIN t_goods_info on t_goods_cate_info.goods_cate_id = t_goods_info.goods_cate_code and t_goods_info.is_deleted = 1
+        LEFT JOIN t_goods_info on t_goods_cate_info.goods_cate_id = t_goods_info.goods_cate_code and t_goods_info.is_deleted = 1 and t_goods_info.goods_condition = 1
         LEFT JOIN t_image_info on t_image_info.image_cate_code = t_goods_info.goods_id and t_image_info.is_deleted = 1
         where
             t_goods_cate_info.is_deleted = 1
         AND
             t_goods_cate_info.cate_parent = #{goodsCateCode}
+        order by t_goods_cate_info.cate_name
     </select>
 
     <!-- 根据id修改商品信息 -->
@@ -159,7 +160,7 @@
                         when goods_id = #{goodsComment.goodsCommentGoodsCode}
                         then
                             (SELECT
-                                    FLOOR(AVG(goods_comment_star))
+                                ROUND(AVG(goods_comment_star), 1)
                                 from
                                     t_goods_comment
                                 where

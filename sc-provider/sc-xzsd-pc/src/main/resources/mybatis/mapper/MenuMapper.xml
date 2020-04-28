@@ -120,11 +120,12 @@
     <!-- 查询菜单列表接口 -->
     <select id="listMenus" parameterType="com.xzsd.pc.menu.entity.Menu" resultMap="BaseResultMap">
         SELECT
-        <include refid="Display_Column_List"/>
+            <include refid="Display_Column_List"/>
         FROM
-        t_menu
+            t_menu
         WHERE
-        is_deleted = 1
+            is_deleted = 1
+        order by create_time
     </select>
 
     <!-- 据菜单id查找菜单信息 -->

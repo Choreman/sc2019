@@ -1,5 +1,7 @@
 package com.xzsd.pc.utils;
 
+import com.neusoft.security.client.utils.SecurityUtils;
+
 /**
  * <p>权限工具类</p>
  * <p>创建日期：2018-03-06</p>
@@ -13,7 +15,7 @@ public class AuthUtils {
      * @return 用户id
      */
     public static String getCurrentUserId(){
-        return "78ac3e9c9a4d4f51a3633b0b24169800";
+        return SecurityUtils.getCurrentUserId();
     }
 
 }

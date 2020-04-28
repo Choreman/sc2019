@@ -200,9 +200,15 @@
         <if test="userLoginName != null and userLoginName != ''">
             and user_login_name like CONCAT('%', #{userLoginName}, '%')
         </if>
-        <if test="userRole != null and userRole != ''">
-            and user_role = #{userRole}
-        </if>
+        <choose>
+            <when test="userRole != null and userRole != ''">
+                and user_role = #{userRole}
+            </when>
+            <otherwise>
+                and user_role in (1, 2)
+            </otherwise>
+        </choose>
+        order by create_time desc
     </select>
 
     <!-- 根据id查询用户信息 -->

@@ -18,8 +18,18 @@ public interface ManagerMapper {
 
     /**
      * 根据店长编号查询是否有该店长
+     *
      * @param managerId 店长编号
      * @return
      */
     int countManagerByManagerId(@Param("managerId") String managerId);
+
+    /**
+     * 根据店长编号查询该店长是否已经绑定门店
+     *
+     * @param managerId 店长编号
+     * @return
+     */
+    int countStoreManager(@Param("managerId") String managerId);
+
 }
