@@ -8,6 +8,8 @@ import com.xzsd.pc.store.dao.StoreMapper;
 import com.xzsd.pc.store.entity.Store;
 import com.xzsd.pc.user.dao.ClientMapper;
 import com.xzsd.pc.user.dao.ManagerMapper;
+import com.xzsd.pc.user.dao.UserMapper;
+import com.xzsd.pc.user.entity.User;
 import com.xzsd.pc.utils.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,9 @@ public class StoreService {
     @Resource
     private ClientMapper clientMapper;
 
+    @Resource
+    private UserMapper userMapper;
+
     /**
      * 新增门店信息接口
      *
@@ -49,7 +54,7 @@ public class StoreService {
             //查询该店长是否已经绑定门店
             int storeManagerCount = managerMapper.countStoreManager(store.getStoreManagerId());
             //该店长未绑定门店，可以进行门店绑定操作
-            if(storeManagerCount == 0){
+            if (storeManagerCount == 0) {
                 //设置UUID为主键
                 store.setStoreId(UUIDUtils.getUUID());
                 //生成门店邀请码
@@ -73,7 +78,7 @@ public class StoreService {
                     return AppResponse.success("新增门店信息成功");
                 }
                 return AppResponse.bizError("新增门店信息失败");
-            }else{
+            } else {
                 return AppResponse.Error("该店长已经绑定过门店");
             }
         }
@@ -89,8 +94,24 @@ public class StoreService {
      * @return
      */
     public AppResponse listStores(PageBean pageBean, Store store, String managerName) {
+        //根据当前登录用户的id查找用户信息
+        User loginUser = userMapper.selectByPrimaryKey(AuthUtils.getCurrentUserId());
+        if (loginUser == null) {
+            return AppResponse.Error("登录用户信息获取失败");
+        }
+        //获取登录用户的角色
+        int userRole = loginUser.getUserRole();
         PageHelper.startPage(pageBean.getPageNum(), pageBean.getPageSize());
-        List<Store> stores = storeMapper.listStores(store, managerName);
+        List<Store> stores = null;
+        //当登录查询的是管理员角色
+        if (userRole == 1) {
+            //根据查询条件查询所有门店信息
+            stores = storeMapper.listStores(store, managerName);
+            //当登录查询的是店长角色
+        } else if (userRole == 2) {
+            //根据登录用户（店长）的编号查询店长的门店信息列表
+            stores = storeMapper.listManagerStores(store, managerName, loginUser.getUserId());
+        }
         PageInfo<Store> pageData = new PageInfo<Store>(stores);
         return AppResponse.success("查询成功!", pageData);
     }
@@ -134,14 +155,14 @@ public class StoreService {
         }
         //查询是否有该店长信息
         int count = managerMapper.countManagerByManagerId(store.getStoreManagerId());
-        if(count == 0){
+        if (count == 0) {
             return AppResponse.Error("店长编号不存在");
         }
         //如果传入的新店长编号和数据库中的店长编号不一致，表示修改了门店的绑定店长
-        if(!oldStore.getStoreManagerId().equals(store.getStoreManagerId())){
+        if (!oldStore.getStoreManagerId().equals(store.getStoreManagerId())) {
             //查询该店长是否已经绑定门店
             int storeManagerCount = managerMapper.countStoreManager(store.getStoreManagerId());
-            if(storeManagerCount != 0){
+            if (storeManagerCount != 0) {
                 return AppResponse.Error("该店长已经绑定过门店");
             }
         }

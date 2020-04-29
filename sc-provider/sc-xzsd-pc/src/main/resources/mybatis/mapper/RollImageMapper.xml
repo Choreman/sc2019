@@ -163,6 +163,7 @@
             <if test="rollImageCondition != 2">
             and roll_image_condition = #{rollImageCondition}
         </if>
+        order by roll_image_weight
     </select>
 
     <!-- 根据轮播图编号列表查询轮播图列表信息 -->
@@ -177,6 +178,22 @@
             <foreach item="rollImageId" index="index" collection="rollImageIds" open="(" separator="," close=")">
                 #{rollImageId}
             </foreach>
+    </select>
+
+    <!-- 根据商品编号列表查询轮播图信息 -->
+    <select id="listRollImageByIds" parameterType="java.lang.String" resultType="com.xzsd.pc.rollimage.entity.RollImage">
+        SELECT
+            <include refid="Display_Column_List"/>
+        FROM
+            t_roll_image
+        WHERE
+            t_roll_image.is_deleted = 1
+        and
+            roll_image_goods_code
+        in
+        <foreach item="rollImageGoodsCode" index="index" collection="listIds" open="(" separator="," close=")">
+            #{rollImageGoodsCode}
+        </foreach>
     </select>
 
     <!-- 批量修改轮播图状态信息 -->

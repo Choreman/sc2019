@@ -189,6 +189,39 @@
         </if>
     </select>
 
+    <!-- 根据登录用户（店长）的编号查询店长的门店信息列表 -->
+    <select id="listManagerStores" resultMap="StoreUserResultMap">
+        select
+            <include refid="display_Column_List"/>
+            , t_sys_user_info.user_name
+            , t_sys_user_info.user_login_name
+        from
+            t_store_info
+        LEFT JOIN t_sys_user_info on t_store_info.store_manager_id = t_sys_user_info.user_id
+        where
+            t_store_info.is_deleted = 1
+        and
+            t_store_info.store_manager_id = #{managerId}
+        <if test="store.storeCode != null and store.storeCode != ''">
+            and store_code like CONCAT('%', #{store.storeCode}, '%')
+        </if>
+        <if test="store.storeName != null and store.storeName != ''">
+            and store_name like CONCAT('%', #{store.storeName}, '%')
+        </if>
+        <if test="store.storeProvinceCode != null and store.storeProvinceCode != ''">
+            and store_province_code = #{store.storeProvinceCode}
+        </if>
+        <if test="store.storeCityCode != null and store.storeCityCode != ''">
+            and store_city_code = #{store.storeCityCode}
+        </if>
+        <if test="store.storeRegionCode != null and store.storeRegionCode != ''">
+            and store_region_code = #{store.storeRegionCode}
+        </if>
+        <if test="managerName != null and managerName != ''">
+            and t_sys_user_info.user_name like CONCAT('%', #{managerName}, '%')
+        </if>
+    </select>
+
     <!-- 根据id查询门店信息关联查询区域名称信息 -->
     <select id="findStoresById" parameterType="java.lang.String" resultMap="StoreAreaResultMap">
         SELECT

@@ -272,36 +272,38 @@
     <!-- 根据查询条件查询商品信息列表（多层级关联） -->
     <select id="listGoods" parameterType="com.xzsd.pc.goods.entity.Goods" resultMap="GoodsGoodsCateResultMap">
         SELECT
-        <include refid="Display_Column_List"/>
-        , t_goods_cate_info.goods_cate_id
-        , t_goods_cate_info.cate_name
-        , t_goods_cate_info.cate_parent
-        , t_goods_cate_info.cate_level
+            <include refid="Display_Column_List"/>
+            , t_goods_cate_info.goods_cate_id
+            , t_goods_cate_info.cate_name
+            , t_goods_cate_info.cate_parent
+            , t_goods_cate_info.cate_level
         FROM
-        t_goods_info
+            t_goods_info
         left join t_goods_cate_info on t_goods_info.goods_cate_code = t_goods_cate_info.goods_cate_id
         WHERE
-        t_goods_info.is_deleted = 1
-        <if test="goodsName != null and goodsName != ''">
-            and goods_name like CONCAT('%', #{goodsName}, '%')
-        </if>
-        <if test="goodsAdvertisement != null and goodsAdvertisement != ''">
-            and goods_advertisement like CONCAT('%', #{goodsAdvertisement}, '%')
-        </if>
-        <if test="goodsPublisher != null and goodsPublisher != ''">
-            and goods_publisher like CONCAT('%', #{goodsPublisher}, '%')
-        </if>
-        <if test="goodsAuthor != null and goodsAuthor != ''">
-            and goods_author like CONCAT('%', #{goodsAuthor}, '%')
-        </if>
-        <if test="goodsCondition != null">
-            and goods_condition = #{goodsCondition}
-        </if>
-        <if test="goodsCode != null and goodsCode != ''">
+            t_goods_info.is_deleted = 1
+        and
+            t_goods_info.goods_condition = 1
+            <if test="goodsName != null and goodsName != ''">
+                and goods_name like CONCAT('%', #{goodsName}, '%')
+            </if>
+            <if test="goodsAdvertisement != null and goodsAdvertisement != ''">
+                and goods_advertisement like CONCAT('%', #{goodsAdvertisement}, '%')
+            </if>
+            <if test="goodsPublisher != null and goodsPublisher != ''">
+                and goods_publisher like CONCAT('%', #{goodsPublisher}, '%')
+            </if>
+            <if test="goodsAuthor != null and goodsAuthor != ''">
+                and goods_author like CONCAT('%', #{goodsAuthor}, '%')
+            </if>
+            <if test="goodsCondition != null">
+                and goods_condition = #{goodsCondition}
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
             and goods_code like CONCAT('%', #{goodsCode}, '%')
         </if>
         order by
-        t_goods_info.create_time
+            t_goods_info.create_time desc
     </select>
 
     <!-- 根据查询条件查询商品信息列表（平级查询关联信息） -->
@@ -332,6 +334,42 @@
             and goods_condition = #{goodsCondition}
         </if>
         <if test="goodsCode != null and goodsCode != ''">
+            and goods_code like CONCAT('%', #{goodsCode}, '%')
+        </if>
+        order by
+            t_goods_info.create_time DESC
+    </select>
+
+    <!-- 轮播图里根据查询条件查询商品信息列表（平级查询关联信息） -->
+    <select id="listRollImageGoods" parameterType="com.xzsd.pc.goods.entity.Goods" resultType="com.xzsd.pc.goods.entity.Goods">
+        SELECT
+            <include refid="Display_Column_List"/>
+            , t2.cate_name as second_goods_cate_name
+            , (SELECT cate_name from t_goods_cate_info t1 where t1.goods_cate_id = t2.cate_parent) as first_goods_cate_name
+            , (SELECT goods_cate_id from t_goods_cate_info t1 where t1.goods_cate_id = t2.cate_parent) as first_goods_cate_id
+        FROM
+            t_goods_info
+        left join t_goods_cate_info t2 on t_goods_info.goods_cate_code = t2.goods_cate_id
+        WHERE
+            t_goods_info.is_deleted = 1
+        and
+            t_goods_info.goods_condition = 1
+            <if test="goodsName != null and goodsName != ''">
+                and goods_name like CONCAT('%', #{goodsName}, '%')
+            </if>
+            <if test="goodsAdvertisement != null and goodsAdvertisement != ''">
+                and goods_advertisement like CONCAT('%', #{goodsAdvertisement}, '%')
+            </if>
+            <if test="goodsPublisher != null and goodsPublisher != ''">
+                and goods_publisher like CONCAT('%', #{goodsPublisher}, '%')
+            </if>
+            <if test="goodsAuthor != null and goodsAuthor != ''">
+                and goods_author like CONCAT('%', #{goodsAuthor}, '%')
+            </if>
+            <if test="goodsCondition != null">
+                and goods_condition = #{goodsCondition}
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
             and goods_code like CONCAT('%', #{goodsCode}, '%')
         </if>
         order by

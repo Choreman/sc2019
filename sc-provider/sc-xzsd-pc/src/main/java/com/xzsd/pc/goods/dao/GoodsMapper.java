@@ -57,6 +57,14 @@ public interface GoodsMapper {
     List<Goods> listAllGoods(Goods goods);
 
     /**
+     * 轮播图里根据查询条件查询商品信息列表（平级查询关联信息）
+     *
+     * @param goods 商品信息查询条件
+     * @return
+     */
+    List<Goods> listRollImageGoods(Goods goods);
+
+    /**
      * 根据商品id查询商品信息
      *
      * @param goodsId 商品id

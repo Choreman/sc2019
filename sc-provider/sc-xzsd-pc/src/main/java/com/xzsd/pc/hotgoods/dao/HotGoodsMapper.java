@@ -19,6 +19,7 @@ public interface HotGoodsMapper {
 
     /**
      * 根据商品编号查询商品是否存在热门位
+     *
      * @param hotGoodsGoodsCode 商品编号
      * @return
      */
@@ -26,6 +27,7 @@ public interface HotGoodsMapper {
 
     /**
      * 根据商品编号查询商品是否存在热门位（排除热门商品本身）
+     *
      * @param hotGoods 包含热门位的编号和商品的编号
      * @return
      */
@@ -33,6 +35,7 @@ public interface HotGoodsMapper {
 
     /**
      * 根据热门商品的排序查询是否已经存在该排序的热门商品
+     *
      * @param hotGoodsWeight 排序
      * @return
      */
@@ -40,6 +43,7 @@ public interface HotGoodsMapper {
 
     /**
      * 根据热门商品的排序查询是否已经存在该排序的热门商品（排除热门商品本身）
+     *
      * @param hotGoods 包含热门位的编号和商品的排序
      * @return
      */
@@ -47,6 +51,7 @@ public interface HotGoodsMapper {
 
     /**
      * 新增热门位商品信息
+     *
      * @param hotGoods 热门位商品信息
      * @return
      */
@@ -54,13 +59,23 @@ public interface HotGoodsMapper {
 
     /**
      * 根据商品信息条件查询热门位商品关联查询商品信息
+     *
      * @param goods 要查询的商品信息
      * @return
      */
     List<HotGoods> listHotGoods(Goods goods);
 
     /**
+     * 根据商品编号列表查询热门商品信息
+     *
+     * @param listIds 商品编号列表
+     * @return
+     */
+    List<HotGoods> listHotGoodsByIds(@Param("listIds") List<String> listIds);
+
+    /**
      * 根据id查询热门位商品信息
+     *
      * @param hotGoodsId 热门位商品id
      * @return
      */
@@ -75,11 +90,17 @@ public interface HotGoodsMapper {
      */
     int deleteHotGoodsById(@Param("listIds") List<String> listIds, @Param("updatePersonId") String updatePersonId);
 
+    /**
+     * 修改热门位商品信息
+     *
+     * @param hotGoods 热门位商品信息
+     * @return
+     */
+    int updateByPrimaryKeySelective(HotGoods hotGoods);
+
     int deleteByPrimaryKey(String hotGoodsId);
 
     int insert(HotGoods record);
-
-    int updateByPrimaryKeySelective(HotGoods record);
 
     int updateByPrimaryKey(HotGoods record);
 }

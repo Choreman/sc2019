@@ -44,8 +44,9 @@ public class DriverService {
 
     /**
      * 新增司机信息接口
-     * @param user 存放司机关联的用户表的信息
-     * @param driver 存放司机表的信息
+     *
+     * @param user    存放司机关联的用户表的信息
+     * @param driver  存放司机表的信息
      * @param imageId 头像图片id
      * @return
      */
@@ -91,21 +92,21 @@ public class DriverService {
         //司机信息在用户表新增成功
         if (status > 0) {
             //如果修改用户时有上传头像
-            if(imageId != null && !"".equals(imageId)){
+            if (imageId != null && !"".equals(imageId)) {
                 Image image = new Image();
                 image.setImageId(imageId);
                 image.setImageCateCode(user.getUserId());
                 //通过图片的id修改图片的分类编号，把用户表的用户信息和图片表的头像图片关联起来
                 int headImageStatus = imageMapper.updateByPrimaryKeySelective(image);
                 //头像和用户信息没有关联成功
-                if(headImageStatus == 0){
+                if (headImageStatus == 0) {
                     //回滚事物
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return AppResponse.bizError("新增司机信息失败，请输入正确的头像地址");
                 }
             }
             int driverStatus = driverMapper.insertSelective(driver);
-            if(driverStatus == 0){
+            if (driverStatus == 0) {
                 //回滚事物
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return AppResponse.bizError("新增司机信息失败，请重试");
@@ -117,11 +118,12 @@ public class DriverService {
 
     /**
      * 上传头像
-     * @param headImage 头像图片
+     *
+     * @param headImage     头像图片
      * @param imageCateCode 图片类别编号，此处是用户编号
      * @return
      */
-    private int uploadHeadImage(MultipartFile headImage, String imageCateCode){
+    private int uploadHeadImage(MultipartFile headImage, String imageCateCode) {
         Image image = new Image();
         //设置UUID为主键
         image.setImageId(UUIDUtils.getUUID());
@@ -142,7 +144,7 @@ public class DriverService {
             try {
                 //上传到指定的文件夹里面
                 url = tencentCOSUtil.uploadImage(headImage, TencentCOSUtil.HEADIMAGEFOLDER);
-            }catch (Exception e){
+            } catch (Exception e) {
                 //表示上传图片出现异常
                 return -1;
             }
@@ -154,11 +156,12 @@ public class DriverService {
 
     /**
      * 更新头像图片
-     * @param headImage 要更新的头像图片
+     *
+     * @param headImage     要更新的头像图片
      * @param imageCateCode 图片分类的编号
      * @return
      */
-    private int updateHeadImage(MultipartFile headImage, String imageCateCode){
+    private int updateHeadImage(MultipartFile headImage, String imageCateCode) {
         Image image = new Image();
         //设置图片分类的编号
         image.setImageCateCode(imageCateCode);
@@ -170,13 +173,13 @@ public class DriverService {
         if (headImage.isEmpty()) {
             //根据图片分类的编号修改图片信息
             status = imageMapper.updateByImageCateCodeSelective(image);
-        //当传入要修改的头像时
-        }else{
+            //当传入要修改的头像时
+        } else {
             String url = null;
             try {
                 //上传到指定的文件夹里面
                 url = tencentCOSUtil.uploadImage(headImage, TencentCOSUtil.HEADIMAGEFOLDER);
-            }catch (Exception e){
+            } catch (Exception e) {
                 //表示上传图片出现异常
                 return -1;
             }
@@ -191,17 +194,17 @@ public class DriverService {
     /**
      * 查询司机信息列表接口
      * - 管理员查询所有司机信息列表
-     * - 司机查询自己的信息列表
+     * - 店长查询自己的信息列表
      *
      * @param pageBean 分页信息
-     * @param user 查询条件，存放在user表里的司机信息
-     * @param driver 查询条件，存放在driver表里的司机信息
+     * @param user     查询条件，存放在user表里的司机信息
+     * @param driver   查询条件，存放在driver表里的司机信息
      * @return
      */
-    public AppResponse listDrivers(PageBean pageBean, User user, Driver driver){
+    public AppResponse listDrivers(PageBean pageBean, User user, Driver driver) {
         //根据当前登录用户的id查找用户信息
         User loginUser = userMapper.selectByPrimaryKey(AuthUtils.getCurrentUserId());
-        if(loginUser == null){
+        if (loginUser == null) {
             return AppResponse.Error("登录用户信息获取失败");
         }
         //获取登录用户的角色
@@ -209,15 +212,15 @@ public class DriverService {
         PageHelper.startPage(pageBean.getPageNum(), pageBean.getPageSize());
         List<User> users = null;
         //当登录查询的是管理员角色
-        if(userRole == 1){
+        if (userRole == 1) {
             //根据查询条件查询所有司机信息
             users = driverMapper.listDrivers(user, driver);
-        //当登录查询的是司机角色
-        }else if(userRole == 3){
-            //获取的登录的司机id
+            //当登录查询的是店长角色
+        } else if (userRole == 2) {
+            //获取的登录的店长id
             user.setUserId(AuthUtils.getCurrentUserId());
-            //根据查询条件查询店长的门店的客户信息
-            users = driverMapper.listSelfDrivers(user, driver);
+            //根据查询条件查询店长的门店的司机信息
+            users = driverMapper.listStoreDrivers(user, driver);
         }
         PageInfo<User> pageData = new PageInfo<User>(users);
         return AppResponse.success("查询成功", pageData);
@@ -225,16 +228,17 @@ public class DriverService {
 
     /**
      * 查询司机信息详情接口（包含用户表、司机表、区域名称表里的信息）
+     *
      * @param userId 在user表中司机的id
      * @return
      */
-    public AppResponse findDriverById(String userId){
-        if(userId == null || "".equals(userId)){
+    public AppResponse findDriverById(String userId) {
+        if (userId == null || "".equals(userId)) {
             return AppResponse.Error("该司机信息不存在");
         }
         //获取司机信息（包含user表和driver表的信息）
         User user = driverMapper.findDriverById(userId);
-        if(user == null){
+        if (user == null) {
             return AppResponse.Error("该司机信息不存在");
         }
         return AppResponse.success("查询成功", user);
@@ -242,13 +246,14 @@ public class DriverService {
 
     /**
      * 修改司机信息接口
-     * @param user 要修改的在用户表的信息
-     * @param driver 要修改的在司机表的信息
+     *
+     * @param user    要修改的在用户表的信息
+     * @param driver  要修改的在司机表的信息
      * @param imageId 头像图片的id
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse updateDriversById(User user, Driver driver, String imageId){
+    public AppResponse updateDriversById(User user, Driver driver, String imageId) {
         //校验用户id不为null或着""
         if (user.getUserId() == null || "".equals(user.getUserId())) {
             return AppResponse.Error("没有该司机信息");
@@ -281,7 +286,7 @@ public class DriverService {
         int status = userMapper.updateByPrimaryKeySelective(user);
         if (status > 0) {
             //如果修改司机时有上传头像
-            if(imageId != null && !"".equals(imageId)){
+            if (imageId != null && !"".equals(imageId)) {
                 //把之前的司机头像进行删除
                 imageMapper.deleteImageByImageCateCode(user.getUserId(), AuthUtils.getCurrentUserId());
                 Image image = new Image();
@@ -290,7 +295,7 @@ public class DriverService {
                 //通过图片的id，把用户表的用户信息和图片表的头像图片关联起来
                 int headImageStatus = imageMapper.updateByPrimaryKeySelective(image);
                 //头像和用户信息没有关联成功
-                if(headImageStatus == 0){
+                if (headImageStatus == 0) {
                     //回滚事物
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return AppResponse.bizError("修改用户信息失败，请输入正确的头像地址");
@@ -298,7 +303,7 @@ public class DriverService {
             }
             //根据司机表关联的用户表编号修改司机信息
             int driverStatus = driverMapper.updateByDriverUserCodeSelective(driver);
-            if(driverStatus == 0){
+            if (driverStatus == 0) {
                 //回滚事物
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return AppResponse.bizError("修改司机信息失败，请重试");
@@ -310,11 +315,12 @@ public class DriverService {
 
     /**
      * 删除司机接口
+     *
      * @param userIds 要删除的用户表的id（批量删除用逗号分开）
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public AppResponse deleteDriverByUserId(String userIds){
+    public AppResponse deleteDriverByUserId(String userIds) {
         //检验要删除的ids是否为null或者""
         if (userIds == null || "".equals(userIds)) {
             return AppResponse.Error("没有该司机信息，删除失败");

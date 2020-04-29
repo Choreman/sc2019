@@ -74,7 +74,7 @@
             <if test="order.orderCode != null and order.orderCode != ''">
                 and t_order.order_code like CONCAT('%',#{order.orderCode},'%')
             </if>
-            <if test="order.orderCondition != null and order.orderCondition != ''">
+            <if test="order.orderCondition != null">
                 and t_order.order_condition = #{order.orderCondition}
             </if>
             <if test="orderBiginPayTime != null">
@@ -83,6 +83,7 @@
             <if test="orderEndPayTime != null">
                 and #{orderEndPayTime} >= t_order.order_pay_time
             </if>
+        order by order_pay_time desc
     </select>
 
     <!-- 根据传入条件查询门店所有订单信息 -->
@@ -107,7 +108,7 @@
             <if test="order.orderCode != null and order.orderCode != ''">
                 and t_order.order_code like CONCAT('%',#{order.orderCode},'%')
             </if>
-            <if test="order.orderCondition != null and order.orderCondition != ''">
+            <if test="order.orderCondition != null">
                 and t_order.order_condition = #{order.orderCondition}
             </if>
             <if test="orderBiginPayTime != null">
@@ -124,6 +125,7 @@
                     WHERE
                         t_store_info.store_manager_id = #{user.userId}
             )
+        order by order_pay_time desc
     </select>
 
     <!-- 根据订单id关联查询订单详情关联查询用户编号 -->

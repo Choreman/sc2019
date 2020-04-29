@@ -32,13 +32,14 @@ public class DriverController {
 
     /**
      * 新增司机信息接口
-     * @param user 存放司机关联的用户表的信息
-     * @param driver 存放司机表的信息
+     *
+     * @param user    存放司机关联的用户表的信息
+     * @param driver  存放司机表的信息
      * @param imageId 头像图片id
      * @return
      */
     @PostMapping("/addDriver")
-    public AppResponse addDriver(User user, Driver driver, String imageId){
+    public AppResponse addDriver(User user, Driver driver, String imageId) {
         try {
             return driverService.addDriver(user, driver, imageId);
         } catch (Exception e) {
@@ -51,15 +52,15 @@ public class DriverController {
     /**
      * 查询司机信息列表接口
      * - 管理员查询所有司机信息列表
-     * - 司机查询自己的信息列表
+     * - 店长查询自己的信息列表
      *
      * @param pageBean 分页信息
-     * @param user 查询条件，存放在user表里的司机信息
-     * @param driver 查询条件，存放在driver表里的司机信息
+     * @param user     查询条件，存放在user表里的司机信息
+     * @param driver   查询条件，存放在driver表里的司机信息
      * @return
      */
     @PostMapping("/listDrivers")
-    public AppResponse listDrivers(PageBean pageBean, User user, Driver driver){
+    public AppResponse listDrivers(PageBean pageBean, User user, Driver driver) {
         try {
             return driverService.listDrivers(pageBean, user, driver);
         } catch (Exception e) {
@@ -71,11 +72,12 @@ public class DriverController {
 
     /**
      * 查询司机信息详情接口（包含用户表、司机表、区域名称表里的信息）
+     *
      * @param userId 在user表中司机的id
      * @return
      */
     @PostMapping("/findDriverById")
-    public AppResponse findDriverById(String userId){
+    public AppResponse findDriverById(String userId) {
         try {
             return driverService.findDriverById(userId);
         } catch (Exception e) {
@@ -87,13 +89,14 @@ public class DriverController {
 
     /**
      * 修改司机信息接口
-     * @param user 要修改的在用户表的信息
-     * @param driver 要修改的在司机表的信息
+     *
+     * @param user    要修改的在用户表的信息
+     * @param driver  要修改的在司机表的信息
      * @param imageId 头像图片的id
      * @return
      */
     @PostMapping("/updateDriversById")
-    public AppResponse updateDriversById(User user, Driver driver, String imageId){
+    public AppResponse updateDriversById(User user, Driver driver, String imageId) {
         try {
             return driverService.updateDriversById(user, driver, imageId);
         } catch (Exception e) {
@@ -105,11 +108,12 @@ public class DriverController {
 
     /**
      * 删除司机接口
+     *
      * @param userIds 要删除的用户表的id（批量删除用逗号分开）
      * @return
      */
     @PostMapping("/deleteDriverByUserId")
-    public AppResponse deleteDriverByUserId(String userIds){
+    public AppResponse deleteDriverByUserId(String userIds) {
         try {
             return driverService.deleteDriverByUserId(userIds);
         } catch (Exception e) {

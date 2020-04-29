@@ -70,4 +70,14 @@ public interface GoodsMapper {
      */
     int updateGoodsStarList(@Param("goodsComments") List<GoodsComment> goodsComments);
 
+    /**
+     * 根据订单编号和商品评价里的商品编号修改商品的销量
+     *
+     * @param goodsComments 包含商品编号
+     * @param orderId       订单编号
+     * @return
+     */
+    int updateGoodsSaleNumList(@Param("goodsComments") List<GoodsComment> goodsComments,
+                               @Param("orderId") String orderId);
+
 }

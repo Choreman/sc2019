@@ -220,6 +220,22 @@
             </foreach>
     </update>
 
+    <!-- 根据商品编号列表查询热门商品信息 -->
+    <select id="listHotGoodsByIds" parameterType="java.lang.String" resultType="com.xzsd.pc.hotgoods.entity.HotGoods">
+        SELECT
+            <include refid="Display_Column_List"/>
+        FROM
+            t_hot_goods_info
+        WHERE
+            t_hot_goods_info.is_deleted = 1
+        and
+            hot_goods_goods_code
+        in
+            <foreach item="hotGoodsGoodsCode" index="index" collection="listIds" open="(" separator="," close=")">
+                #{hotGoodsGoodsCode}
+            </foreach>
+    </select>
+
     <!-- Mybatis generator自动生成代码 -->
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from t_hot_goods_info

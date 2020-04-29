@@ -3,6 +3,7 @@ package com.xzsd.pc.rollimage.controller;
 import com.github.pagehelper.Page;
 import com.xzsd.pc.area.service.AreaService;
 import com.xzsd.pc.base.bean.PageBean;
+import com.xzsd.pc.goods.entity.Goods;
 import com.xzsd.pc.rollimage.entity.RollImage;
 import com.xzsd.pc.rollimage.service.RollImageService;
 import com.xzsd.pc.utils.AppResponse;
@@ -34,15 +35,16 @@ public class RollImageController {
 
     /**
      * 新增轮播图接口
-     * @param rollImage 轮播图信息
-     * @param imageId 轮播图图片编号
+     *
+     * @param rollImage             轮播图信息
+     * @param imageId               轮播图图片编号
      * @param rollImageBeginDateStr 轮播图开始时间
-     * @param rollImageEndDateStr 轮播图结束时间
+     * @param rollImageEndDateStr   轮播图结束时间
      * @return
      */
     @PostMapping("/addRollImage")
     public AppResponse addRollImage(RollImage rollImage, String imageId,
-                                    String rollImageBeginDateStr, String rollImageEndDateStr){
+                                    String rollImageBeginDateStr, String rollImageEndDateStr) {
         try {
             return rollImageService.addRollImage(rollImage, imageId, rollImageBeginDateStr, rollImageEndDateStr);
         } catch (Exception e) {
@@ -54,12 +56,13 @@ public class RollImageController {
 
     /**
      * 查询轮播图列表接口
-     * @param pageBean 分页信息
+     *
+     * @param pageBean           分页信息
      * @param rollImageCondition 轮播图状态
      * @return
      */
     @PostMapping("/listRollImages")
-    public AppResponse listRollImages(PageBean pageBean, String rollImageCondition){
+    public AppResponse listRollImages(PageBean pageBean, String rollImageCondition) {
         try {
             return rollImageService.listRollImages(pageBean, rollImageCondition);
         } catch (Exception e) {
@@ -70,13 +73,32 @@ public class RollImageController {
     }
 
     /**
+     * 轮播图查询商品列表接口
+     *
+     * @param pageBean 分页信息
+     * @param goods    商品查询信息
+     * @return
+     */
+    @PostMapping("/listRollImageGoods")
+    public AppResponse listRollImageGoods(PageBean pageBean, Goods goods) {
+        try {
+            return rollImageService.listRollImageGoods(pageBean, goods);
+        } catch (Exception e) {
+            logger.error("查询商品列表异常", e);
+            System.out.println(e.toString());
+            return AppResponse.bizError("出现异常");
+        }
+    }
+
+    /**
      * 修改轮播图状态接口
-     * @param rollImageIds 轮播图编号列表
+     *
+     * @param rollImageIds       轮播图编号列表
      * @param rollImageCondition 轮播图状态
      * @return
      */
     @PostMapping("/updateRollImageConditionById")
-    public AppResponse updateRollImageConditionById(String rollImageIds, int rollImageCondition){
+    public AppResponse updateRollImageConditionById(String rollImageIds, int rollImageCondition) {
         try {
             return rollImageService.updateRollImageConditionById(rollImageIds, rollImageCondition);
         } catch (Exception e) {
@@ -88,11 +110,12 @@ public class RollImageController {
 
     /**
      * 删除轮播图接口
+     *
      * @param rollImageIds 轮播图编号列表（批量删除用逗号分开）
      * @return
      */
     @PostMapping("/deleteRollImageById")
-    public AppResponse deleteRollImageById(String rollImageIds){
+    public AppResponse deleteRollImageById(String rollImageIds) {
         try {
             return rollImageService.deleteRollImageById(rollImageIds);
         } catch (Exception e) {

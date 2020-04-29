@@ -40,6 +40,9 @@ public class RollImageService {
     private ImageMapper imageMapper;
 
     @Resource
+    private GoodsMapper goodsMapper;
+
+    @Resource
     private TencentCOSUtil tencentCOSUtil;
 
     /**
@@ -99,14 +102,14 @@ public class RollImageService {
         //轮播图新增成功
         if (status > 0) {
             //如果新增轮播图时有上传图片
-            if(imageId != null && !"".equals(imageId)){
+            if (imageId != null && !"".equals(imageId)) {
                 Image image = new Image();
                 image.setImageId(imageId);
                 image.setImageCateCode(rollImage.getRollImageId());
                 //通过图片的id修改图片的分类编号，把轮播图表的轮播图信息和图片表的轮播图图片关联起来
                 int headImageStatus = imageMapper.updateByPrimaryKeySelective(image);
                 //轮播图图片和轮播图信息没有关联成功
-                if(headImageStatus == 0){
+                if (headImageStatus == 0) {
                     //回滚事务
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return AppResponse.bizError("新增轮播图信息失败，请输入正确的头像地址");
@@ -171,6 +174,20 @@ public class RollImageService {
     }
 
     /**
+     * 轮播图查询商品列表接口
+     *
+     * @param pageBean 分页信息
+     * @param goods    商品查询信息
+     * @return
+     */
+    public AppResponse listRollImageGoods(PageBean pageBean, Goods goods) {
+        PageHelper.startPage(pageBean.getPageNum(), pageBean.getPageSize());
+        List<Goods> goodses = goodsMapper.listRollImageGoods(goods);
+        PageInfo<Goods> pageData = new PageInfo<Goods>(goodses);
+        return AppResponse.success("查询成功!", pageData);
+    }
+
+    /**
      * 修改轮播图状态接口
      *
      * @param rollImageIds       轮播图编号列表
@@ -216,7 +233,7 @@ public class RollImageService {
             //回滚事物
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return AppResponse.bizError("所选列表有未存在数据，删除失败");
-        }else{
+        } else {
             //同时删除轮播图信息列表关联的轮播图图片
             imageMapper.deleteImageByRollImageId(listIds, AuthUtils.getCurrentUserId());
             return AppResponse.success("删除成功");

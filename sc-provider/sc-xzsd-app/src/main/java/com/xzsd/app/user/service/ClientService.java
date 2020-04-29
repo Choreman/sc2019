@@ -591,7 +591,6 @@ public class ClientService {
         return orderDetail;
     }
 
-
     /**
      * 查询客户订单列表接口
      *
@@ -683,10 +682,14 @@ public class ClientService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return AppResponse.bizError("新增商品评价异常");
         }
+        //商品评价完，表示购买成功，修改商品的销量
+        int saleNumCount = goodsMapper.updateGoodsSaleNumList(goodsCommentList, orderId);
+        if(saleNumCount != goodsCommentList.size()){
+            return AppResponse.bizError("商品销量修改失败");
+        }
         //去除没有评价星级的商品评价信息
         List<GoodsComment> starGoodsComment = goodsCommentList.stream().
                 filter(a -> a.getGoodsCommentStar() != 0).collect(Collectors.toList());
-
         int starCount = 0;
         if (starGoodsComment.size() != 0){
             //根据评价的星级更新商品的星级

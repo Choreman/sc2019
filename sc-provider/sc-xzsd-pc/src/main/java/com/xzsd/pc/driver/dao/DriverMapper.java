@@ -36,13 +36,13 @@ public interface DriverMapper {
 
     /**
      * 根据传入的查询条件查询司机存放在user表中的信息
-     * 只查询自己本身的信息（因为登录的是司机，权限只能查看自己的信息）
+     * 只查询负责店长绑定店铺的司机列表信息（因为登录的是店长，权限只能查看店长绑定门店的司机列表信息）
      *
      * @param user   查询条件，存放在user表里的司机信息
      * @param driver 查询条件，存放在driver表里的司机信息
      * @return
      */
-    List<User> listSelfDrivers(@Param("user") User user, @Param("driver") Driver driver);
+    List<User> listStoreDrivers(@Param("user") User user, @Param("driver") Driver driver);
 
     /**
      * 根据id查询司机信息（包含用户表、司机表、区域名称表里的信息）

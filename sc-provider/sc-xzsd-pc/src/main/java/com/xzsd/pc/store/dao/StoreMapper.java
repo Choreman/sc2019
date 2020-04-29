@@ -35,6 +35,18 @@ public interface StoreMapper {
     List<Store> listStores(@Param("store") Store store, @Param("managerName") String managerName);
 
     /**
+     * 根据登录用户（店长）的编号查询店长的门店信息列表
+     *
+     * @param store       门店信息查询条件
+     * @param managerName 店长名称查询条件
+     * @param managerId   店长的编号
+     * @return
+     */
+    List<Store> listManagerStores(@Param("store") Store store,
+                                  @Param("managerName") String managerName,
+                                  @Param("managerId") String managerId);
+
+    /**
      * 根据id查询门店信息关联查询区域名称信息
      *
      * @param storeId 门店id

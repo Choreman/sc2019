@@ -182,5 +182,35 @@
         </where>
     </update>
 
+    <!-- 根据订单编号和商品评价里的商品编号修改商品的销量 -->
+    <update id="updateGoodsSaleNumList" parameterType="java.util.ArrayList">
+        update t_goods_info
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="goods_sale_sum =(case" suffix="end),">
+                <foreach collection="goodsComments" item="goodsComment">
+                    <if test="goodsComment.goodsCommentGoodsCode != null">
+                        when goods_id = #{goodsComment.goodsCommentGoodsCode}
+                        then goods_sale_sum + (
+                        SELECT
+                            order_detail_goods_num
+                        from
+                            t_order_detail
+                        where
+                            t_order_detail.order_detail_order_code = #{orderId}
+                        and
+                            t_order_detail.order_detail_goods_code = #{goodsComment.goodsCommentGoodsCode}
+                        )
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        <where>
+            goods_id in
+            <foreach collection="goodsComments" item="goodsComment" index="index" open="(" separator="," close=")">
+                #{goodsComment.goodsCommentGoodsCode}
+            </foreach>
+        </where>
+    </update>
+
 
 </mapper>

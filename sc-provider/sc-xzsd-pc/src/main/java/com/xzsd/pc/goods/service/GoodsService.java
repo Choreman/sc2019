@@ -5,8 +5,12 @@ import com.github.pagehelper.PageInfo;
 import com.xzsd.pc.base.bean.PageBean;
 import com.xzsd.pc.goods.dao.GoodsMapper;
 import com.xzsd.pc.goods.entity.Goods;
+import com.xzsd.pc.hotgoods.dao.HotGoodsMapper;
+import com.xzsd.pc.hotgoods.entity.HotGoods;
 import com.xzsd.pc.image.dao.ImageMapper;
 import com.xzsd.pc.image.entity.Image;
+import com.xzsd.pc.rollimage.dao.RollImageMapper;
+import com.xzsd.pc.rollimage.entity.RollImage;
 import com.xzsd.pc.utils.AppResponse;
 import com.xzsd.pc.utils.AuthUtils;
 import com.xzsd.pc.utils.TencentCOSUtil;
@@ -21,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 商品信息业务处理类
@@ -36,6 +41,12 @@ public class GoodsService {
 
     @Resource
     private ImageMapper imageMapper;
+
+    @Resource
+    private HotGoodsMapper hotGoodsMapper;
+
+    @Resource
+    private RollImageMapper rollImageMapper;
 
     @Resource
     private TencentCOSUtil tencentCOSUtil;
@@ -279,12 +290,15 @@ public class GoodsService {
                 }
             }
         }
-        //修改商品信息（上架、下架、上架时间）
-        int status = goodsMapper.updateGoodsListCondition(listIds, goodsCondition, AuthUtils.getCurrentUserId());
-        if (status > 0) {
-            return AppResponse.success("商品状态修改成功");
+        if(listIds.size() != 0){
+            //修改商品信息（上架、下架、上架时间）
+            int status = goodsMapper.updateGoodsListCondition(listIds, goodsCondition, AuthUtils.getCurrentUserId());
+            if (status > 0) {
+                return AppResponse.success("商品状态修改成功");
+            }
+            return AppResponse.bizError("商品状态修改失败");
         }
-        return AppResponse.bizError("商品状态修改失败");
+        return AppResponse.Error("所选商品库存不足，无法上架");
     }
 
     /**
@@ -300,20 +314,50 @@ public class GoodsService {
             return AppResponse.Error("没有该商品信息，删除失败");
         }
         List<String> listIds = Arrays.asList(goodsIds.split(","));
-        //删除商品信息列表集合，设置更新人id
-        int count = goodsMapper.deleteGoodsById(listIds, AuthUtils.getCurrentUserId());
-        //当要删除的商品总数和已删除的总数不等时，回滚事物，删除失败
-        if (count != listIds.size()) {
-            //回滚事物
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return AppResponse.bizError("所选列表有未存在数据，删除失败");
-        } else {
-            //同时删除商品信息列表关联的商品图片
-            imageMapper.deleteImageByGoodsId(listIds, AuthUtils.getCurrentUserId());
-            return AppResponse.success("删除成功");
+        //设置商品存在热门位或轮播图标记
+        boolean flag = false;
+        //1.检查商品编号列表中是否添加热门位，有则剔除该商品编号，不进行删除
+        //获取要删除的商品中在热门位中的信息
+        List<HotGoods> hotGoodsList = hotGoodsMapper.listHotGoodsByIds(listIds);
+        listIds = new ArrayList<>(listIds);
+        for (HotGoods hotGoods : hotGoodsList){
+            //如果要删除的商品编号列表中存在热门位，则在要删除的商品编号列表中删除该商品编号
+            if(listIds.contains(hotGoods.getHotGoodsGoodsCode())){
+                listIds.remove(hotGoods.getHotGoodsGoodsCode());
+                flag = true;
+            }
         }
-        //todo
-        //删除商品还需要判断是否在轮播图里，是否在热门位里，完成轮播图和热门位在来完成这个，待完成
+        //2.检查商品编号列表中是否添加轮播图，有则剔除该商品编号，不进行删除
+        if (listIds.size() != 0){
+            //获取要删除的商品中在轮播图中的信息
+            List<RollImage> rollImageList = rollImageMapper.listRollImageByIds(listIds);
+            for(RollImage rollImage : rollImageList){
+                //如果要删除的商品编号列表中存在轮播图，则在要删除的商品编号列表中删除该商品编号
+                if(listIds.contains(rollImage.getRollImageGoodsCode())){
+                    listIds.remove(rollImage.getRollImageGoodsCode());
+                    flag = true;
+                }
+            }
+        }
+        //3.删除商品信息
+        if(listIds.size() != 0){
+            //删除商品信息列表集合，设置更新人id
+            int count = goodsMapper.deleteGoodsById(listIds, AuthUtils.getCurrentUserId());
+            //当要删除的商品总数和已删除的总数不等时，回滚事物，删除失败
+            if (count != listIds.size()) {
+                //回滚事物
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return AppResponse.bizError("所选列表有未存在数据，删除失败");
+            } else {
+                //同时删除商品信息列表关联的商品图片
+                imageMapper.deleteImageByGoodsId(listIds, AuthUtils.getCurrentUserId());
+                if (flag){
+                    return AppResponse.success("部分商品存在于热门位或轮播图无法删除，部分删除成功");
+                }
+                return AppResponse.success("删除成功");
+            }
+        }
+        return AppResponse.Error("所选商品存在于热门位或轮播图，删除失败");
     }
 
 }
