@@ -127,6 +127,20 @@
         </trim>
     </insert>
 
+    <!-- 查询是否有相同省市区的司机信息 -->
+    <select id="countDriverByArea" parameterType="com.xzsd.pc.driver.entity.Driver" resultType="int">
+        SELECT
+            count(*)
+        FROM
+            t_driver_info
+        WHERE
+            t_driver_info.driver_province_code = #{driverProvinceCode}
+        and
+            t_driver_info.driver_city_code = #{driverCityCode}
+        and
+            t_driver_info.driver_region_code = #{driverRegionCode}
+    </select>
+
     <!-- 根据传入的查询条件查询司机存放在user表中的信息 -->
     <select id="listDrivers" resultType="com.xzsd.pc.user.entity.User">
         SELECT

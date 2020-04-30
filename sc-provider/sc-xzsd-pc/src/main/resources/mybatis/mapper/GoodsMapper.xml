@@ -25,7 +25,7 @@
         <result column="goods_isbn" property="goodsIsbn" jdbcType="VARCHAR"/>
         <result column="goods_publisher" property="goodsPublisher" jdbcType="VARCHAR"/>
         <result column="goods_author" property="goodsAuthor" jdbcType="VARCHAR"/>
-        <result column="goods_star" property="goodsStar" jdbcType="INTEGER"/>
+        <result column="goods_star" property="goodsStar" jdbcType="REAL"/>
     </resultMap>
     <sql id="Base_Column_List">
       goods_id, create_time, create_person, update_time, update_person, version, is_deleted,

@@ -79,7 +79,7 @@ public class GoodsService {
         //设置商品默认总访问量为0
         goods.setGoodsVisitNum(0);
         //设置商品评价星级默认为0
-        goods.setGoodsStar(0);
+        goods.setGoodsStar(0f);
         //设置基本属性
         goods.setCreateTime(new Date());
         goods.setCreatePerson(AuthUtils.getCurrentUserId());

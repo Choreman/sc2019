@@ -90,7 +90,7 @@ public class Goods extends BaseEntity {
     /**
      * 商品的评价星级（1：一星，2：两星，3：三星，4：四星，5：五星）
      */
-    private Integer goodsStar;
+    private Float goodsStar;
 
 
     //-----------------关联关系-----------------
@@ -297,11 +297,11 @@ public class Goods extends BaseEntity {
         this.goodsAuthor = goodsAuthor == null ? null : goodsAuthor.trim();
     }
 
-    public Integer getGoodsStar() {
+    public Float getGoodsStar() {
         return goodsStar;
     }
 
-    public void setGoodsStar(Integer goodsStar) {
+    public void setGoodsStar(Float goodsStar) {
         this.goodsStar = goodsStar;
     }
 }

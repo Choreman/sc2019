@@ -62,6 +62,11 @@ public class DriverService {
         if (count != 0) {
             return AppResponse.Error("司机账号已存在");
         }
+        //查询数据库中是否有相同省市区的司机信息
+        int driverCount = driverMapper.countDriverByArea(driver);
+        if (driverCount != 0){
+            return AppResponse.Error("存在相同区域的司机信息");
+        }
         //设置UUID为主键
         user.setUserId(UUIDUtils.getUUID());
         //设置用户展示的编号（年月日时分秒+2位随机数）

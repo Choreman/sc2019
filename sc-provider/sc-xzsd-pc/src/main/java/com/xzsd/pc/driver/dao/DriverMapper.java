@@ -26,6 +26,14 @@ public interface DriverMapper {
     int insertSelective(Driver driver);
 
     /**
+     * 查询是否有相同省市区的司机信息
+     *
+     * @param driver 包含省市区编号
+     * @return
+     */
+    int countDriverByArea(Driver driver);
+
+    /**
      * 根据传入的查询条件查询司机存放在user表中的信息
      *
      * @param user   查询条件，存放在user表里的司机信息
