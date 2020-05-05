@@ -27,9 +27,6 @@ import java.util.List;
 public class DriverService {
 
     @Resource
-    private DriverMapper driverMapper;
-
-    @Resource
     private StoreMapper storeMapper;
 
     /**

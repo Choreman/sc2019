@@ -31,14 +31,4 @@ public interface OrderDetailMapper {
      */
     int insertOrderDetailList(@Param("OrderDetailList") List<OrderDetail> OrderDetailList);
 
-
-    int deleteByPrimaryKey(String orderDetailId);
-
-    int insert(OrderDetail record);
-
-    OrderDetail selectByPrimaryKey(String orderDetailId);
-
-    int updateByPrimaryKeySelective(OrderDetail record);
-
-    int updateByPrimaryKey(OrderDetail record);
 }

@@ -86,9 +86,4 @@ public interface ShoppingCartMapper {
      */
     ShoppingCart selectByPrimaryKey(String shoppingCartId);
 
-    int deleteByPrimaryKey(String shoppingCartId);
-
-    int insert(ShoppingCart record);
-
-    int updateByPrimaryKey(ShoppingCart record);
 }

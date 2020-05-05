@@ -145,6 +145,7 @@
                     </otherwise>
                 </choose>
             </if>
+        order by t_order.create_time desc
     </select>
 
     <!-- 根据订单编号查询门店订单详情 -->

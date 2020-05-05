@@ -223,32 +223,4 @@
             shopping_cart_id = #{shoppingCartId,jdbcType=VARCHAR}
     </select>
 
-
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from t_shopping_cart
-    where shopping_cart_id = #{shoppingCartId,jdbcType=VARCHAR}
-  </delete>
-    <insert id="insert" parameterType="com.xzsd.app.shoppingcart.entity.ShoppingCart">
-    insert into t_shopping_cart (shopping_cart_id, create_time, create_person, 
-      update_time, update_person, version, 
-      is_deleted, shopping_cart_client_code, shopping_cart_goods_code, 
-      shopping_cart_goods_num)
-    values (#{shoppingCartId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
-      #{isDeleted,jdbcType=INTEGER}, #{shoppingCartClientCode,jdbcType=VARCHAR}, #{shoppingCartGoodsCode,jdbcType=VARCHAR}, 
-      #{shoppingCartGoodsNum,jdbcType=INTEGER})
-  </insert>
-    <update id="updateByPrimaryKey" parameterType="com.xzsd.app.shoppingcart.entity.ShoppingCart">
-    update t_shopping_cart
-    set create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_person = #{createPerson,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_person = #{updatePerson,jdbcType=VARCHAR},
-      version = #{version,jdbcType=INTEGER},
-      is_deleted = #{isDeleted,jdbcType=INTEGER},
-      shopping_cart_client_code = #{shoppingCartClientCode,jdbcType=VARCHAR},
-      shopping_cart_goods_code = #{shoppingCartGoodsCode,jdbcType=VARCHAR},
-      shopping_cart_goods_num = #{shoppingCartGoodsNum,jdbcType=INTEGER}
-    where shopping_cart_id = #{shoppingCartId,jdbcType=VARCHAR}
-  </update>
 </mapper>
