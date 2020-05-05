@@ -97,10 +97,5 @@ public interface HotGoodsMapper {
      * @return
      */
     int updateByPrimaryKeySelective(HotGoods hotGoods);
-
-    int deleteByPrimaryKey(String hotGoodsId);
-
-    int insert(HotGoods record);
-
-    int updateByPrimaryKey(HotGoods record);
+    
 }

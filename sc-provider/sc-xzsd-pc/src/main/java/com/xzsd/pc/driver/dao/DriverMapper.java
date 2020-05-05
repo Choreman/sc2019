@@ -77,11 +77,4 @@ public interface DriverMapper {
      */
     int deleteDriverByUserId(@Param("listIds") List<String> listIds, @Param("updatePersonId") String updatePersonId);
 
-    int deleteByPrimaryKey(String driverId);
-
-    int insert(Driver record);
-
-    Driver selectByPrimaryKey(String driverId);
-
-    int updateByPrimaryKey(Driver record);
 }

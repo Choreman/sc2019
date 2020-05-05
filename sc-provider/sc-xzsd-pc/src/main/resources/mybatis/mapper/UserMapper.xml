@@ -310,43 +310,4 @@
             user_id = #{userId,jdbcType=VARCHAR}
     </select>
 
-    <!-- Mybatis generator自动生成代码 -->
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from t_sys_user_info
-    where user_id = #{userId,jdbcType=VARCHAR}
-  </delete>
-    <insert id="insert" parameterType="com.xzsd.pc.user.entity.User">
-    insert into t_sys_user_info (user_id, create_time, create_person, 
-      update_time, update_person, version, 
-      is_deleted, user_code, user_login_name, 
-      user_password, user_role, user_name, 
-      user_sex, user_phone, user_mail, 
-      user_idcard, user_store_id)
-    values (#{userId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
-      #{isDeleted,jdbcType=INTEGER}, #{userCode,jdbcType=VARCHAR}, #{userLoginName,jdbcType=VARCHAR}, 
-      #{userPassword,jdbcType=VARCHAR}, #{userRole,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, 
-      #{userSex,jdbcType=INTEGER}, #{userPhone,jdbcType=VARCHAR}, #{userMail,jdbcType=VARCHAR}, 
-      #{userIdcard,jdbcType=VARCHAR}, #{userStoreId,jdbcType=VARCHAR})
-  </insert>
-    <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.user.entity.User">
-    update t_sys_user_info
-    set create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_person = #{createPerson,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_person = #{updatePerson,jdbcType=VARCHAR},
-      version = #{version,jdbcType=INTEGER},
-      is_deleted = #{isDeleted,jdbcType=INTEGER},
-      user_code = #{userCode,jdbcType=VARCHAR},
-      user_login_name = #{userLoginName,jdbcType=VARCHAR},
-      user_password = #{userPassword,jdbcType=VARCHAR},
-      user_role = #{userRole,jdbcType=INTEGER},
-      user_name = #{userName,jdbcType=VARCHAR},
-      user_sex = #{userSex,jdbcType=INTEGER},
-      user_phone = #{userPhone,jdbcType=VARCHAR},
-      user_mail = #{userMail,jdbcType=VARCHAR},
-      user_idcard = #{userIdcard,jdbcType=VARCHAR},
-      user_store_id = #{userStoreId,jdbcType=VARCHAR}
-    where user_id = #{userId,jdbcType=VARCHAR}
-  </update>
 </mapper>

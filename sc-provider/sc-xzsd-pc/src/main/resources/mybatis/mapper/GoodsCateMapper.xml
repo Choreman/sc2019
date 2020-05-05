@@ -245,39 +245,12 @@
             </choose>
     </select>
 
-    <!-- Mybatis generator自动生成代码 -->
+    <!-- 根据商品分类编号查询商品分类信息 -->
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
         <include refid="Base_Column_List"/>
         from t_goods_cate_info
         where goods_cate_id = #{goodsCateId,jdbcType=VARCHAR}
     </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from t_goods_cate_info
-    where goods_cate_id = #{goodsCateId,jdbcType=VARCHAR}
-  </delete>
-    <insert id="insert" parameterType="com.xzsd.pc.goodscate.entity.GoodsCate">
-    insert into t_goods_cate_info (goods_cate_id, create_time, create_person, 
-      update_time, update_person, version, 
-      is_deleted, cate_name, cate_level, 
-      cate_parent, cate_comment)
-    values (#{goodsCateId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
-      #{isDeleted,jdbcType=INTEGER}, #{cateName,jdbcType=VARCHAR}, #{cateLevel,jdbcType=INTEGER}, 
-      #{cateParent,jdbcType=VARCHAR}, #{cateComment,jdbcType=VARCHAR})
-  </insert>
-    <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.goodscate.entity.GoodsCate">
-    update t_goods_cate_info
-    set create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_person = #{createPerson,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_person = #{updatePerson,jdbcType=VARCHAR},
-      version = #{version,jdbcType=INTEGER},
-      is_deleted = #{isDeleted,jdbcType=INTEGER},
-      cate_name = #{cateName,jdbcType=VARCHAR},
-      cate_level = #{cateLevel,jdbcType=INTEGER},
-      cate_parent = #{cateParent,jdbcType=VARCHAR},
-      cate_comment = #{cateComment,jdbcType=VARCHAR}
-    where goods_cate_id = #{goodsCateId,jdbcType=VARCHAR}
-  </update>
+
 </mapper>

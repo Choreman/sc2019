@@ -75,11 +75,11 @@ public interface GoodsCateMapper {
      */
     List<GoodsCate> listGoodsCatesByParentCode(@Param("cateParent") String cateParent);
 
-    int deleteByPrimaryKey(String goodsCateId);
-
-    int insert(GoodsCate record);
-
+    /**
+     * 根据商品分类编号查询商品分类信息
+     * @param goodsCateId 商品分类编号
+     * @return
+     */
     GoodsCate selectByPrimaryKey(String goodsCateId);
 
-    int updateByPrimaryKey(GoodsCate record);
 }

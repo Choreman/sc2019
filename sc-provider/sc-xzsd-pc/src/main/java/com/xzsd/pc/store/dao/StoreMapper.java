@@ -79,9 +79,4 @@ public interface StoreMapper {
      */
     int deleteStoreById(@Param("listIds") List<String> listIds, @Param("updatePersonId") String updatePersonId);
 
-    int insert(Store store);
-
-    int deleteByPrimaryKey(String storeId);
-
-    int updateByPrimaryKey(Store record);
 }

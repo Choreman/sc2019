@@ -15,6 +15,7 @@ import java.util.List;
  */
 @Mapper
 public interface AreaMapper {
+
     /**
      * 查询所有区域名称列表
      *
@@ -35,17 +36,5 @@ public interface AreaMapper {
      * @return
      */
     List<Area> listTreeAreas();
-
-    int deleteByPrimaryKey(String areaNameId);
-
-    int insert(Area record);
-
-    int insertSelective(Area record);
-
-    Area selectByPrimaryKey(String areaNameId);
-
-    int updateByPrimaryKeySelective(Area record);
-
-    int updateByPrimaryKey(Area record);
 
 }

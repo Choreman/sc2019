@@ -198,36 +198,4 @@
             </foreach>
     </update>
 
-    <!-- Mybatis generator自动生成代码 -->
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from t_menu
-    where menu_id = #{menuId,jdbcType=VARCHAR}
-  </delete>
-    <insert id="insert" parameterType="com.xzsd.pc.menu.entity.Menu">
-    insert into t_menu (menu_id, create_time, create_person, 
-      update_time, update_person, version, 
-      is_deleted, menu_name, menu_route, 
-      is_menu, menu_comment, menu_parent
-      )
-    values (#{menuId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
-      #{isDeleted,jdbcType=INTEGER}, #{menuName,jdbcType=VARCHAR}, #{menuRoute,jdbcType=VARCHAR}, 
-      #{isMenu,jdbcType=INTEGER}, #{menuComment,jdbcType=VARCHAR}, #{menuParent,jdbcType=VARCHAR}
-      )
-  </insert>
-    <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.menu.entity.Menu">
-    update t_menu
-    set create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_person = #{createPerson,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_person = #{updatePerson,jdbcType=VARCHAR},
-      version = #{version,jdbcType=INTEGER},
-      is_deleted = #{isDeleted,jdbcType=INTEGER},
-      menu_name = #{menuName,jdbcType=VARCHAR},
-      menu_route = #{menuRoute,jdbcType=VARCHAR},
-      is_menu = #{isMenu,jdbcType=INTEGER},
-      menu_comment = #{menuComment,jdbcType=VARCHAR},
-      menu_parent = #{menuParent,jdbcType=VARCHAR}
-    where menu_id = #{menuId,jdbcType=VARCHAR}
-  </update>
 </mapper>

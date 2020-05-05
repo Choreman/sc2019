@@ -315,39 +315,4 @@
             </foreach>
     </update>
 
-    <!-- Mybatis generator自动生成代码 -->
-    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
-        select
-        <include refid="Base_Column_List"/>
-        from t_driver_info
-        where driver_id = #{driverId,jdbcType=VARCHAR}
-    </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from t_driver_info
-    where driver_id = #{driverId,jdbcType=VARCHAR}
-  </delete>
-    <insert id="insert" parameterType="com.xzsd.pc.driver.entity.Driver">
-    insert into t_driver_info (driver_id, create_time, create_person, 
-      update_time, update_person, version, 
-      is_deleted, driver_user_code, driver_province_code,
-      driver_city_code, driver_region_code)
-    values (#{driverId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
-      #{isDeleted,jdbcType=INTEGER}, #{driverUserCode,jdbcType=VARCHAR}, #{driverProvinceCode,jdbcType=VARCHAR},
-      #{driverCityCode,jdbcType=VARCHAR}, #{driverRegionCode,jdbcType=VARCHAR})
-  </insert>
-    <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.driver.entity.Driver">
-    update t_driver_info
-    set create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_person = #{createPerson,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_person = #{updatePerson,jdbcType=VARCHAR},
-      version = #{version,jdbcType=INTEGER},
-      is_deleted = #{isDeleted,jdbcType=INTEGER},
-      driver_user_code = #{driverUserCode,jdbcType=VARCHAR},
-      driver_province_code = #{driverProvinceCode,jdbcType=VARCHAR},
-      driver_city_code = #{driverCityCode,jdbcType=VARCHAR},
-      driver_region_code = #{driverRegionCode,jdbcType=VARCHAR}
-    where driver_id = #{driverId,jdbcType=VARCHAR}
-  </update>
 </mapper>

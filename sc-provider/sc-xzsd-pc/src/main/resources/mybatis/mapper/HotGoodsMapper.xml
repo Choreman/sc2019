@@ -236,31 +236,4 @@
             </foreach>
     </select>
 
-    <!-- Mybatis generator自动生成代码 -->
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from t_hot_goods_info
-    where hot_goods_id = #{hotGoodsId,jdbcType=VARCHAR}
-  </delete>
-    <insert id="insert" parameterType="com.xzsd.pc.hotgoods.entity.HotGoods">
-    insert into t_hot_goods_info (hot_goods_id, create_time, create_person, 
-      update_time, update_person, version, 
-      is_deleted, hot_goods_goods_code, hot_goods_weight
-      )
-    values (#{hotGoodsId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
-      #{isDeleted,jdbcType=INTEGER}, #{hotGoodsGoodsCode,jdbcType=VARCHAR}, #{hotGoodsWeight,jdbcType=INTEGER}
-      )
-  </insert>
-    <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.hotgoods.entity.HotGoods">
-    update t_hot_goods_info
-    set create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_person = #{createPerson,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_person = #{updatePerson,jdbcType=VARCHAR},
-      version = #{version,jdbcType=INTEGER},
-      is_deleted = #{isDeleted,jdbcType=INTEGER},
-      hot_goods_goods_code = #{hotGoodsGoodsCode,jdbcType=VARCHAR},
-      hot_goods_weight = #{hotGoodsWeight,jdbcType=INTEGER}
-    where hot_goods_id = #{hotGoodsId,jdbcType=VARCHAR}
-  </update>
 </mapper>

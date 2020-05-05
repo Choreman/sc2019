@@ -60,15 +60,4 @@ public interface OrderMapper {
                                  @Param("updatePersonId") String updatePersonId,
                                  @Param("orderCondition") int orderCondition);
 
-    int deleteByPrimaryKey(String orderId);
-
-    int insert(Order record);
-
-    int insertSelective(Order record);
-
-    Order selectByPrimaryKey(String orderId);
-
-    int updateByPrimaryKeySelective(Order record);
-
-    int updateByPrimaryKey(Order record);
 }

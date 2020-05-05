@@ -82,9 +82,4 @@ public interface ImageMapper {
      */
     int updateByPrimaryKeySelective(Image image);
 
-    int insert(Image record);
-
-    Image selectByPrimaryKey(String imageId);
-
-    int updateByPrimaryKey(Image record);
 }

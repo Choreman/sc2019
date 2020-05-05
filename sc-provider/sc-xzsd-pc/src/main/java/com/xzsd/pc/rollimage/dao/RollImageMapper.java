@@ -85,13 +85,4 @@ public interface RollImageMapper {
      */
     int deleteRollImageById(@Param("listIds") List<String> listIds, @Param("updatePersonId") String updatePersonId);
 
-    int deleteByPrimaryKey(String rollImageId);
-
-    RollImage selectByPrimaryKey(String rollImageId);
-
-    int updateByPrimaryKeySelective(RollImage rollImage);
-
-    int insert(RollImage record);
-
-    int updateByPrimaryKey(RollImage record);
 }

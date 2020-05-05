@@ -331,40 +331,4 @@
             </foreach>
     </update>
 
-    <!-- Mybatis generator自动生成代码 -->
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from t_store_info
-    where store_id = #{storeId,jdbcType=VARCHAR}
-  </delete>
-    <insert id="insert" parameterType="com.xzsd.pc.store.entity.Store">
-        insert into t_store_info (
-        <include refid="Base_Column_List"/>
-        )
-        values (#{storeId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR},
-        #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER},
-        #{isDeleted,jdbcType=INTEGER}, #{storeCode, jdbcType=VARCHAR}, #{storeName,jdbcType=VARCHAR},
-        #{storePhone,jdbcType=VARCHAR}, #{storeManagerId,jdbcType=VARCHAR}, #{storeLicenseCode,jdbcType=VARCHAR},
-        #{storeAddress,jdbcType=VARCHAR}, #{storeInvitationCode,jdbcType=VARCHAR},
-        #{storeProvinceCode,jdbcType=VARCHAR},
-        #{storeCityCode,jdbcType=VARCHAR}, #{storeRegionCode,jdbcType=VARCHAR})
-    </insert>
-    <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.store.entity.Store">
-    update t_store_info
-    set create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_person = #{createPerson,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_person = #{updatePerson,jdbcType=VARCHAR},
-      version = #{version,jdbcType=INTEGER},
-      is_deleted = #{isDeleted,jdbcType=INTEGER},
-      store_name = #{storeName,jdbcType=VARCHAR},
-      store_phone = #{storePhone,jdbcType=VARCHAR},
-      store_manager_id = #{storeManagerId,jdbcType=VARCHAR},
-      store_license_code = #{storeLicenseCode,jdbcType=VARCHAR},
-      store_address = #{storeAddress,jdbcType=VARCHAR},
-      store_invitation_code = #{storeInvitationCode,jdbcType=VARCHAR},
-      store_province_code = #{storeProvinceCode,jdbcType=VARCHAR},
-      store_city_code = #{storeCityCode,jdbcType=VARCHAR},
-      store_region_code = #{storeRegionCode,jdbcType=VARCHAR}
-    where store_id = #{storeId,jdbcType=VARCHAR}
-  </update>
 </mapper>

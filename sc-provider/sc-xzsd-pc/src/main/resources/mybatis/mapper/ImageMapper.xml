@@ -251,35 +251,4 @@
         where image_id = #{imageId,jdbcType=VARCHAR}
     </update>
 
-    <!-- Mybatis generator自动生成代码 -->
-    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
-        select
-        <include refid="Base_Column_List"/>
-        from t_image_info
-        where image_id = #{imageId,jdbcType=VARCHAR}
-    </select>
-    <insert id="insert" parameterType="com.xzsd.pc.image.entity.Image">
-    insert into t_image_info (image_id, create_time, create_person, 
-      update_time, update_person, version, 
-      is_deleted, image_cate, image_cate_code, 
-      image_url, image_weight)
-    values (#{imageId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
-      #{isDeleted,jdbcType=INTEGER}, #{imageCate,jdbcType=INTEGER}, #{imageCateCode,jdbcType=VARCHAR}, 
-      #{imageUrl,jdbcType=VARCHAR}, #{imageWeight,jdbcType=INTEGER})
-  </insert>
-    <update id="updateByPrimaryKey" parameterType="com.xzsd.pc.image.entity.Image">
-    update t_image_info
-    set create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_person = #{createPerson,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_person = #{updatePerson,jdbcType=VARCHAR},
-      version = #{version,jdbcType=INTEGER},
-      is_deleted = #{isDeleted,jdbcType=INTEGER},
-      image_cate = #{imageCate,jdbcType=INTEGER},
-      image_cate_code = #{imageCateCode,jdbcType=VARCHAR},
-      image_url = #{imageUrl,jdbcType=VARCHAR},
-      image_weight = #{imageWeight,jdbcType=INTEGER}
-    where image_id = #{imageId,jdbcType=VARCHAR}
-  </update>
 </mapper>

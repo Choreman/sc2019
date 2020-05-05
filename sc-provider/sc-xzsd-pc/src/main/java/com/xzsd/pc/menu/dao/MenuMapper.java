@@ -59,10 +59,4 @@ public interface MenuMapper {
      */
     int deleteMenuById(@Param("listIds") List<String> listIds, @Param("updatePersonId") String updatePersonId);
 
-
-    int deleteByPrimaryKey(String menuId);
-
-    int insert(Menu record);
-
-    int updateByPrimaryKey(Menu record);
 }

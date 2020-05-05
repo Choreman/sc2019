@@ -109,9 +109,4 @@ public interface GoodsMapper {
      */
     List<Goods> findGoodsById(@Param("listIds") List<String> listIds);
 
-    int deleteByPrimaryKey(String goodsId);
-
-    int insert(Goods record);
-
-    int updateByPrimaryKey(Goods record);
 }

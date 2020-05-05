@@ -82,9 +82,4 @@ public interface UserMapper {
      */
     User findUserById(@Param("userId") String userId);
 
-    int deleteByPrimaryKey(String userId);
-
-    int insert(User record);
-
-    int updateByPrimaryKey(User record);
 }
